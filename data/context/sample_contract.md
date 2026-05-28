@@ -94,8 +94,66 @@ Ninguna de las partes será responsable por el incumplimiento de sus obligacione
 
 ---
 
-*Suscrito en la ciudad de Quito, Ecuador.*
+## CLÁUSULA DÉCIMA — PROTECCIÓN DE DATOS PERSONALES Y CIBERSEGURIDAD
 
-**POR EL CONTRATISTA:** TechSolutions Ecuador S.A. — Representante Legal: Ing. Roberto Andrade, C.I. 171234567-8
+**10.1 Marco normativo:** Ambas partes declaran conocer y cumplir con la Ley Orgánica de Protección de Datos Personales del Ecuador (LOPDP) y su reglamento de aplicación, así como con las normativas sectoriales emitidas por la Autoridad de Protección de Datos Personales. El CONTRATISTA, en su calidad de encargado del tratamiento, procesará datos personales de empleados, clientes y proveedores del CONTRATANTE únicamente en los términos y para los fines establecidos en el presente contrato.
 
-**POR EL CONTRATANTE:** Corporación Andina de Alimentos S.A. — Representante Legal: Ec. Patricia Viteri, C.I. 091234567-1
+**10.2 Obligaciones del CONTRATISTA como encargado de tratamiento:** El CONTRATISTA se obliga a: (a) tratar los datos personales exclusivamente siguiendo instrucciones documentadas del CONTRATANTE; (b) garantizar que el personal autorizado para tratar datos personales haya asumido compromisos de confidencialidad o esté sujeto a obligaciones legales de confidencialidad; (c) aplicar las medidas técnicas y organizativas apropiadas para garantizar un nivel de seguridad adecuado al riesgo, incluyendo cifrado de datos en tránsito y en reposo, control de acceso basado en roles, y registros de auditoría; (d) no subcontratar el tratamiento de datos sin autorización previa y por escrito del CONTRATANTE; (e) notificar al CONTRATANTE sin dilación indebida y en un plazo máximo de setenta y dos (72) horas tras detectar una brecha de seguridad que afecte a datos personales; (f) suprimir o devolver al CONTRATANTE todos los datos personales una vez finalice la prestación de servicios, eliminando las copias existentes salvo que el derecho aplicable exija su conservación.
+
+**10.3 Plan de respuesta ante incidentes:** El CONTRATISTA mantendrá un plan documentado de respuesta ante incidentes de ciberseguridad, que incluirá procedimientos de detección, contención, erradicación y recuperación. Este plan será auditado por el CONTRATANTE con periodicidad anual y cada vez que ocurra un incidente de seguridad significativo.
+
+**10.4 Penalidad por incumplimiento de seguridad:** Todo incidente de seguridad causado por negligencia comprobada del CONTRATISTA que resulte en exposición de datos personales del CONTRATANTE generará una penalidad mínima de CINCO MIL DÓLARES (USD 5.000,00), independientemente de las acciones legales que correspondan bajo la LOPDP.
+
+---
+
+## CLÁUSULA DÉCIMA PRIMERA — SUBCONTRATACIÓN
+
+**11.1** El CONTRATISTA podrá subcontratar únicamente actividades de soporte operativo de bajo riesgo (logística, mensajería técnica, suministro de consumibles) sin necesidad de autorización previa del CONTRATANTE, siempre que estas actividades no impliquen acceso a sistemas, datos o instalaciones del CONTRATANTE.
+
+**11.2** Cualquier subcontratación que implique acceso a sistemas informáticos, datos o instalaciones físicas del CONTRATANTE requerirá autorización escrita previa. El CONTRATISTA permanecerá como único responsable frente al CONTRATANTE por la actuación de sus subcontratistas, quienes deberán suscribir acuerdos de confidencialidad equivalentes a los establecidos en este contrato.
+
+**11.3** El CONTRATANTE podrá rechazar a cualquier subcontratista propuesto sin necesidad de justificación, en cuyo caso el CONTRATISTA deberá proponer una alternativa dentro de los diez (10) días hábiles siguientes.
+
+---
+
+## CLÁUSULA DÉCIMA SEGUNDA — CESIÓN DEL CONTRATO
+
+Ninguna de las partes podrá ceder, transferir o subrogar los derechos y obligaciones derivados del presente contrato, total o parcialmente, sin el consentimiento previo y por escrito de la otra parte. Se exceptúa de esta restricción la cesión que el CONTRATISTA realice a favor de una empresa del mismo grupo empresarial, siempre que la empresa cesionaria asuma solidariamente todas las obligaciones del contrato y el CONTRATANTE sea notificado con al menos treinta (30) días de anticipación. En caso de fusión, adquisición o cambio de control del CONTRATISTA, el CONTRATANTE podrá dar por terminado el contrato sin penalidad, con notificación de quince (15) días hábiles.
+
+---
+
+## CLÁUSULA DÉCIMA TERCERA — MODIFICACIONES AL CONTRATO
+
+**13.1** Cualquier modificación, adición o supresión al presente contrato deberá formalizarse mediante adenda escrita, suscrita por los representantes legales de ambas partes o por los apoderados debidamente autorizados, e incorporada como parte integrante del contrato.
+
+**13.2** Las comunicaciones operativas, acuerdos de nivel de servicio adicionales y cambios de alcance menores (que no superen el diez por ciento del valor mensual del contrato ni impliquen modificación de las obligaciones principales) podrán instrumentarse mediante intercambio de correos electrónicos entre los contactos designados por cada parte, con plena validez jurídica conforme a la Ley de Comercio Electrónico, Firmas y Mensajes de Datos del Ecuador.
+
+**13.3** Los cambios de contacto técnico o administrativo designado por cada parte no requieren adenda, pero deben ser notificados formalmente por escrito con al menos cinco (5) días hábiles de anticipación.
+
+---
+
+## CLÁUSULA DÉCIMA CUARTA — NOTIFICACIONES Y COMUNICACIONES FORMALES
+
+Toda notificación, requerimiento o comunicación formal entre las partes deberá realizarse por escrito y se entenderá válidamente efectuada cuando sea: (a) entregada personalmente al representante legal o apoderado de la parte destinataria, con constancia de recepción; (b) enviada por correo certificado con acuse de recibo a la dirección indicada en el encabezamiento del contrato; (c) remitida por correo electrónico a las direcciones oficiales de los representantes legales, siempre que se reciba acuse de recepción del sistema o confirmación expresa del destinatario. El cambio de domicilio o dirección de correo electrónico deberá notificarse a la otra parte con al menos diez (10) días hábiles de anticipación; de lo contrario, las notificaciones enviadas a la última dirección conocida se tendrán por válidamente efectuadas.
+
+---
+
+## CLÁUSULA DÉCIMA QUINTA — CLÁUSULA PENAL GENERAL
+
+Sin perjuicio de las penalidades específicas establecidas en las cláusulas anteriores, el incumplimiento grave de cualquiera de las obligaciones principales de este contrato por parte del CONTRATISTA faculta al CONTRATANTE a exigir una cláusula penal equivalente al cinco por ciento (5%) del valor total del contrato como estimación anticipada de los daños y perjuicios, sin necesidad de probar el daño efectivo. El cobro de la cláusula penal no excluye el derecho a exigir el cumplimiento de la obligación principal, la resolución del contrato y/o la indemnización de daños adicionales que superen el monto de la penalidad.
+
+---
+
+## CLÁUSULA DÉCIMA SEXTA — LEGISLACIÓN APLICABLE E INTEGRACIÓN
+
+El presente contrato se rige en su interpretación, cumplimiento y ejecución por las leyes de la República del Ecuador, en especial por el Código Civil, el Código de Comercio, la Ley Orgánica de Defensa del Consumidor, la Ley Orgánica de Telecomunicaciones y la Ley Orgánica de Protección de Datos Personales. Este contrato, junto con sus adendas y anexos debidamente suscritos, constituye el acuerdo completo entre las partes respecto al objeto descrito en la Cláusula Primera y reemplaza y deja sin efecto cualquier negociación, propuesta, representación, garantía o acuerdo previo, oral o escrito, relacionado con dicho objeto.
+
+---
+
+*Suscrito en la ciudad de Quito, Ecuador, a los veintiocho días del mes de enero de dos mil veinticuatro.*
+
+**POR EL CONTRATISTA:** TechSolutions Ecuador S.A. — Representante Legal: Ing. Roberto Andrade Molina, C.I. 171234567-8, domiciliado en Av. República del Salvador N34-183 y Suecia, Quito.
+
+**POR EL CONTRATANTE:** Corporación Andina de Alimentos S.A. — Representante Legal: Ec. Patricia Viteri Espinosa, C.I. 091234567-1, domiciliada en Av. 6 de Diciembre N23-102 y Av. Colón, Quito.
+
+**TESTIGO:** Ab. Fernando Mora Cárdenas, C.I. 170987654-3, Notaría Décima Cuarta del Cantón Quito.

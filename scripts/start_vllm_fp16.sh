@@ -10,6 +10,7 @@ echo ""
 
 python -m vllm.entrypoints.openai.api_server \
     --model /workspace/models/llama3.1-8b-instruct \
+    --served-model-name "meta-llama/Meta-Llama-3.1-8B-Instruct" \
     --dtype float16 \
     --max-model-len 8192 \
     --port 8000 \

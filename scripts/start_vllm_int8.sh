@@ -11,6 +11,7 @@ echo ""
 
 python -m vllm.entrypoints.openai.api_server \
     --model /workspace/models/llama3.1-8b-instruct \
+    --served-model-name "meta-llama/Meta-Llama-3.1-8B-Instruct" \
     --quantization bitsandbytes \
     --load-format bitsandbytes \
     --dtype float16 \

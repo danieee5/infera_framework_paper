@@ -99,4 +99,52 @@
 
 ---
 
-*Este reglamento fue aprobado por el Ministerio del Trabajo mediante Resolución MDT-2023-0142 y está disponible para consulta de todos los trabajadores en el portal interno hr.techsolutions.com.ec*
+## CAPÍTULO IX — SEGURIDAD Y SALUD OCUPACIONAL
+
+**Art. 26 — Política de seguridad:** TechSolutions Ecuador S.A. está comprometida con la prevención de riesgos laborales y el mantenimiento de condiciones de trabajo seguras y saludables. Todo trabajador tiene derecho a un entorno de trabajo libre de riesgos evitables y tiene la obligación de cumplir con las normas de seguridad y salud ocupacional establecidas.
+
+**Art. 27 — Comité paritario de SSO:** La empresa mantendrá un Comité Paritario de Seguridad y Salud Ocupacional integrado por igual número de representantes del empleador y de los trabajadores. El Comité se reunirá mensualmente, levantará actas de sus sesiones y presentará un informe anual a la Dirección y al Ministerio del Trabajo.
+
+**Art. 28 — Equipos de protección personal:** Los trabajadores que realicen labores de campo (instalaciones, mantenimiento de servidores, tendido de cableado) recibirán los equipos de protección personal (EPP) necesarios sin costo alguno: casco dieléctrico, guantes aislantes, zapatos de seguridad con punta de acero y chaleco reflectivo para trabajos en vía pública. El uso del EPP proporcionado es obligatorio en todas las actividades que así lo requieran.
+
+**Art. 29 — Ergonomía para trabajadores de oficina:** Los trabajadores con funciones principalmente de escritorio recibirán una evaluación ergonómica al ingresar y cada dos años. La empresa proporcionará sillas ergonómicas, monitores ajustables en altura y reposapiés cuando la evaluación así lo recomiende. Los trabajadores en teletrabajo tienen derecho a una dotación económica de CIEN DÓLARES (USD 100,00) anuales para adecuar su espacio de trabajo, previa presentación de justificativos.
+
+**Art. 30 — Exámenes médicos ocupacionales:** La empresa realizará exámenes médicos pre-empleo, anuales y de egreso para todos los trabajadores. Los exámenes tendrán el alcance definido por el médico ocupacional según el perfil de riesgo del cargo. Los resultados son confidenciales y no podrán utilizarse para discriminar en decisiones laborales.
+
+**Art. 31 — Accidentes e incidentes:** Todo accidente de trabajo o incidente (evento que pudo haber causado daño pero no lo causó) debe reportarse al jefe inmediato y a RR.HH. dentro de las dos (2) horas siguientes. RR.HH. iniciará la investigación en un plazo máximo de cuarenta y ocho (48) horas e implementará las medidas correctivas que correspondan. Los accidentes de trabajo deben ser notificados al IESS conforme los plazos legales.
+
+---
+
+## CAPÍTULO X — TELETRABAJO
+
+**Art. 32 — Modalidades de trabajo:** La empresa reconoce tres modalidades: presencial (trabajo en instalaciones de la empresa o del cliente), teletrabajo (trabajo desde el domicilio u otro lugar autorizado) e híbrida (combinación de ambas). La modalidad aplicable a cada cargo se define en el contrato individual y puede modificarse por acuerdo entre las partes o por necesidades operativas de la empresa, con notificación de al menos cinco (5) días hábiles.
+
+**Art. 33 — Requisitos para teletrabajo:** Para autorizar la modalidad de teletrabajo, la empresa verificará que el trabajador cuente con: (a) conexión a internet con velocidad mínima de 20 Mbps simétricos; (b) espacio físico adecuado, silencioso e iluminado; (c) equipo de cómputo con las especificaciones mínimas definidas por el área de TI (procesador i5/Ryzen 5 o superior, 8 GB RAM, cámara web y micrófono funcionales); (d) acceso al sistema de VPN corporativa y herramientas de colaboración autorizadas.
+
+**Art. 34 — Disponibilidad y control horario:** El trabajador en modalidad de teletrabajo debe estar disponible y accesible durante su jornada ordinaria a través de los canales oficiales de comunicación (correo corporativo, Teams, sistema de tickets). El registro de asistencia se realizará mediante el sistema digital de la empresa. La empresa podrá utilizar herramientas de monitoreo de actividad declaradas y conocidas por el trabajador, conforme la normativa de protección de datos vigente.
+
+**Art. 35 — Dotación tecnológica para teletrabajo:** La empresa proporcionará al trabajador en teletrabajo: laptop corporativo con software licenciado, acceso a VPN, licencia de Microsoft 365 con Teams y herramienta de gestión de tickets. El bono de conectividad mensual (Art. 14) cubre parcialmente los gastos de internet del trabajador. Los equipos entregados por la empresa son de uso exclusivo laboral y deben ser devueltos al término de la relación laboral en las mismas condiciones de entrega, considerando el desgaste normal por uso.
+
+---
+
+## CAPÍTULO XI — CAPACITACIÓN Y DESARROLLO PROFESIONAL
+
+**Art. 36 — Plan anual de capacitación:** La empresa elaborará anualmente un Plan de Capacitación que identificará las necesidades formativas por área y cargo, en función de los objetivos estratégicos, los cambios tecnológicos del sector y los resultados de las evaluaciones de desempeño. El plan será socializado con los trabajadores en el primer trimestre de cada año.
+
+**Art. 37 — Capacitación técnica obligatoria:** Los técnicos de campo y los ingenieros de soporte deberán mantener vigentes las certificaciones técnicas requeridas para su cargo. La empresa financiará hasta dos (2) certificaciones anuales por trabajador dentro del presupuesto establecido en el Art. 14. El trabajador que abandone la empresa dentro de los doce (12) meses siguientes a recibir capacitación financiada con un costo superior a TRESCIENTOS DÓLARES (USD 300,00) deberá reembolsar el valor proporcional al tiempo no laborado.
+
+**Art. 38 — Evaluación de desempeño:** La empresa realizará evaluaciones de desempeño semestrales. Los resultados serán comunicados al trabajador por su jefe inmediato en una reunión de retroalimentación, y se documentarán en el expediente laboral. Las evaluaciones positivas y consistentes durante dos períodos consecutivos constituyen criterio relevante para promociones internas y aumentos salariales.
+
+---
+
+## CAPÍTULO XII — USO DE TECNOLOGÍA Y RECURSOS CORPORATIVOS
+
+**Art. 39 — Uso de equipos y sistemas:** Los equipos informáticos, sistemas, plataformas en la nube y conexiones de red proporcionados por la empresa son herramientas de trabajo de uso exclusivo laboral. Se permite un uso personal ocasional y moderado (consultar el correo personal, usar redes sociales durante el descanso) siempre que no interfiera con las responsabilidades laborales, no comprometa la seguridad de los sistemas y no genere costos adicionales para la empresa.
+
+**Art. 40 — Seguridad de la información:** Todo trabajador que maneje información clasificada (datos de clientes, contratos, información financiera, credenciales de acceso) deberá: (a) utilizar contraseñas robustas de al menos doce caracteres con combinación de letras, números y símbolos; (b) activar la autenticación de dos factores en todos los sistemas que lo soporten; (c) no compartir credenciales de acceso con compañeros de trabajo ni con terceros; (d) bloquear la pantalla al alejarse del puesto de trabajo; (e) reportar inmediatamente cualquier sospecha de acceso no autorizado o phishing al equipo de TI.
+
+**Art. 41 — Uso de inteligencia artificial:** El uso de herramientas de inteligencia artificial generativa (ChatGPT, Copilot, Gemini y similares) para apoyar las labores diarias está permitido, siempre que: (a) no se introduzcan en estas herramientas datos personales de clientes, contraseñas, información contractual confidencial o código fuente propietario; (b) las respuestas generadas por IA sean revisadas y validadas por el trabajador antes de compartirlas o utilizarlas; (c) se informe al cliente cuando un entregable incluya contenido generado con asistencia de IA, si el cliente así lo requiere.
+
+---
+
+*Este reglamento fue aprobado por el Ministerio del Trabajo mediante Resolución MDT-2023-0142 y está disponible para consulta de todos los trabajadores en el portal interno hr.techsolutions.com.ec. Última revisión: enero 2024.*
