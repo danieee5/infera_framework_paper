@@ -1,0 +1,35 @@
+# Results (large files, not committed — download from RunPod separately)
+results/*/
+
+# Keep results directory structure but not contents
+!results/.gitkeep
+
+# Generated prompt corpus (regenerate with build_prompt_dataset.py)
+data/prompts/prompt_corpus.jsonl
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.env
+venv/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# HuggingFace token (never commit)
+.env
+*.token
