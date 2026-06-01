@@ -604,13 +604,13 @@ def main():
         return content
 
     # Archivos de contexto requeridos:
-    # - service_policies.md  → Caso A (políticas de atención)
+    # - company_policies.md  → Caso A (políticas de atención)
     # - company_profile.md   → Caso B (perfil de empresa)
     # - internal_faq.md      → Caso C (documento largo para análisis)
     #
     # Si tu repo usa nombres diferentes, cámbialos aquí.
     # El script fallará si alguno falta, lo cual es intencional.
-    policies_text = read_context("service_policies.md", required=True)
+    policies_text = read_context("company_policies.md", required=True)
     profile_text  = read_context("company_profile.md",  required=True)
     # Para Caso C usamos el FAQ si existe, si no usamos el contrato
     faq_path = context_dir / "internal_faq.md"
