@@ -658,6 +658,9 @@ def main():
                 conversation_histories.append(entry)
             elif isinstance(entry, dict) and "messages" in entry:
                 conversation_histories.append(entry["messages"])
+            elif isinstance(entry, dict) and "turns" in entry:
+                # Formato alternativo con clave "turns" en lugar de "messages"
+                conversation_histories.append(entry["turns"])
             else:
                 print(
                     f"FATAL: Formato inesperado en línea {line_num}.\n"
