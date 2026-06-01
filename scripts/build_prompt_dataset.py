@@ -1,445 +1,730 @@
+#!/usr/bin/env python3
 """
-build_prompt_dataset.py
-Builds the 90-prompt evaluation corpus from context files.
+INFERA — build_prompt_dataset.py
+Construye el corpus de 90 prompts para el benchmark.
 
-THREE SCENARIOS (context-augmented prompting — NOT full RAG):
-  Case A — Customer support chatbot        target: ~256 input tokens
-  Case B — Memory-augmented assistant      target: ~1024 input tokens
-  Case C — Long document analysis          target: ~4096 input tokens
+DISEÑO:
+  Tres casos operacionalizan los niveles de VI4 (carga contextual efectiva):
+    Caso A (~256 tokens): chatbot de atención al cliente, contexto corto
+    Caso B (~1024 tokens): asistente conversacional con historial
+    Caso C (~4096 tokens): análisis de documentos completos
 
-  These scenarios simulate the inference workload AFTER context has been
-  retrieved and assembled — the computationally relevant phase for energy
-  measurement. The retrieval step is not evaluated.
+DECISIÓN TÉCNICA CLAVE — truncación token-aware:
+  El parche anterior usaba slices de caracteres (profile[:400]) como
+  aproximación de tokens. Esto es frágil: los archivos de contexto pueden
+  cambiar y los conteos de caracteres NO garantizan conteos de tokens.
+  Este script usa tokenizer.encode() para truncar exactamente por tokens
+  y tokenizer.apply_chat_template() para contar lo que vLLM realmente ve,
+  incluyendo los tokens especiales de plantilla.
 
-TOKENIZATION POLICY:
-  By default, requires AutoTokenizer from HuggingFace (real LLaMA tokenizer).
-  If the model cannot be loaded and --allow-tokenizer-fallback is NOT set,
-  the script aborts. This is intentional: approximate token counts invalidate
-  J/token and throughput calculations, which are the primary dependent variables.
+VALIDACIÓN:
+  Tolerancia VI4: ±15% del objetivo central.
+    Case A: 256 tokens → válido en [218, 294]
+    Case B: 1024 tokens → válido en [870, 1178]
+    Case C: 4096 tokens → válido en [3482, 4710]
+  Si algún caso produce < 30 prompts válidos → el script aborta con error.
+  No hay fallbacks silenciosos.
 
-  Token count heuristics (tiktoken, word split) are ONLY permitted when
-  --allow-tokenizer-fallback is explicitly passed. This flag is provided for
-  development convenience only and must NOT be used for thesis data collection.
+REPRODUCIBILIDAD:
+  - Las 30 preguntas de usuario por caso están embebidas en este script.
+  - El corpus generado es idéntico en cualquier máquina con los mismos
+    archivos de contexto y este script.
+  - Tokenizador: meta-llama/Meta-Llama-3.1-8B-Instruct (real, no aproximado).
 
-  To pre-download the tokenizer without downloading full model weights:
-    python -c "
-    from transformers import AutoTokenizer
-    AutoTokenizer.from_pretrained('meta-llama/Meta-Llama-3.1-8B-Instruct')
-    "
-
-PROMPT FORMAT:
-  Prompts are stored as lists of message dicts (OpenAI chat format):
-    [{"role": "system", "content": "..."}, {"role": "user", "content": "..."}]
-  The benchmark runner sends these to /v1/chat/completions, which lets vLLM
-  apply the correct LLaMA 3.1 chat template internally. This avoids manually
-  reconstructing <|begin_of_text|>...<|eot_id|> special tokens.
-
-  Token counts in the corpus are estimated pre-template using the tokenizer.
-  The actual prompt_tokens reported by vLLM (post-template) will be slightly
-  higher (~10–20 tokens for template overhead). This difference is documented
-  and consistent across all configurations, so it does not affect comparisons.
-
-VALIDITY TOLERANCE:
-  ±15% of target token count per case (documented in methodology).
-  Out-of-range prompts are flagged. The script ABORTS if any case has fewer
-  than 30 valid prompts — it will not save a broken corpus.
-
-USAGE:
-  # Normal (requires real tokenizer):
-  python scripts/build_prompt_dataset.py
+USO:
+  # Verificar token counts sin guardar:
   python scripts/build_prompt_dataset.py --verify-only
 
-  # Development only (approximate counts — DO NOT USE FOR THESIS DATA):
-  python scripts/build_prompt_dataset.py --allow-tokenizer-fallback
+  # Construir corpus completo:
+  python scripts/build_prompt_dataset.py
 
-  # Custom model ID (if tokenizer is cached elsewhere):
-  python scripts/build_prompt_dataset.py --model-id meta-llama/Meta-Llama-3.1-8B-Instruct
+  # Especificar rutas si difieren de los defaults:
+  python scripts/build_prompt_dataset.py \\
+      --model-dir /workspace/models/llama3.1-8b-instruct \\
+      --context-dir data/context \\
+      --conversations data/conversations/conversation_histories.jsonl \\
+      --output data/prompts/prompt_corpus.jsonl
 """
 
 import argparse
 import json
-import random
 import sys
 from pathlib import Path
 
-RANDOM_SEED      = 42
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CONFIGURACIÓN — targets y tolerancias de VI4
+# ─────────────────────────────────────────────────────────────────────────────
+
+VI4_TARGETS = {
+    "A": {"center": 256,  "low": 218,  "high": 294},
+    "B": {"center": 1024, "low": 870,  "high": 1178},
+    "C": {"center": 4096, "low": 3482, "high": 4710},
+}
+
 PROMPTS_PER_CASE = 30
-OUTPUT_PATH      = "data/prompts/prompt_corpus.jsonl"
+TOLERANCE = 0.15  # ±15%
 
-TARGETS = {
-    "A": {"target": 256,  "min": 218,  "max": 294},
-    "B": {"target": 1024, "min": 870,  "max": 1178},
-    "C": {"target": 4096, "min": 3482, "max": 4710},
-}
+# ─────────────────────────────────────────────────────────────────────────────
+# PREGUNTAS DE USUARIO
+# 30 por caso. Embebidas aquí para garantizar reproducibilidad.
+# En español (idioma del caso de uso objetivo).
+# ─────────────────────────────────────────────────────────────────────────────
 
-CONTEXT_FILES = {
-    "profile":   "data/context/company_profile.md",
-    "policies":  "data/context/company_policies.md",
-    "contract":  "data/context/sample_contract.md",
-    "faq":       "data/context/internal_faq.md",
-    "histories": "data/conversations/conversation_histories.jsonl",
-}
+QUESTIONS_A = [
+    "¿Cuál es el horario de atención al cliente?",
+    "¿Cómo puedo reportar un problema técnico urgente?",
+    "¿Cuáles son los métodos de pago aceptados para la renovación?",
+    "¿Cuánto tiempo tarda en resolverse una incidencia de nivel crítico?",
+    "¿Qué incluye el plan de mantenimiento preventivo básico?",
+    "¿Puedo solicitar un cambio de plan sin penalización?",
+    "¿Qué documentos necesito para abrir un ticket de soporte?",
+    "¿Cómo se calcula el tiempo de respuesta garantizado en mi contrato?",
+    "¿Existe algún número de emergencia disponible las 24 horas?",
+    "¿Qué pasa si el técnico no llega en el tiempo comprometido?",
+    "¿Puedo solicitar una copia de mi historial de incidencias?",
+    "¿Cómo actualizo los datos de contacto de mi empresa en el sistema?",
+    "¿Qué significa el nivel de servicio Silver en la política de atención?",
+    "¿Cuántos usuarios pueden estar registrados bajo una sola licencia corporativa?",
+    "¿Existe penalización por cancelar el servicio antes de que termine el contrato?",
+    "¿Cómo funciona el proceso de escalamiento de un caso no resuelto?",
+    "¿Qué cobertura tiene el soporte remoto versus el soporte presencial?",
+    "¿Puedo transferir mi contrato de servicio a otra empresa?",
+    "¿Cómo solicito capacitación técnica para mi equipo?",
+    "¿Qué pasa con mis datos si decido cancelar el servicio?",
+    "¿Con qué frecuencia se realizan las actualizaciones del sistema?",
+    "¿El soporte cubre problemas con equipos de terceros integrados al sistema?",
+    "¿Cómo reporto un incumplimiento del acuerdo de nivel de servicio?",
+    "¿Puedo añadir sedes adicionales a mi contrato actual?",
+    "¿Cuál es el proceso para solicitar un reembolso por tiempo de inactividad?",
+    "¿Qué información necesito tener a mano antes de llamar al soporte?",
+    "¿Existe algún portal de autogestión donde pueda ver el estado de mis tickets?",
+    "¿Cómo se define una interrupción parcial versus una interrupción total del servicio?",
+    "¿El mantenimiento programado se notifica con anticipación?",
+    "¿Qué garantías de seguridad de datos ofrece la empresa?",
+]
+
+QUESTIONS_B = [
+    "¿Cuándo recibiré la confirmación oficial del cierre de mi caso?",
+    "¿Existe algún costo adicional asociado al soporte que recibí?",
+    "¿Puedo solicitar que el mismo técnico atienda mi próxima incidencia?",
+    "¿Cuál es el siguiente paso para formalizar lo que acordamos?",
+    "¿Hay alguna documentación que deba firmar para continuar el proceso?",
+    "¿En qué plazo se implementará la solución que discutimos?",
+    "¿Puedo obtener un resumen escrito de lo conversado hasta ahora?",
+    "¿Esto que mencionas implica algún cambio en mi plan de servicio actual?",
+    "¿Necesito coordinar algo con mi equipo interno para que esto funcione?",
+    "¿Existe algún riesgo de interrupción durante la implementación que comentaste?",
+    "¿El cambio que me propones está cubierto por mi contrato vigente?",
+    "¿Con quién más debo hablar en tu empresa para avanzar con esto?",
+    "¿Puedo recibir una alerta anticipada si el problema podría volver a ocurrir?",
+    "¿Qué indicadores debo monitorear para saber que todo está funcionando bien?",
+    "¿Hay algo que yo deba evitar hacer para que la solución sea estable?",
+    "¿Cuánto tiempo tomará el proceso de validación que mencionaste?",
+    "¿Eso que describen aplica también a las sucursales que tengo fuera de Guayaquil?",
+    "¿Puedo cancelar el cambio si no estoy satisfecho con los resultados?",
+    "¿Hay algún periodo de prueba antes de que los cambios sean definitivos?",
+    "¿Puedo revisar el informe técnico antes de que se archive el caso?",
+    "¿Eso que mencionan afecta a todos los usuarios o solo al administrador principal?",
+    "¿Qué pasa si el problema que describieron vuelve a ocurrir en menos de 30 días?",
+    "¿Necesito actualizar alguna configuración de mi parte para que esto funcione?",
+    "¿El soporte que recibiré en adelante cambia en algo respecto a lo actual?",
+    "¿Pueden enviarme la propuesta técnica por escrito para revisarla con mi gerente?",
+    "¿Cuál es el tiempo estimado de inactividad durante el mantenimiento que proponen?",
+    "¿Esto tiene algún impacto en mis respaldos automáticos programados?",
+    "¿Puedo solicitar que esto sea revisado por un ingeniero sénior antes de aplicarlo?",
+    "¿Hay algún formulario que deba completar para autorizar los cambios?",
+    "¿Eso que mencionan ya fue probado en entornos similares al mío?",
+]
+
+QUESTIONS_C = [
+    "¿Cuáles son las principales obligaciones del cliente según este documento?",
+    "Resume las cláusulas relacionadas con la terminación anticipada del contrato.",
+    "¿Qué garantías específicas ofrece la empresa en este acuerdo?",
+    "¿Cuáles son los criterios para determinar incumplimiento por parte del proveedor?",
+    "¿Qué mecanismos de resolución de conflictos se establecen en el documento?",
+    "¿Cuáles son las limitaciones de responsabilidad del proveedor descritas aquí?",
+    "¿Qué información confidencial está protegida bajo este acuerdo y cómo?",
+    "Identifica las condiciones bajo las cuales se puede suspender el servicio.",
+    "¿Cuáles son los plazos de pago y las penalizaciones por retraso establecidos?",
+    "¿Qué modificaciones al servicio requieren autorización formal según este documento?",
+    "¿Cuáles son las condiciones de renovación automática del contrato?",
+    "¿Qué niveles de servicio (SLA) están comprometidos y cómo se miden?",
+    "¿Cuáles son los derechos de propiedad intelectual descritos en este acuerdo?",
+    "Identifica todos los plazos críticos mencionados en el documento.",
+    "¿Qué exclusiones de servicio están definidas explícitamente?",
+    "¿Cuáles son las condiciones para que el cliente pueda reclamar compensaciones?",
+    "¿Qué documentación debe entregarse al inicio y al cierre del contrato?",
+    "¿Cuáles son las obligaciones de seguridad de la información del proveedor?",
+    "¿Bajo qué circunstancias puede una parte ceder sus derechos a un tercero?",
+    "¿Cuáles son los procedimientos de escalamiento establecidos en este documento?",
+    "¿Qué define el documento como 'fuerza mayor' y cuáles son sus consecuencias?",
+    "¿Cuáles son las condiciones bajo las cuales se aplican descuentos o créditos?",
+    "Identifica las cláusulas relacionadas con auditorías o revisiones del servicio.",
+    "¿Qué métricas se usan para medir el cumplimiento del nivel de servicio?",
+    "¿Cuáles son las restricciones de uso del servicio mencionadas en el documento?",
+    "¿Qué obligaciones tiene el proveedor en caso de incidente de seguridad?",
+    "¿Cuáles son las condiciones para modificar el precio del servicio durante el contrato?",
+    "¿Qué garantías de continuidad del negocio ofrece el proveedor en este acuerdo?",
+    "Identifica todas las partes mencionadas en el documento y sus roles.",
+    "¿Cuáles son los criterios de aceptación del servicio establecidos?",
+]
 
 
-# ── TOKENIZER ─────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
+# FUNCIONES DE TOKENIZACIÓN
+# ─────────────────────────────────────────────────────────────────────────────
 
-def load_tokenizer(model_id: str, allow_fallback: bool):
+def load_tokenizer(model_dir: str):
     """
-    Load the real LLaMA tokenizer.
+    Carga el tokenizador desde el directorio local del modelo.
+    Falla con mensaje claro si no está disponible.
 
-    If allow_fallback=False (default) and the tokenizer cannot be loaded,
-    the script aborts. This is the correct behavior for thesis data collection.
-
-    If allow_fallback=True (--allow-tokenizer-fallback flag), falls back to
-    tiktoken then word heuristic. FOR DEVELOPMENT ONLY.
+    Por qué cargamos local y no desde HuggingFace:
+      En RunPod sin internet, el modelo ya está en /workspace/models/.
+      En reproducibilidad, garantizamos que todos usen exactamente el mismo
+      tokenizador que se usó para el experimento.
     """
     try:
         from transformers import AutoTokenizer
-        tok = AutoTokenizer.from_pretrained(model_id)
-        print(f"[Tokenizer] ✓ Loaded: {model_id}")
-        return tok, model_id
-    except Exception as e:
-        if not allow_fallback:
-            sys.exit(
-                f"\nFATAL: Could not load tokenizer for '{model_id}'.\n"
-                f"Error: {e}\n\n"
-                f"The real model tokenizer is required for valid token counts.\n"
-                f"Fix options:\n"
-                f"  1. Run setup first: bash scripts/setup_runpod.sh\n"
-                f"     (downloads the model and tokenizer to /workspace/models/)\n"
-                f"  2. Pre-download tokenizer only:\n"
-                f"     python -c \"from transformers import AutoTokenizer; "
-                f"AutoTokenizer.from_pretrained('{model_id}')\"\n"
-                f"  3. Development only (DO NOT use for thesis data):\n"
-                f"     python scripts/build_prompt_dataset.py --allow-tokenizer-fallback\n"
-            )
+    except ImportError:
+        print("FATAL: transformers no instalado. Ejecuta el setup primero.", file=sys.stderr)
+        sys.exit(1)
 
-        # Fallback path — only reached with --allow-tokenizer-fallback
-        print(f"[Tokenizer] WARNING: Could not load {model_id}: {e}")
+    model_path = Path(model_dir)
+    if not model_path.exists():
+        # Intentar también desde HuggingFace cache como fallback
+        model_id = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+        print(f"  Directorio local no encontrado: {model_path}", file=sys.stderr)
+        print(f"  Intentando cargar desde HuggingFace: {model_id}", file=sys.stderr)
         try:
-            import tiktoken
-            enc = tiktoken.get_encoding("cl100k_base")
-            class _TiktokenWrap:
-                def encode(self, t): return enc.encode(t)
-            print("[Tokenizer] FALLBACK: tiktoken cl100k_base")
-            print("[Tokenizer] ⚠ Token counts are approximate (~4% error vs LLaMA)")
-            print("[Tokenizer] ⚠ DO NOT use these counts for thesis data collection")
-            return _TiktokenWrap(), "tiktoken_cl100k_base_FALLBACK"
-        except ImportError:
-            class _WordWrap:
-                def encode(self, t): return t.split()
-            print("[Tokenizer] FALLBACK: word split heuristic (very approximate)")
-            print("[Tokenizer] ⚠ DO NOT use these counts for thesis data collection")
-            return _WordWrap(), "word_split_heuristic_FALLBACK"
+            tok = AutoTokenizer.from_pretrained(model_id)
+            print(f"  Tokenizador cargado desde HuggingFace cache.")
+            return tok
+        except Exception as e:
+            print(f"FATAL: No se pudo cargar el tokenizador.\n"
+                  f"  Directorio local: {model_path}\n"
+                  f"  Error: {e}\n"
+                  f"  Solución: Ejecutar setup_runpod.sh para descargar el modelo.",
+                  file=sys.stderr)
+            sys.exit(1)
+
+    try:
+        tok = AutoTokenizer.from_pretrained(str(model_path))
+        print(f"  Tokenizador cargado desde: {model_path}")
+        return tok
+    except Exception as e:
+        print(f"FATAL: Error cargando tokenizador desde {model_path}: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
-def count_tokens(text: str, tokenizer) -> int:
-    """Count tokens using the loaded tokenizer."""
-    return len(tokenizer.encode(text))
-
-
-# ── CONTEXT LOADING ───────────────────────────────────────────────────────────
-
-def load_file(path: str) -> str:
-    p = Path(path)
-    if not p.exists():
-        sys.exit(
-            f"\nFATAL: Context file not found: {path}\n"
-            f"See docs/context_guide.md for instructions on replacing context files.\n"
-        )
-    return p.read_text(encoding="utf-8")
-
-
-def load_histories(path: str) -> list:
-    p = Path(path)
-    if not p.exists():
-        sys.exit(
-            f"\nFATAL: Conversation histories not found: {path}\n"
-            f"See docs/context_guide.md.\n"
-        )
-    return [json.loads(l) for l in p.read_text(encoding="utf-8").splitlines() if l.strip()]
-
-
-# ── PROMPT BUILDERS — return OpenAI chat message lists ───────────────────────
-#
-# Each function returns a list of {"role": ..., "content": ...} dicts.
-# This is the format expected by /v1/chat/completions (OpenAI-compatible API).
-# vLLM applies the correct LLaMA 3.1 chat template (with <|begin_of_text|>,
-# <|eot_id|>, etc.) internally — we do not reconstruct it manually.
-#
-# For token counting in the corpus, we count the concatenated content text
-# (system + user). The actual post-template token count reported by vLLM will
-# be ~10–20 tokens higher due to template overhead tokens. This offset is
-# constant across all configurations and does not affect relative comparisons.
-
-QUESTIONS_A = [
-    "¿Cuál es el horario de atención del soporte técnico?",
-    "¿Cómo solicito una visita técnica a domicilio?",
-    "¿Qué garantía tienen los equipos que instalan?",
-    "¿Ofrecen contratos de mantenimiento mensual?",
-    "¿Hacen envíos fuera de la ciudad?",
-    "¿Cómo puedo pagar mis facturas en línea?",
-    "¿En cuánto tiempo reparan un equipo que entrego?",
-    "¿Tienen descuentos para empresas con múltiples equipos?",
-    "¿Qué pasa si el equipo se daña durante la reparación?",
-    "¿Puedo hacer seguimiento del estado de mi solicitud?",
-    "¿Tienen cobertura en provincias fuera de Quito?",
-    "¿Qué incluye el diagnóstico gratuito?",
-    "¿Cuánto demora una instalación de red empresarial?",
-    "¿Cómo cancelo un servicio contratado?",
-    "¿Qué hace falta para solicitar soporte remoto?",
-]
-
-
-def build_case_a(index: int, profile: str, policies: str) -> list[dict]:
-    """Case A: ~256 input tokens. System context + short user question."""
-    system_content = (
-        "Eres el asistente virtual de atención al cliente de TechSolutions Ecuador, "
-        "empresa especializada en soluciones tecnológicas empresariales. "
-        "Responde de forma clara, amigable y concisa.\n\n"
-        f"INFORMACIÓN DE LA EMPRESA:\n{profile[:600]}\n\n"
-        f"POLÍTICAS DE SERVICIO:\n{policies[:400]}"
-    )
-    return [
-        {"role": "system", "content": system_content},
-        {"role": "user",   "content": QUESTIONS_A[index % len(QUESTIONS_A)]},
-    ]
-
-
-def build_case_b(index: int, profile: str, history: dict) -> list[dict]:
+def truncate_to_tokens(text: str, tokenizer, max_tokens: int) -> str:
     """
-    Case B: ~1024 input tokens. System + company profile + serialized history + question.
-    Only turns and new_question from the history dict enter the prompt.
-    conversation_id and scenario_tag are stored as corpus metadata only.
+    Trunca texto a exactamente max_tokens tokens como máximo.
+
+    Por qué esto es mejor que slices de caracteres:
+      text[:400] puede dar entre 80 y 200 tokens dependiendo del idioma,
+      longitud de palabras y caracteres especiales.
+      Esta función garantiza exactamente max_tokens tokens.
     """
-    history_text = "\n".join(
-        f"[{'Usuario' if t['role'] == 'user' else 'Asistente'}]: {t['content']}"
-        for t in history.get("turns", [])[:8]
+    token_ids = tokenizer.encode(text, add_special_tokens=False)
+    if len(token_ids) <= max_tokens:
+        return text
+    truncated_ids = token_ids[:max_tokens]
+    # decode puede añadir espacios extra al inicio; strip() los limpia
+    return tokenizer.decode(truncated_ids, skip_special_tokens=True).strip()
+
+
+def count_prompt_tokens(messages: list, tokenizer) -> int:
+    """
+    Cuenta tokens exactamente como vLLM los verá.
+
+    Por qué usar apply_chat_template:
+      vLLM aplica internamente el chat template de LLaMA 3.1 antes de
+      tokenizar. El template añade tokens especiales: <|begin_of_text|>,
+      <|start_header_id|>, etc. Sin aplicar el template, los conteos
+      serían más bajos que los reales y los prompts caerían fuera de VI4.
+    """
+    formatted = tokenizer.apply_chat_template(
+        messages,
+        tokenize=False,
+        add_generation_prompt=True,
     )
-    system_content = (
-        "Eres el asistente de soporte empresarial de TechSolutions Ecuador. "
-        "Tienes acceso al historial completo de esta conversación y al perfil de la empresa. "
-        "Usa el historial para dar respuestas contextualizadas y coherentes.\n\n"
-        f"PERFIL DE LA EMPRESA:\n{profile[:900]}\n\n"
-        f"HISTORIAL DE CONVERSACIÓN:\n{history_text}"
+    return len(tokenizer.encode(formatted, add_special_tokens=False))
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CONSTRUCTORES DE CASOS
+# ─────────────────────────────────────────────────────────────────────────────
+
+def build_case_a(policies_text: str, tokenizer) -> list:
+    """
+    Construye 30 prompts del Caso A (~256 tokens).
+
+    Estructura:
+      system: instrucción compacta + políticas de servicio (truncadas)
+      user: pregunta de atención al cliente
+
+    Estrategia de truncación:
+      1. Estimar tokens disponibles para el contexto de políticas.
+      2. Truncar políticas a ese presupuesto.
+      3. Construir prompt y contar tokens reales.
+      4. Si está fuera de rango, ajustar el presupuesto ±step tokens.
+
+    Rango válido: [218, 294] tokens.
+    """
+    target = VI4_TARGETS["A"]
+    prompts = []
+
+    system_prefix = (
+        "Eres el asistente virtual de TechSolutions Ecuador. "
+        "Responde de forma precisa, profesional y basándote en las siguientes "
+        "políticas de atención al cliente:\n\n"
     )
-    question = history.get("new_question",
-                           "¿Puede resumir los problemas reportados y su estado actual?")
-    return [
-        {"role": "system", "content": system_content},
-        {"role": "user",   "content": question},
-    ]
 
+    for i, question in enumerate(QUESTIONS_A):
+        # Buscar presupuesto correcto para políticas por búsqueda binaria
+        # El overhead del template + system_prefix + question es aproximadamente
+        # 50-70 tokens; empezamos con un presupuesto conservador
+        best_policies_budget = 150  # tokens iniciales para políticas
 
-TASKS_C = [
-    ("contract",
-     "Analiza este contrato e identifica: (1) obligaciones de cada parte, "
-     "(2) condiciones de pago, (3) penalidades por incumplimiento, "
-     "(4) mecanismo de resolución de conflictos."),
-    ("contract",
-     "Resume los puntos clave: monto total, plazos, forma de pago, garantías "
-     "y condiciones de terminación anticipada."),
-    ("contract",
-     "¿Cuáles son los riesgos financieros más importantes para el CONTRATANTE? "
-     "Explica cada uno con referencia a cláusulas específicas."),
-    ("contract",
-     "Crea un calendario de pagos con las condiciones que deben cumplirse "
-     "para cada desembolso."),
-    ("contract",
-     "¿Bajo qué condiciones puede terminarse este contrato anticipadamente? "
-     "Explica las consecuencias económicas para cada parte."),
-    ("faq",
-     "Resume los derechos laborales principales: jornada, remuneración, "
-     "vacaciones y permisos con sueldo."),
-    ("faq",
-     "¿Cuáles son las causas de terminación del contrato laboral y cuál es "
-     "el proceso disciplinario completo?"),
-    ("faq",
-     "Un trabajador con 5 años de antigüedad quiere saber sus beneficios. "
-     "Extrae y calcula la respuesta exacta."),
-    ("faq",
-     "¿Cómo funcionan las horas extras? ¿Cuándo se pagan, con qué recargo "
-     "y requieren autorización previa?"),
-    ("faq",
-     "Crea una guía de bolsillo para empleado nuevo: derechos y obligaciones "
-     "más importantes en lenguaje simple."),
-]
+        result_messages = None
+        final_token_count = 0
 
+        for attempt in range(20):  # máximo 20 iteraciones de ajuste
+            policies_snippet = truncate_to_tokens(
+                policies_text, tokenizer, best_policies_budget
+            )
+            messages = [
+                {
+                    "role": "system",
+                    "content": system_prefix + policies_snippet,
+                },
+                {
+                    "role": "user",
+                    "content": question,
+                },
+            ]
+            n_tokens = count_prompt_tokens(messages, tokenizer)
 
-def build_case_c(index: int, contract: str, faq: str) -> list[dict]:
-    """Case C: ~4096 input tokens. Full document + analysis instruction."""
-    task_key, instruction = TASKS_C[index % len(TASKS_C)]
-    document = contract if task_key == "contract" else faq
-    return [
-        {"role": "system",
-         "content": "Eres un asistente especializado en análisis de documentos empresariales. "
-                    "Analiza el documento completo antes de responder."},
-        {"role": "user",
-         "content": f"{instruction}\n\nDOCUMENTO:\n{document}"},
-    ]
+            if target["low"] <= n_tokens <= target["high"]:
+                result_messages = messages
+                final_token_count = n_tokens
+                break
+            elif n_tokens < target["low"]:
+                best_policies_budget += 20
+            else:
+                best_policies_budget -= 10
 
+            if best_policies_budget < 10:
+                best_policies_budget = 10
+                break
 
-def messages_text_for_counting(messages: list[dict]) -> str:
-    """Concatenate all message content for pre-template token estimation."""
-    return " ".join(m["content"] for m in messages)
+        if result_messages is None:
+            # Usar la última versión aunque esté fuera de rango exacto
+            # (el validador final lo capturará)
+            result_messages = messages
+            final_token_count = n_tokens
 
-
-# ── CORPUS BUILDER ────────────────────────────────────────────────────────────
-
-def build_corpus(tokenizer, tokenizer_id: str, output_path: str, verify_only: bool):
-    profile   = load_file(CONTEXT_FILES["profile"])
-    policies  = load_file(CONTEXT_FILES["policies"])
-    contract  = load_file(CONTEXT_FILES["contract"])
-    faq       = load_file(CONTEXT_FILES["faq"])
-    histories = load_histories(CONTEXT_FILES["histories"])
-
-    rng = random.Random(RANDOM_SEED)
-    rng.shuffle(histories)
-
-    prompts      = []
-    out_of_range = []
-
-    for i in range(PROMPTS_PER_CASE):
-
-        # ── Case A ────────────────────────────────────────────────────────────
-        msgs_a = build_case_a(i, profile, policies)
-        tok_a  = count_tokens(messages_text_for_counting(msgs_a), tokenizer)
-        in_a   = TARGETS["A"]["min"] <= tok_a <= TARGETS["A"]["max"]
         prompts.append({
-            "prompt_id":             f"A_{i:02d}",
-            "case":                  "A",
-            "vi4_level":             "short",
-            "vi4_target_tokens":     256,
-            "measured_input_tokens": tok_a,
-            "within_tolerance":      in_a,
-            "tokenizer_used":        tokenizer_id,
-            "messages":              msgs_a,   # list of {role, content} dicts
+            "case": "A",
+            "prompt_id": f"A_{i+1:02d}",
+            "messages": result_messages,
+            "token_count": final_token_count,
+            "valid": target["low"] <= final_token_count <= target["high"],
         })
-        if not in_a:
-            out_of_range.append(f"A_{i:02d}: {tok_a} tokens (target 218–294)")
 
-        # ── Case B ────────────────────────────────────────────────────────────
-        hist   = histories[i % len(histories)]
-        msgs_b = build_case_b(i, profile, hist)
-        tok_b  = count_tokens(messages_text_for_counting(msgs_b), tokenizer)
-        in_b   = TARGETS["B"]["min"] <= tok_b <= TARGETS["B"]["max"]
+    return prompts
+
+
+def build_case_b(profile_text: str, conversation_histories: list, tokenizer) -> list:
+    """
+    Construye 30 prompts del Caso B (~1024 tokens).
+
+    Estructura:
+      system: instrucción + perfil de empresa (truncado)
+      [turnos del historial de conversación]
+      user: pregunta de seguimiento
+
+    Estrategia:
+      1. Cada historial tiene una cantidad fija de tokens.
+      2. Calcular cuántos tokens quedan para el perfil en el system message.
+      3. Truncar perfil al presupuesto restante.
+
+    Rango válido: [870, 1178] tokens.
+    """
+    target = VI4_TARGETS["B"]
+    prompts = []
+
+    system_prefix = (
+        "Eres un asistente conversacional de TechSolutions Ecuador. "
+        "Tienes acceso al perfil de la empresa y al historial de esta conversación. "
+        "Responde la consulta del usuario de forma coherente con el contexto previo.\n\n"
+        "Perfil de la empresa:\n"
+    )
+
+    for i, (history, question) in enumerate(
+        zip(conversation_histories, QUESTIONS_B)
+    ):
+        # Los mensajes de historial son los turnos previos de conversación
+        # El último mensaje es la nueva pregunta del usuario
+        history_messages = history  # lista de {role, content}
+
+        # Buscar presupuesto para perfil de empresa
+        best_profile_budget = 300  # tokens iniciales
+
+        result_messages = None
+        final_token_count = 0
+
+        for attempt in range(25):
+            profile_snippet = truncate_to_tokens(
+                profile_text, tokenizer, best_profile_budget
+            )
+            messages = (
+                [{"role": "system", "content": system_prefix + profile_snippet}]
+                + history_messages
+                + [{"role": "user", "content": question}]
+            )
+            n_tokens = count_prompt_tokens(messages, tokenizer)
+
+            if target["low"] <= n_tokens <= target["high"]:
+                result_messages = messages
+                final_token_count = n_tokens
+                break
+            elif n_tokens < target["low"]:
+                best_profile_budget += 30
+            else:
+                best_profile_budget -= 20
+
+            if best_profile_budget < 10:
+                best_profile_budget = 10
+                break
+
+        if result_messages is None:
+            result_messages = messages
+            final_token_count = n_tokens
+
         prompts.append({
-            "prompt_id":             f"B_{i:02d}",
-            "case":                  "B",
-            "vi4_level":             "medium",
-            "vi4_target_tokens":     1024,
-            "measured_input_tokens": tok_b,
-            "within_tolerance":      in_b,
-            "tokenizer_used":        tokenizer_id,
-            # conversation_id and scenario_tag: corpus metadata ONLY.
-            # Neither field appears in msgs_b or is sent to the model.
-            "source_conversation_id": hist.get("conversation_id", ""),
-            "source_scenario_tag":    hist.get("scenario_tag", ""),
-            "messages":               msgs_b,
+            "case": "B",
+            "prompt_id": f"B_{i+1:02d}",
+            "messages": result_messages,
+            "token_count": final_token_count,
+            "valid": target["low"] <= final_token_count <= target["high"],
         })
-        if not in_b:
-            out_of_range.append(f"B_{i:02d}: {tok_b} tokens (target 870–1178)")
 
-        # ── Case C ────────────────────────────────────────────────────────────
-        msgs_c = build_case_c(i, contract, faq)
-        tok_c  = count_tokens(messages_text_for_counting(msgs_c), tokenizer)
-        in_c   = TARGETS["C"]["min"] <= tok_c <= TARGETS["C"]["max"]
+    return prompts
+
+
+def build_case_c(document_text: str, tokenizer) -> list:
+    """
+    Construye 30 prompts del Caso C (~4096 tokens).
+
+    Estructura:
+      system: instrucción + documento completo (truncado)
+      user: pregunta de análisis
+
+    Estrategia:
+      El documento es el componente dominante (~3900 tokens).
+      Truncamos el documento al presupuesto restante después de contar
+      el overhead del template + system prefix + user question.
+
+    Rango válido: [3482, 4710] tokens.
+    """
+    target = VI4_TARGETS["C"]
+    prompts = []
+
+    system_prefix = (
+        "Eres un analista de documentos empresariales de TechSolutions Ecuador. "
+        "Analiza el siguiente documento y responde la consulta del usuario "
+        "basándote exclusivamente en el contenido proporcionado.\n\n"
+        "Documento:\n"
+    )
+
+    for i, question in enumerate(QUESTIONS_C):
+        best_doc_budget = 3700  # tokens iniciales para el documento
+
+        result_messages = None
+        final_token_count = 0
+
+        for attempt in range(25):
+            doc_snippet = truncate_to_tokens(
+                document_text, tokenizer, best_doc_budget
+            )
+            messages = [
+                {
+                    "role": "system",
+                    "content": system_prefix + doc_snippet,
+                },
+                {
+                    "role": "user",
+                    "content": question,
+                },
+            ]
+            n_tokens = count_prompt_tokens(messages, tokenizer)
+
+            if target["low"] <= n_tokens <= target["high"]:
+                result_messages = messages
+                final_token_count = n_tokens
+                break
+            elif n_tokens < target["low"]:
+                best_doc_budget += 50
+            else:
+                best_doc_budget -= 30
+
+            if best_doc_budget < 100:
+                best_doc_budget = 100
+                break
+
+        if result_messages is None:
+            result_messages = messages
+            final_token_count = n_tokens
+
         prompts.append({
-            "prompt_id":             f"C_{i:02d}",
-            "case":                  "C",
-            "vi4_level":             "long",
-            "vi4_target_tokens":     4096,
-            "measured_input_tokens": tok_c,
-            "within_tolerance":      in_c,
-            "tokenizer_used":        tokenizer_id,
-            "messages":              msgs_c,
+            "case": "C",
+            "prompt_id": f"C_{i+1:02d}",
+            "messages": result_messages,
+            "token_count": final_token_count,
+            "valid": target["low"] <= final_token_count <= target["high"],
         })
-        if not in_c:
-            out_of_range.append(f"C_{i:02d}: {tok_c} tokens (target 3482–4710)")
 
-    # ── Validation report ─────────────────────────────────────────────────────
-    print("\n=== CORPUS VALIDATION ===")
-    for case in ["A", "B", "C"]:
-        cp     = [p for p in prompts if p["case"] == case]
-        tokens = [p["measured_input_tokens"] for p in cp]
-        t      = TARGETS[case]
-        valid  = sum(1 for p in cp if p["within_tolerance"])
-        print(f"  Case {case}: n={len(tokens)} | "
-              f"mean={sum(tokens)/len(tokens):.0f} | "
-              f"min={min(tokens)} max={max(tokens)} | "
-              f"target={t['target']} ±15%=[{t['min']},{t['max']}] | "
-              f"valid={valid}/{len(tokens)}")
+    return prompts
 
-    if out_of_range:
-        print(f"\n  OUT OF RANGE ({len(out_of_range)} prompts) — details:")
-        for item in out_of_range:
-            print(f"    {item}")
+
+# ─────────────────────────────────────────────────────────────────────────────
+# VALIDACIÓN Y REPORTE
+# ─────────────────────────────────────────────────────────────────────────────
+
+def validate_and_report(prompts_by_case: dict) -> bool:
+    """
+    Valida que cada caso tenga exactamente 30 prompts válidos.
+    Imprime estadísticas de token count por caso.
+    Retorna True si todo es válido, False si algo falla.
+    """
+    all_ok = True
+    print("\n" + "─" * 60)
+    print("VALIDACIÓN DEL CORPUS")
+    print("─" * 60)
+
+    for case_label, prompts in prompts_by_case.items():
+        target = VI4_TARGETS[case_label]
+        counts = [p["token_count"] for p in prompts]
+        valid_count = sum(1 for p in prompts if p["valid"])
+        invalid_prompts = [p for p in prompts if not p["valid"]]
+
+        mean_tokens = sum(counts) / len(counts) if counts else 0
+        min_tokens = min(counts) if counts else 0
+        max_tokens = max(counts) if counts else 0
+
+        status = "✓" if valid_count == PROMPTS_PER_CASE else "✗ FALLO"
+        print(
+            f"  Case {case_label}: {valid_count}/{PROMPTS_PER_CASE} válidos | "
+            f"mean={mean_tokens:.0f} | min={min_tokens} | max={max_tokens} | "
+            f"target={target['center']} [{target['low']}-{target['high']}] {status}"
+        )
+
+        if invalid_prompts:
+            all_ok = False
+            for p in invalid_prompts:
+                print(
+                    f"    ✗ {p['prompt_id']}: {p['token_count']} tokens "
+                    f"(fuera de [{target['low']}, {target['high']}])"
+                )
+
+    print("─" * 60)
+    if all_ok:
+        print("  Corpus completo: 90/90 prompts válidos ✓")
     else:
-        print("\n  ✓ All prompts within ±15% tolerance")
-
-    # ── Sanity check — hard fail before saving ────────────────────────────────
-    print("\n=== SANITY CHECK ===")
-    fail = False
-    for case in ["A", "B", "C"]:
-        valid_count = sum(1 for p in prompts
-                          if p["case"] == case and p["within_tolerance"])
-        ok = valid_count >= PROMPTS_PER_CASE
-        print(f"  Case {case}: {valid_count}/{PROMPTS_PER_CASE} valid  "
-              f"{'✓' if ok else '✗ FAIL'}")
-        if not ok:
-            fail = True
-
-    if fail:
-        sys.exit(
-            "\nFATAL: One or more cases have fewer than 30 valid prompts.\n"
-            "Fix your context files (see docs/context_guide.md) and re-run:\n"
-            "  python scripts/build_prompt_dataset.py --verify-only\n"
-            "  python scripts/build_prompt_dataset.py\n"
-            "Corpus NOT saved.\n"
+        print(
+            "  FATAL: Algunos prompts están fuera del rango de tolerancia.\n"
+            "  Posible causa: archivos de contexto muy cortos para el target.\n"
+            "  Revisión: verificar tamaño de archivos en data/context/",
+            file=sys.stderr,
         )
-
-    if verify_only:
-        print("\n  --verify-only: corpus not saved.")
-        return
-
-    Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, "w", encoding="utf-8") as f:
-        for p in prompts:
-            f.write(json.dumps(p, ensure_ascii=False) + "\n")
-    print(f"\n  ✓ Corpus saved: {output_path} ({len(prompts)} prompts)")
+    print("─" * 60)
+    return all_ok
 
 
-if __name__ == "__main__":
+# ─────────────────────────────────────────────────────────────────────────────
+# MAIN
+# ─────────────────────────────────────────────────────────────────────────────
+
+def main():
     parser = argparse.ArgumentParser(
-        description="Build the 90-prompt evaluation corpus for the LLM energy benchmark"
+        description="INFERA: Construir corpus de 90 prompts para el benchmark."
     )
     parser.add_argument(
-        "--model-id",
-        default="meta-llama/Meta-Llama-3.1-8B-Instruct",
-        help="HuggingFace model ID for the real tokenizer (default: LLaMA 3.1 8B Instruct)"
+        "--model-dir",
+        default="/workspace/models/llama3.1-8b-instruct",
+        help="Directorio del modelo LLaMA 3.1 (para cargar el tokenizador).",
+    )
+    parser.add_argument(
+        "--context-dir",
+        default="data/context",
+        help="Directorio con archivos de contexto de la empresa.",
+    )
+    parser.add_argument(
+        "--conversations",
+        default="data/conversations/conversation_histories.jsonl",
+        help="Archivo JSONL con 30 historiales de conversación para Caso B.",
+    )
+    parser.add_argument(
+        "--output",
+        default="data/prompts/prompt_corpus.jsonl",
+        help="Ruta de salida del corpus en formato JSONL.",
     )
     parser.add_argument(
         "--verify-only",
         action="store_true",
-        help="Check token counts and run sanity check without saving corpus"
-    )
-    parser.add_argument(
-        "--output",
-        default=OUTPUT_PATH,
-        help=f"Output path for prompt corpus (default: {OUTPUT_PATH})"
-    )
-    parser.add_argument(
-        "--allow-tokenizer-fallback",
-        action="store_true",
-        help=(
-            "DEVELOPMENT ONLY. Allow approximate token counting if real tokenizer "
-            "cannot be loaded. DO NOT use for thesis data collection."
-        )
+        help="Solo verificar token counts sin guardar el corpus.",
     )
     args = parser.parse_args()
 
-    tokenizer, tokenizer_id = load_tokenizer(
-        args.model_id,
-        allow_fallback=args.allow_tokenizer_fallback,
+    print("=" * 60)
+    print("INFERA — Construcción del corpus")
+    print("=" * 60)
+
+    # ── Cargar tokenizador ────────────────────────────────────────────────────
+    print("\n[1/5] Cargando tokenizador...")
+    tokenizer = load_tokenizer(args.model_dir)
+
+    # ── Cargar archivos de contexto ───────────────────────────────────────────
+    print("\n[2/5] Cargando archivos de contexto...")
+    context_dir = Path(args.context_dir)
+
+    def read_context(filename: str, required: bool = True) -> str:
+        path = context_dir / filename
+        if not path.exists():
+            if required:
+                print(f"FATAL: Archivo requerido no encontrado: {path}", file=sys.stderr)
+                sys.exit(1)
+            return ""
+        content = path.read_text(encoding="utf-8").strip()
+        n_tokens = len(tokenizer.encode(content, add_special_tokens=False))
+        print(f"  {filename}: {len(content):,} chars | {n_tokens:,} tokens")
+        return content
+
+    # Archivos de contexto requeridos:
+    # - service_policies.md  → Caso A (políticas de atención)
+    # - company_profile.md   → Caso B (perfil de empresa)
+    # - internal_faq.md      → Caso C (documento largo para análisis)
+    #
+    # Si tu repo usa nombres diferentes, cámbialos aquí.
+    # El script fallará si alguno falta, lo cual es intencional.
+    policies_text = read_context("service_policies.md", required=True)
+    profile_text  = read_context("company_profile.md",  required=True)
+    # Para Caso C usamos el FAQ si existe, si no usamos el contrato
+    faq_path = context_dir / "internal_faq.md"
+    contract_path = context_dir / "sample_contract.md"
+    if faq_path.exists():
+        doc_text = read_context("internal_faq.md", required=False)
+    elif contract_path.exists():
+        doc_text = read_context("sample_contract.md", required=False)
+    else:
+        print("FATAL: Se necesita internal_faq.md o sample_contract.md para Caso C.", file=sys.stderr)
+        sys.exit(1)
+
+    # Verificar que el documento C tiene suficientes tokens para el target
+    doc_tokens = len(tokenizer.encode(doc_text, add_special_tokens=False))
+    if doc_tokens < VI4_TARGETS["C"]["center"] * 0.8:
+        print(
+            f"FATAL: El documento para Caso C tiene solo {doc_tokens} tokens.\n"
+            f"Se necesitan al menos {int(VI4_TARGETS['C']['center'] * 0.8)} tokens.\n"
+            f"Solución: reemplazar internal_faq.md por un documento más largo.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    # ── Cargar historiales de conversación ───────────────────────────────────
+    print("\n[3/5] Cargando historiales de conversación (Caso B)...")
+    conv_path = Path(args.conversations)
+    if not conv_path.exists():
+        print(f"FATAL: Archivo de conversaciones no encontrado: {conv_path}", file=sys.stderr)
+        sys.exit(1)
+
+    conversation_histories = []
+    with open(conv_path, encoding="utf-8") as f:
+        for line_num, line in enumerate(f, 1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entry = json.loads(line)
+            except json.JSONDecodeError as e:
+                print(f"FATAL: Error en línea {line_num} de {conv_path}: {e}", file=sys.stderr)
+                sys.exit(1)
+            # Formato esperado: lista de mensajes [{role, content}, ...]
+            # O dict con clave "messages": [{role, content}, ...]
+            if isinstance(entry, list):
+                conversation_histories.append(entry)
+            elif isinstance(entry, dict) and "messages" in entry:
+                conversation_histories.append(entry["messages"])
+            else:
+                print(
+                    f"FATAL: Formato inesperado en línea {line_num}.\n"
+                    f"  Esperado: lista de mensajes o {{\"messages\": [...]}}",
+                    file=sys.stderr,
+                )
+                sys.exit(1)
+
+    if len(conversation_histories) < PROMPTS_PER_CASE:
+        print(
+            f"FATAL: Se necesitan {PROMPTS_PER_CASE} historiales, "
+            f"encontrados: {len(conversation_histories)}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    conversation_histories = conversation_histories[:PROMPTS_PER_CASE]
+    print(f"  {len(conversation_histories)} historiales cargados.")
+
+    # ── Construir corpus ──────────────────────────────────────────────────────
+    print("\n[4/5] Construyendo prompts...")
+    print("  Caso A (~256 tokens)...", end=" ", flush=True)
+    prompts_a = build_case_a(policies_text, tokenizer)
+    print("listo.")
+
+    print("  Caso B (~1024 tokens)...", end=" ", flush=True)
+    prompts_b = build_case_b(profile_text, conversation_histories, tokenizer)
+    print("listo.")
+
+    print("  Caso C (~4096 tokens)...", end=" ", flush=True)
+    prompts_c = build_case_c(doc_text, tokenizer)
+    print("listo.")
+
+    # ── Validar ───────────────────────────────────────────────────────────────
+    print("\n[5/5] Validando corpus...")
+    prompts_by_case = {"A": prompts_a, "B": prompts_b, "C": prompts_c}
+    corpus_valid = validate_and_report(prompts_by_case)
+
+    if not corpus_valid:
+        print("\nFATAL: Corpus no válido. No se guardará el archivo.", file=sys.stderr)
+        sys.exit(1)
+
+    if args.verify_only:
+        print("\n--verify-only: corpus validado, no se guardó.")
+        return
+
+    # ── Guardar ───────────────────────────────────────────────────────────────
+    output_path = Path(args.output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    all_prompts = prompts_a + prompts_b + prompts_c
+    with open(output_path, "w", encoding="utf-8") as f:
+        for prompt in all_prompts:
+            # Guardar solo los campos que el benchmark_runner necesita
+            record = {
+                "case":     prompt["case"],
+                "prompt_id": prompt["prompt_id"],
+                "messages": prompt["messages"],
+                "token_count": prompt["token_count"],
+            }
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+    print(f"\n✓ Corpus guardado: {output_path} ({len(all_prompts)} prompts)")
+    print(
+        f"  Distribución: "
+        f"{len(prompts_a)} Case A | {len(prompts_b)} Case B | {len(prompts_c)} Case C"
     )
-    build_corpus(tokenizer, tokenizer_id, args.output, args.verify_only)
+
+
+if __name__ == "__main__":
+    main()

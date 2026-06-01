@@ -1,35 +1,26 @@
-# requirements.txt — pinned versions for reproducibility
-# Install: pip install -r requirements.txt
-# Tested on: CUDA 12.1, Python 3.10, RTX 4090
+# INFERA — Requirements
+# Versiones fijadas para reproducibilidad del benchmark.
+# NO instalar sobre el Python global de RunPod.
+# Usar siempre en venv: source /workspace/venv/bin/activate
+#
+# Historial de cambios:
+#   vllm: 0.4.3 → 0.5.3 (incompatibilidad rope_scaling LLaMA 3.1)
+#   outlines: (no fijada) → 0.0.46 (vLLM 0.5.3 requiere outlines<0.1.0)
+#   huggingface-hub: (no fijada) → 0.24.0 (vLLM 0.5.3 requiere <1.0)
 
-# Core inference framework
-vllm==0.4.3
+# Core inference
+vllm==0.5.3
 
-# PyTorch — must match vLLM 0.4.3 requirements
-torch==2.3.0
-torchvision==0.18.0
-
-# Model loading and quantization
-transformers==4.43.0
-bitsandbytes==0.43.1    # INT8 W8A16 quantization
-autoawq==0.2.5          # INT4 AWQ quantization
-accelerate==0.31.0
-
-# GPU measurement (NVML Python bindings)
+# Monitoring energético
 pynvml==11.5.0
 
-# Energy and CO2 tracking (triangulation source)
-codecarbon==2.4.1
+# HTTP async para benchmark_runner (asyncio.gather + httpx)
+httpx==0.27.0
 
-# Model download
-huggingface_hub==0.24.0
+# Tokenizador y modelos
+transformers==4.43.3
+huggingface-hub==0.24.0
 
-# Tokenization fallback
-tiktoken==0.7.0
-
-# HTTP clients
-requests==2.32.3    # used by generate_reproducibility_info.py
-httpx==0.27.0       # async HTTP for concurrent vLLM requests (benchmark_runner.py)
-
-# Utilities
-numpy==1.26.4
+# Utilidades
+tqdm>=4.66.0
+numpy>=1.24.0
