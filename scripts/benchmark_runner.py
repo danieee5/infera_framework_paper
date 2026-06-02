@@ -115,7 +115,7 @@ def load_and_validate_prompts(corpus_path: str) -> dict[str, list]:
             if not line:
                 continue
             p = json.loads(line)
-            if p["case"] in by_case and p.get("within_tolerance", False):
+            if p["case"] in by_case and p.get("within_tolerance", True):
                 by_case[p["case"]].append(p)
 
     print("\n=== CORPUS SANITY CHECK ===")
@@ -340,7 +340,7 @@ def run_config_rep(
         padded        = is_padded(batch_idx, batch)
         msgs_in_batch = [p["messages"] for p in batch_prompts]
         prompt_ids    = [p["prompt_id"] for p in batch_prompts]
-        vi4_tokens    = int(sum(p["measured_input_tokens"]
+        vi4_tokens    = int(sum(p.get("measured_input_tokens", p.get("token_count", 0))
                                for p in batch_prompts) / len(batch_prompts))
 
         run_id = (f"{config_key}"
