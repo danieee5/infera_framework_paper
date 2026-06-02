@@ -1,0 +1,1873 @@
+
+=================================================================
+  BENCHMARK  |  quantization=fp16  |  output: results/fp16_20260601_175220
+=================================================================
+
+=== CORPUS SANITY CHECK ===
+  Case A: 30 valid prompts  ✓
+  Case B: 30 valid prompts  ✓
+  Case C: 30 valid prompts  ✓
+  ✓ All cases ready (30 valid prompts each)
+
+  Batch calls per (config × rep) for this quantization:
+    batch=1: 27 config×rep × 30 calls = 810 batch calls  (810 concurrent HTTP requests)
+    batch=4: 27 config×rep × 8 calls = 216 batch calls  (864 concurrent HTTP requests)
+    batch=8: 27 config×rep × 4 calls = 108 batch calls  (864 concurrent HTTP requests)
+
+FULL MODE:  81 (config × rep) entries  [quantization=fp16]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=64  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[  1/81]  rep=1
+  fp16_b8_o64_caseB_rep1  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  509.351 J | 250.8 tok/s | VRAM: 22318 MB | samples: 31
+    [2/4] ✓  525.461 J | 251.1 tok/s | VRAM: 22708 MB | samples: 31
+    [3/4] ✓  541.464 J | 251.8 tok/s | VRAM: 23100 MB | samples: 31
+    [4/4] ✓  529.677 J | 254.0 tok/s | VRAM: 23100 MB | samples: 31 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=256  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[  2/81]  rep=1
+  fp16_b1_o256_caseC_rep1  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1428.758 J | 47.5 tok/s | VRAM: 23100 MB | samples: 64
+    [2/30] ✓  874.050 J | 44.9 tok/s | VRAM: 23100 MB | samples: 43
+    [3/30] ✓  1249.690 J | 46.7 tok/s | VRAM: 23100 MB | samples: 57
+    [4/30] ✓  1458.514 J | 47.2 tok/s | VRAM: 23100 MB | samples: 65
+    [5/30] ✓  1088.019 J | 46.2 tok/s | VRAM: 23100 MB | samples: 52
+    [6/30] ✓  949.064 J | 45.6 tok/s | VRAM: 23100 MB | samples: 46
+    [7/30] ✓  524.253 J | 40.7 tok/s | VRAM: 23100 MB | samples: 30
+    [8/30] ✓  1315.580 J | 47.2 tok/s | VRAM: 23100 MB | samples: 60
+    [9/30] ✓  1417.160 J | 47.6 tok/s | VRAM: 23100 MB | samples: 64
+    [10/30] ✓  1153.920 J | 46.2 tok/s | VRAM: 23100 MB | samples: 53
+    [11/30] ✓  1450.498 J | 47.7 tok/s | VRAM: 23100 MB | samples: 64
+    [12/30] ✓  1430.676 J | 47.4 tok/s | VRAM: 23100 MB | samples: 64
+    [13/30] ✓  481.837 J | 40.1 tok/s | VRAM: 23100 MB | samples: 30
+    [14/30] ✓  790.802 J | 44.6 tok/s | VRAM: 23100 MB | samples: 41
+    [15/30] ✓  1419.255 J | 47.3 tok/s | VRAM: 23100 MB | samples: 64
+    [16/30] ✓  1450.564 J | 47.4 tok/s | VRAM: 23100 MB | samples: 64
+    [17/30] ✓  1459.063 J | 47.2 tok/s | VRAM: 23100 MB | samples: 65
+    [18/30] ✓  1450.437 J | 47.4 tok/s | VRAM: 23100 MB | samples: 64
+    [19/30] ✓  547.466 J | 41.7 tok/s | VRAM: 23100 MB | samples: 32
+    [20/30] ✓  1414.640 J | 47.2 tok/s | VRAM: 23100 MB | samples: 64
+    [21/30] ✓  1396.324 J | 47.3 tok/s | VRAM: 23100 MB | samples: 64
+    [22/30] ✓  1476.628 J | 47.6 tok/s | VRAM: 23100 MB | samples: 64
+    [23/30] ✓  1474.242 J | 47.2 tok/s | VRAM: 23100 MB | samples: 65
+    [24/30] ✓  1469.904 J | 47.1 tok/s | VRAM: 23100 MB | samples: 65
+    [25/30] ✓  1149.925 J | 46.3 tok/s | VRAM: 23100 MB | samples: 53
+    [26/30] ✓  1404.910 J | 46.8 tok/s | VRAM: 23490 MB | samples: 61
+    [27/30] ✓  606.964 J | 41.9 tok/s | VRAM: 23100 MB | samples: 35
+    [28/30] ✓  1495.919 J | 47.2 tok/s | VRAM: 23100 MB | samples: 65
+    [29/30] ✓  898.278 J | 45.1 tok/s | VRAM: 23100 MB | samples: 44
+    [30/30] ✓  402.544 J | 37.7 tok/s | VRAM: 23100 MB | samples: 26
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=512  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[  3/81]  rep=2
+  fp16_b4_o512_caseB_rep2  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1856.052 J | 124.8 tok/s | VRAM: 23100 MB | samples: 84
+    [2/8] ✓  843.757 J | 120.9 tok/s | VRAM: 23100 MB | samples: 46
+    [3/8] ✓  894.265 J | 146.0 tok/s | VRAM: 23100 MB | samples: 49
+    [4/8] ✓  833.535 J | 139.6 tok/s | VRAM: 23100 MB | samples: 45
+    [5/8] ✓  883.157 J | 161.1 tok/s | VRAM: 23100 MB | samples: 48
+    [6/8] ✓  2659.070 J | 100.6 tok/s | VRAM: 23100 MB | samples: 114
+    [7/8] ✓  2712.460 J | 116.2 tok/s | VRAM: 23100 MB | samples: 116
+    [8/8] ✓  1825.260 J | 131.6 tok/s | VRAM: 23100 MB | samples: 84 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=512  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[  4/81]  rep=2
+  fp16_b4_o512_caseC_rep2  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  3226.624 J | 119.6 tok/s | VRAM: 23516 MB | samples: 126
+    [2/8] ✓  1772.987 J | 110.3 tok/s | VRAM: 23516 MB | samples: 71
+    [3/8] ✓  3229.431 J | 136.2 tok/s | VRAM: 23516 MB | samples: 127
+    [4/8] ✓  3216.605 J | 98.8 tok/s | VRAM: 23516 MB | samples: 123
+    [5/8] ✓  3242.117 J | 139.8 tok/s | VRAM: 23516 MB | samples: 127
+    [6/8] ✓  3302.509 J | 155.7 tok/s | VRAM: 23516 MB | samples: 128
+    [7/8] ✓  3230.960 J | 101.4 tok/s | VRAM: 23516 MB | samples: 124
+    [8/8] ✓  3274.216 J | 77.9 tok/s | VRAM: 23516 MB | samples: 122 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=64  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[  5/81]  rep=3
+  fp16_b4_o64_caseB_rep3  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  366.686 J | 161.3 tok/s | VRAM: 23516 MB | samples: 26
+    [2/8] ✓  370.678 J | 161.8 tok/s | VRAM: 23516 MB | samples: 26
+    [3/8] ✓  331.758 J | 161.2 tok/s | VRAM: 23516 MB | samples: 26
+    [4/8] ✓  344.971 J | 162.8 tok/s | VRAM: 23516 MB | samples: 26
+    [5/8] ✓  366.940 J | 161.5 tok/s | VRAM: 23516 MB | samples: 26
+    [6/8] ✓  361.803 J | 162.1 tok/s | VRAM: 23516 MB | samples: 26
+    [7/8] ✓  326.425 J | 160.5 tok/s | VRAM: 23516 MB | samples: 26
+    [8/8] ✓  356.589 J | 162.4 tok/s | VRAM: 23516 MB | samples: 26 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=256  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[  6/81]  rep=1
+  fp16_b1_o256_caseB_rep1  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1302.370 J | 54.9 tok/s | VRAM: 23516 MB | samples: 57
+    [2/30] ✓  1167.995 J | 54.6 tok/s | VRAM: 23516 MB | samples: 53
+    [3/30] ✓  612.636 J | 53.6 tok/s | VRAM: 23516 MB | samples: 34
+    [4/30] ✓  1022.202 J | 54.6 tok/s | VRAM: 23516 MB | samples: 48
+    [5/30] ✓  362.532 J | 52.2 tok/s | VRAM: 23516 MB | samples: 27
+    [6/30] ✓  733.273 J | 54.0 tok/s | VRAM: 23516 MB | samples: 38
+    [7/30] ✓  293.489 J | 51.3 tok/s | VRAM: 23516 MB | samples: 24
+    [8/30] ✓  482.890 J | 53.0 tok/s | VRAM: 23516 MB | samples: 31
+    [9/30] ✓  805.005 J | 54.1 tok/s | VRAM: 23516 MB | samples: 41
+    [10/30] ✓  382.444 J | 52.2 tok/s | VRAM: 23516 MB | samples: 27
+    [11/30] ✓  669.212 J | 54.1 tok/s | VRAM: 23516 MB | samples: 37
+    [12/30] ✓  846.138 J | 54.3 tok/s | VRAM: 23516 MB | samples: 42
+    [13/30] ✓  438.454 J | 52.5 tok/s | VRAM: 23516 MB | samples: 29
+    [14/30] ✓  563.197 J | 53.4 tok/s | VRAM: 23516 MB | samples: 32
+    [15/30] ✓  749.869 J | 54.3 tok/s | VRAM: 23516 MB | samples: 39
+    [16/30] ✓  547.542 J | 53.3 tok/s | VRAM: 23516 MB | samples: 32
+    [17/30] ✓  523.467 J | 52.8 tok/s | VRAM: 23516 MB | samples: 31
+    [18/30] ✓  826.255 J | 54.5 tok/s | VRAM: 23516 MB | samples: 41
+    [19/30] ✓  784.100 J | 54.2 tok/s | VRAM: 23516 MB | samples: 41
+    [20/30] ✓  825.954 J | 54.1 tok/s | VRAM: 23516 MB | samples: 41
+    [21/30] ✓  677.214 J | 53.9 tok/s | VRAM: 23516 MB | samples: 36
+    [22/30] ✓  459.438 J | 53.0 tok/s | VRAM: 23516 MB | samples: 30
+    [23/30] ✓  1272.689 J | 54.9 tok/s | VRAM: 23516 MB | samples: 57
+    [24/30] ✓  1288.705 J | 54.9 tok/s | VRAM: 23516 MB | samples: 57
+    [25/30] ✓  1189.016 J | 54.9 tok/s | VRAM: 23516 MB | samples: 54
+    [26/30] ✓  1262.671 J | 55.1 tok/s | VRAM: 23516 MB | samples: 57
+    [27/30] ✓  1220.817 J | 54.9 tok/s | VRAM: 23516 MB | samples: 55
+    [28/30] ✓  1139.475 J | 54.7 tok/s | VRAM: 23516 MB | samples: 52
+    [29/30] ✓  1285.081 J | 54.9 tok/s | VRAM: 23516 MB | samples: 57
+    [30/30] ✓  645.449 J | 53.5 tok/s | VRAM: 23516 MB | samples: 35
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=512  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[  7/81]  rep=3
+  fp16_b4_o512_caseC_rep3  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  3191.479 J | 120.9 tok/s | VRAM: 23516 MB | samples: 125
+    [2/8] ✓  1751.351 J | 110.7 tok/s | VRAM: 23516 MB | samples: 71
+    [3/8] ✓  3239.240 J | 137.4 tok/s | VRAM: 23516 MB | samples: 126
+    [4/8] ✓  3148.274 J | 99.0 tok/s | VRAM: 23516 MB | samples: 123
+    [5/8] ✓  3229.488 J | 140.9 tok/s | VRAM: 23516 MB | samples: 126
+    [6/8] ✓  3237.217 J | 156.2 tok/s | VRAM: 23516 MB | samples: 127
+    [7/8] ✓  3227.558 J | 102.5 tok/s | VRAM: 23516 MB | samples: 123
+    [8/8] ✓  3234.086 J | 78.8 tok/s | VRAM: 23516 MB | samples: 120 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=64  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[  8/81]  rep=3
+  fp16_b1_o64_caseC_rep3  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  388.051 J | 41.1 tok/s | VRAM: 23516 MB | samples: 26
+    [2/30] ✓  362.273 J | 41.1 tok/s | VRAM: 23516 MB | samples: 26
+    [3/30] ✓  371.999 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [4/30] ✓  380.824 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [5/30] ✓  396.420 J | 40.8 tok/s | VRAM: 23516 MB | samples: 26
+    [6/30] ✓  354.684 J | 40.8 tok/s | VRAM: 23516 MB | samples: 26
+    [7/30] ✓  359.460 J | 40.9 tok/s | VRAM: 23516 MB | samples: 26
+    [8/30] ✓  401.287 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [9/30] ✓  398.553 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [10/30] ✓  359.027 J | 41.1 tok/s | VRAM: 23516 MB | samples: 26
+    [11/30] ✓  365.968 J | 40.7 tok/s | VRAM: 23516 MB | samples: 26
+    [12/30] ✓  390.149 J | 40.9 tok/s | VRAM: 23516 MB | samples: 26
+    [13/30] ✓  416.456 J | 40.7 tok/s | VRAM: 23516 MB | samples: 26
+    [14/30] ✓  364.773 J | 40.8 tok/s | VRAM: 23516 MB | samples: 26
+    [15/30] ✓  374.115 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [16/30] ✓  404.187 J | 40.9 tok/s | VRAM: 23516 MB | samples: 26
+    [17/30] ✓  401.278 J | 41.2 tok/s | VRAM: 23516 MB | samples: 26
+    [18/30] ✓  359.402 J | 40.9 tok/s | VRAM: 23516 MB | samples: 26
+    [19/30] ✓  360.306 J | 40.9 tok/s | VRAM: 23906 MB | samples: 26
+    [20/30] ✓  398.746 J | 40.9 tok/s | VRAM: 23516 MB | samples: 26
+    [21/30] ✓  405.647 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [22/30] ✓  362.334 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [23/30] ✓  394.403 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [24/30] ✓  410.480 J | 41.3 tok/s | VRAM: 23516 MB | samples: 26
+    [25/30] ✓  397.587 J | 40.7 tok/s | VRAM: 23516 MB | samples: 26
+    [26/30] ✓  356.160 J | 40.9 tok/s | VRAM: 23516 MB | samples: 26
+    [27/30] ✓  385.421 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [28/30] ✓  403.962 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [29/30] ✓  401.652 J | 41.2 tok/s | VRAM: 23516 MB | samples: 26
+    [30/30] ✓  335.028 J | 40.5 tok/s | VRAM: 23516 MB | samples: 25
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=256  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[  9/81]  rep=1
+  fp16_b8_o256_caseA_rep1  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1276.688 J | 366.6 tok/s | VRAM: 23516 MB | samples: 60
+    [2/4] ✓  1259.003 J | 350.4 tok/s | VRAM: 23516 MB | samples: 60
+    [3/4] ✓  1266.018 J | 343.4 tok/s | VRAM: 23516 MB | samples: 60
+    [4/4] ✓  1247.279 J | 344.7 tok/s | VRAM: 23516 MB | samples: 61 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=64  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 10/81]  rep=1
+  fp16_b4_o64_caseB_rep1  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  347.258 J | 163.5 tok/s | VRAM: 23516 MB | samples: 26
+    [2/8] ✓  342.320 J | 163.9 tok/s | VRAM: 23516 MB | samples: 26
+    [3/8] ✓  360.874 J | 163.6 tok/s | VRAM: 23516 MB | samples: 26
+    [4/8] ✓  382.398 J | 163.0 tok/s | VRAM: 23516 MB | samples: 26
+    [5/8] ✓  334.447 J | 163.1 tok/s | VRAM: 23516 MB | samples: 26
+    [6/8] ✓  346.745 J | 163.2 tok/s | VRAM: 23516 MB | samples: 26
+    [7/8] ✓  371.000 J | 163.2 tok/s | VRAM: 23516 MB | samples: 26
+    [8/8] ✓  388.284 J | 164.0 tok/s | VRAM: 23516 MB | samples: 26 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=512  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 11/81]  rep=3
+  fp16_b8_o512_caseB_rep3  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1974.976 J | 177.1 tok/s | VRAM: 23516 MB | samples: 82
+    [2/4] ✓  1116.989 J | 264.7 tok/s | VRAM: 23516 MB | samples: 54
+    [3/4] ✓  2791.047 J | 168.9 tok/s | VRAM: 23516 MB | samples: 111
+    [4/4] ✓  2778.318 J | 217.0 tok/s | VRAM: 23516 MB | samples: 112 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=512  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 12/81]  rep=3
+  fp16_b4_o512_caseB_rep3  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1803.022 J | 134.2 tok/s | VRAM: 23516 MB | samples: 79
+    [2/8] ✓  822.596 J | 128.3 tok/s | VRAM: 23516 MB | samples: 44
+    [3/8] ✓  890.109 J | 157.9 tok/s | VRAM: 23516 MB | samples: 46
+    [4/8] ✓  787.351 J | 148.7 tok/s | VRAM: 23516 MB | samples: 43
+    [5/8] ✓  885.462 J | 172.0 tok/s | VRAM: 23516 MB | samples: 46
+    [6/8] ✓  2616.348 J | 108.4 tok/s | VRAM: 23516 MB | samples: 107
+    [7/8] ✓  2645.104 J | 126.4 tok/s | VRAM: 23516 MB | samples: 107
+    [8/8] ✓  1802.117 J | 139.3 tok/s | VRAM: 23516 MB | samples: 80 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=256  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 13/81]  rep=1
+  fp16_b4_o256_caseA_rep1  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1209.218 J | 204.5 tok/s | VRAM: 23516 MB | samples: 58
+    [2/8] ✓  1177.690 J | 176.3 tok/s | VRAM: 23516 MB | samples: 58
+    [3/8] ✓  1140.956 J | 150.0 tok/s | VRAM: 23516 MB | samples: 58
+    [4/8] ✓  1197.681 J | 214.7 tok/s | VRAM: 23516 MB | samples: 58
+    [5/8] ✓  1178.420 J | 178.0 tok/s | VRAM: 23516 MB | samples: 58
+    [6/8] ✓  1143.423 J | 174.1 tok/s | VRAM: 23516 MB | samples: 58
+    [7/8] ✓  1175.413 J | 196.2 tok/s | VRAM: 23516 MB | samples: 58
+    [8/8] ✓  1177.609 J | 171.6 tok/s | VRAM: 23516 MB | samples: 58 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=256  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 14/81]  rep=2
+  fp16_b8_o256_caseC_rep2  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  2706.163 J | 181.7 tok/s | VRAM: 23516 MB | samples: 95
+    [2/4] ✓  2722.336 J | 197.3 tok/s | VRAM: 23516 MB | samples: 96
+    [3/4] ✓  2752.018 J | 216.6 tok/s | VRAM: 23516 MB | samples: 97
+    [4/4] ✓  2642.017 J | 169.4 tok/s | VRAM: 23516 MB | samples: 94 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=512  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 15/81]  rep=3
+  fp16_b1_o512_caseB_rep3  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1802.542 J | 55.4 tok/s | VRAM: 23516 MB | samples: 74
+    [2/30] ✓  1140.001 J | 54.8 tok/s | VRAM: 23516 MB | samples: 53
+    [3/30] ✓  602.778 J | 53.5 tok/s | VRAM: 23516 MB | samples: 34
+    [4/30] ✓  1026.047 J | 54.6 tok/s | VRAM: 23516 MB | samples: 48
+    [5/30] ✓  375.254 J | 52.2 tok/s | VRAM: 23516 MB | samples: 27
+    [6/30] ✓  714.818 J | 54.0 tok/s | VRAM: 23516 MB | samples: 38
+    [7/30] ✓  304.977 J | 51.8 tok/s | VRAM: 23516 MB | samples: 24
+    [8/30] ✓  493.167 J | 53.0 tok/s | VRAM: 23516 MB | samples: 31
+    [9/30] ✓  796.903 J | 54.2 tok/s | VRAM: 23516 MB | samples: 41
+    [10/30] ✓  389.443 J | 52.3 tok/s | VRAM: 23516 MB | samples: 27
+    [11/30] ✓  672.853 J | 54.0 tok/s | VRAM: 23516 MB | samples: 37
+    [12/30] ✓  830.768 J | 54.3 tok/s | VRAM: 23516 MB | samples: 42
+    [13/30] ✓  443.893 J | 52.3 tok/s | VRAM: 23516 MB | samples: 29
+    [14/30] ✓  507.962 J | 53.3 tok/s | VRAM: 23516 MB | samples: 32
+    [15/30] ✓  737.420 J | 54.2 tok/s | VRAM: 23516 MB | samples: 39
+    [16/30] ✓  522.473 J | 53.2 tok/s | VRAM: 23516 MB | samples: 32
+    [17/30] ✓  540.743 J | 53.1 tok/s | VRAM: 23516 MB | samples: 31
+    [18/30] ✓  830.918 J | 54.2 tok/s | VRAM: 23516 MB | samples: 41
+    [19/30] ✓  793.863 J | 54.3 tok/s | VRAM: 23516 MB | samples: 41
+    [20/30] ✓  820.174 J | 54.2 tok/s | VRAM: 23516 MB | samples: 41
+    [21/30] ✓  691.594 J | 53.9 tok/s | VRAM: 23516 MB | samples: 36
+    [22/30] ✓  460.144 J | 53.1 tok/s | VRAM: 23516 MB | samples: 30
+    [23/30] ✓  2581.021 J | 55.8 tok/s | VRAM: 23516 MB | samples: 102
+    [24/30] ✓  1499.431 J | 55.2 tok/s | VRAM: 23516 MB | samples: 64
+    [25/30] ✓  1193.580 J | 55.0 tok/s | VRAM: 23516 MB | samples: 54
+    [26/30] ✓  2603.250 J | 55.7 tok/s | VRAM: 23516 MB | samples: 102
+    [27/30] ✓  1243.383 J | 54.9 tok/s | VRAM: 23516 MB | samples: 55
+    [28/30] ✓  1151.323 J | 54.9 tok/s | VRAM: 23516 MB | samples: 52
+    [29/30] ✓  1311.998 J | 55.1 tok/s | VRAM: 23516 MB | samples: 57
+    [30/30] ✓  621.337 J | 53.8 tok/s | VRAM: 23516 MB | samples: 35
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=256  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 16/81]  rep=3
+  fp16_b8_o256_caseA_rep3  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1263.632 J | 365.7 tok/s | VRAM: 23516 MB | samples: 60
+    [2/4] ✓  1245.602 J | 351.0 tok/s | VRAM: 23516 MB | samples: 60
+    [3/4] ✓  1244.347 J | 344.9 tok/s | VRAM: 23516 MB | samples: 60
+    [4/4] ✓  1260.421 J | 353.8 tok/s | VRAM: 23516 MB | samples: 60 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=64  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 17/81]  rep=3
+  fp16_b8_o64_caseA_rep3  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  301.549 J | 365.4 tok/s | VRAM: 23516 MB | samples: 24
+    [2/4] ✓  267.574 J | 345.7 tok/s | VRAM: 23516 MB | samples: 24
+    [3/4] ✓  346.900 J | 340.5 tok/s | VRAM: 23516 MB | samples: 26
+    [4/4] ✓  283.560 J | 365.2 tok/s | VRAM: 23516 MB | samples: 24 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=256  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 18/81]  rep=2
+  fp16_b4_o256_caseC_rep2  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1863.386 J | 133.1 tok/s | VRAM: 23516 MB | samples: 76
+    [2/8] ✓  1767.934 J | 110.7 tok/s | VRAM: 23516 MB | samples: 71
+    [3/8] ✓  1885.888 J | 145.7 tok/s | VRAM: 23516 MB | samples: 77
+    [4/8] ✓  1850.141 J | 112.1 tok/s | VRAM: 23516 MB | samples: 75
+    [5/8] ✓  1892.124 J | 131.1 tok/s | VRAM: 23516 MB | samples: 76
+    [6/8] ✓  1874.163 J | 153.4 tok/s | VRAM: 23516 MB | samples: 77
+    [7/8] ✓  1866.807 J | 123.5 tok/s | VRAM: 23516 MB | samples: 76
+    [8/8] ✓  1876.260 J | 95.6 tok/s | VRAM: 23516 MB | samples: 74 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=64  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 19/81]  rep=3
+  fp16_b8_o64_caseB_rep3  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  494.980 J | 267.5 tok/s | VRAM: 23516 MB | samples: 30
+    [2/4] ✓  499.616 J | 267.6 tok/s | VRAM: 23516 MB | samples: 30
+    [3/4] ✓  545.247 J | 268.3 tok/s | VRAM: 23516 MB | samples: 30
+    [4/4] ✓  499.397 J | 269.2 tok/s | VRAM: 23516 MB | samples: 29 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=64  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 20/81]  rep=1
+  fp16_b4_o64_caseC_rep1  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  873.973 J | 91.9 tok/s | VRAM: 23516 MB | samples: 38
+    [2/8] ✓  838.921 J | 91.3 tok/s | VRAM: 23516 MB | samples: 38
+    [3/8] ✓  882.827 J | 91.2 tok/s | VRAM: 23516 MB | samples: 39
+    [4/8] ✓  865.526 J | 91.5 tok/s | VRAM: 23516 MB | samples: 38
+    [5/8] ✓  845.527 J | 91.9 tok/s | VRAM: 23516 MB | samples: 38
+    [6/8] ✓  811.509 J | 91.3 tok/s | VRAM: 23516 MB | samples: 38
+    [7/8] ✓  862.506 J | 91.5 tok/s | VRAM: 23516 MB | samples: 38
+    [8/8] ✓  835.526 J | 89.9 tok/s | VRAM: 23516 MB | samples: 38 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=64  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 21/81]  rep=2
+  fp16_b1_o64_caseA_rep2  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  233.899 J | 53.3 tok/s | VRAM: 23516 MB | samples: 22
+    [2/30] ✓  248.133 J | 53.7 tok/s | VRAM: 23516 MB | samples: 22
+    [3/30] ✓  267.160 J | 51.6 tok/s | VRAM: 23516 MB | samples: 23
+    [4/30] ✓  244.949 J | 54.2 tok/s | VRAM: 23516 MB | samples: 22
+    [5/30] ✓  264.443 J | 54.2 tok/s | VRAM: 23516 MB | samples: 22
+    [6/30] ✓  251.434 J | 54.6 tok/s | VRAM: 23516 MB | samples: 22
+    [7/30] ✓  249.019 J | 54.3 tok/s | VRAM: 23516 MB | samples: 22
+    [8/30] ✓  245.871 J | 54.4 tok/s | VRAM: 23516 MB | samples: 22
+    [9/30] ✓  258.241 J | 54.4 tok/s | VRAM: 23516 MB | samples: 22
+    [10/30] ✓  229.482 J | 53.9 tok/s | VRAM: 23516 MB | samples: 22
+    [11/30] ✓  118.010 J | 51.8 tok/s | VRAM: 23516 MB | samples: 17
+    [12/30] ✓  232.433 J | 54.3 tok/s | VRAM: 23516 MB | samples: 22
+    [13/30] ✓  259.023 J | 54.2 tok/s | VRAM: 23516 MB | samples: 22
+    [14/30] ✓  213.525 J | 54.1 tok/s | VRAM: 23516 MB | samples: 22
+    [15/30] ✓  258.671 J | 54.3 tok/s | VRAM: 23516 MB | samples: 22
+    [16/30] ✓  216.725 J | 54.4 tok/s | VRAM: 23516 MB | samples: 22
+    [17/30] ✓  242.339 J | 53.7 tok/s | VRAM: 23516 MB | samples: 22
+    [18/30] ✓  201.464 J | 53.8 tok/s | VRAM: 23516 MB | samples: 22
+    [19/30] ✓  246.871 J | 54.1 tok/s | VRAM: 23516 MB | samples: 22
+    [20/30] ✓  252.412 J | 54.3 tok/s | VRAM: 23516 MB | samples: 22
+    [21/30] ✓  227.080 J | 53.8 tok/s | VRAM: 23516 MB | samples: 22
+    [22/30] ✓  267.145 J | 46.7 tok/s | VRAM: 23516 MB | samples: 24
+    [23/30] ✓  229.763 J | 53.7 tok/s | VRAM: 23516 MB | samples: 22
+    [24/30] ✓  231.082 J | 54.2 tok/s | VRAM: 23516 MB | samples: 22
+    [25/30] ✓  257.033 J | 54.5 tok/s | VRAM: 23516 MB | samples: 22
+    [26/30] ✓  211.584 J | 53.9 tok/s | VRAM: 23516 MB | samples: 22
+    [27/30] ✓  234.680 J | 54.2 tok/s | VRAM: 23516 MB | samples: 22
+    [28/30] ✓  213.083 J | 54.2 tok/s | VRAM: 23516 MB | samples: 22
+    [29/30] ✓  247.029 J | 53.9 tok/s | VRAM: 23516 MB | samples: 22
+    [30/30] ✓  257.665 J | 54.4 tok/s | VRAM: 23516 MB | samples: 22
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=512  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 22/81]  rep=1
+  fp16_b8_o512_caseC_rep1  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  3937.014 J | 153.6 tok/s | VRAM: 23516 MB | samples: 144
+    [2/4] ✓  4167.768 J | 194.3 tok/s | VRAM: 23516 MB | samples: 148
+    [3/4] ✓  4330.143 J | 242.1 tok/s | VRAM: 23516 MB | samples: 153
+    [4/4] ✓  3969.948 J | 151.1 tok/s | VRAM: 23516 MB | samples: 144 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=64  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 23/81]  rep=2
+  fp16_b8_o64_caseA_rep2  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  307.226 J | 364.3 tok/s | VRAM: 23516 MB | samples: 25
+    [2/4] ✓  302.724 J | 347.2 tok/s | VRAM: 23516 MB | samples: 24
+    [3/4] ✓  252.334 J | 368.8 tok/s | VRAM: 23516 MB | samples: 24
+    [4/4] ✓  281.085 J | 365.1 tok/s | VRAM: 23516 MB | samples: 24 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=256  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 24/81]  rep=1
+  fp16_b4_o256_caseB_rep1  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1267.174 J | 159.7 tok/s | VRAM: 23516 MB | samples: 62
+    [2/8] ✓  819.659 J | 128.1 tok/s | VRAM: 23516 MB | samples: 44
+    [3/8] ✓  882.490 J | 154.1 tok/s | VRAM: 23516 MB | samples: 47
+    [4/8] ✓  789.742 J | 147.6 tok/s | VRAM: 23516 MB | samples: 43
+    [5/8] ✓  867.891 J | 171.6 tok/s | VRAM: 23516 MB | samples: 46
+    [6/8] ✓  1290.204 J | 147.1 tok/s | VRAM: 23516 MB | samples: 62
+    [7/8] ✓  1312.594 J | 188.3 tok/s | VRAM: 23516 MB | samples: 62
+    [8/8] ✓  1271.252 J | 169.3 tok/s | VRAM: 23516 MB | samples: 62 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=512  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 25/81]  rep=1
+  fp16_b1_o512_caseA_rep1  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1240.199 J | 56.0 tok/s | VRAM: 23516 MB | samples: 55
+    [2/30] ✓  1116.961 J | 56.1 tok/s | VRAM: 23516 MB | samples: 52
+    [3/30] ✓  1147.558 J | 56.1 tok/s | VRAM: 23516 MB | samples: 53
+    [4/30] ✓  1423.360 J | 55.9 tok/s | VRAM: 23516 MB | samples: 62
+    [5/30] ✓  1344.685 J | 56.2 tok/s | VRAM: 23516 MB | samples: 60
+    [6/30] ✓  1287.733 J | 56.1 tok/s | VRAM: 23516 MB | samples: 57
+    [7/30] ✓  1279.336 J | 56.0 tok/s | VRAM: 23516 MB | samples: 56
+    [8/30] ✓  322.921 J | 54.7 tok/s | VRAM: 23516 MB | samples: 24
+    [9/30] ✓  788.600 J | 55.9 tok/s | VRAM: 23516 MB | samples: 40
+    [10/30] ✓  1739.446 J | 56.3 tok/s | VRAM: 23516 MB | samples: 72
+    [11/30] ✓  128.369 J | 52.9 tok/s | VRAM: 23516 MB | samples: 17
+    [12/30] ✓  1816.408 J | 56.1 tok/s | VRAM: 23516 MB | samples: 75
+    [13/30] ✓  2606.626 J | 56.4 tok/s | VRAM: 23516 MB | samples: 101
+    [14/30] ✓  2570.032 J | 56.2 tok/s | VRAM: 23516 MB | samples: 101
+    [15/30] ✓  1986.077 J | 56.2 tok/s | VRAM: 23516 MB | samples: 81
+    [16/30] ✓  1698.625 J | 56.0 tok/s | VRAM: 23516 MB | samples: 71
+    [17/30] ✓  1014.828 J | 55.7 tok/s | VRAM: 23516 MB | samples: 49
+    [18/30] ✓  540.142 J | 55.0 tok/s | VRAM: 23516 MB | samples: 32
+    [19/30] ✓  2574.914 J | 56.2 tok/s | VRAM: 23516 MB | samples: 101
+    [20/30] ✓  1321.446 J | 56.3 tok/s | VRAM: 23516 MB | samples: 58
+    [21/30] ✓  790.614 J | 56.0 tok/s | VRAM: 23516 MB | samples: 41
+    [22/30] ✓  673.555 J | 55.6 tok/s | VRAM: 23516 MB | samples: 36
+    [23/30] ✓  1346.552 J | 56.3 tok/s | VRAM: 23516 MB | samples: 59
+    [24/30] ✓  1759.373 J | 56.1 tok/s | VRAM: 23516 MB | samples: 74
+    [25/30] ✓  828.445 J | 55.5 tok/s | VRAM: 23516 MB | samples: 42
+    [26/30] ✓  1206.733 J | 55.7 tok/s | VRAM: 23516 MB | samples: 54
+    [27/30] ✓  2440.112 J | 56.2 tok/s | VRAM: 23516 MB | samples: 96
+    [28/30] ✓  1336.311 J | 55.9 tok/s | VRAM: 23516 MB | samples: 58
+    [29/30] ✓  338.700 J | 54.5 tok/s | VRAM: 23516 MB | samples: 25
+    [30/30] ✓  1905.320 J | 56.2 tok/s | VRAM: 23516 MB | samples: 78
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=256  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 26/81]  rep=3
+  fp16_b8_o256_caseB_rep3  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1485.182 J | 213.2 tok/s | VRAM: 23516 MB | samples: 66
+    [2/4] ✓  1178.121 J | 264.2 tok/s | VRAM: 23516 MB | samples: 54
+    [3/4] ✓  1470.593 J | 256.2 tok/s | VRAM: 23516 MB | samples: 65
+    [4/4] ✓  1544.549 J | 328.7 tok/s | VRAM: 23516 MB | samples: 67 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=512  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 27/81]  rep=2
+  fp16_b1_o512_caseA_rep2  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1239.977 J | 56.0 tok/s | VRAM: 23516 MB | samples: 55
+    [2/30] ✓  1129.420 J | 55.9 tok/s | VRAM: 23516 MB | samples: 52
+    [3/30] ✓  1169.877 J | 56.0 tok/s | VRAM: 23516 MB | samples: 53
+    [4/30] ✓  1411.871 J | 56.3 tok/s | VRAM: 23516 MB | samples: 61
+    [5/30] ✓  1349.937 J | 56.0 tok/s | VRAM: 23516 MB | samples: 60
+    [6/30] ✓  1255.910 J | 56.2 tok/s | VRAM: 23516 MB | samples: 57
+    [7/30] ✓  1242.758 J | 56.1 tok/s | VRAM: 23516 MB | samples: 56
+    [8/30] ✓  305.426 J | 54.4 tok/s | VRAM: 23516 MB | samples: 24
+    [9/30] ✓  786.469 J | 55.7 tok/s | VRAM: 23516 MB | samples: 40
+    [10/30] ✓  1730.040 J | 56.0 tok/s | VRAM: 23516 MB | samples: 72
+    [11/30] ✓  119.331 J | 51.6 tok/s | VRAM: 23516 MB | samples: 17
+    [12/30] ✓  1819.321 J | 56.2 tok/s | VRAM: 23516 MB | samples: 75
+    [13/30] ✓  2602.838 J | 55.8 tok/s | VRAM: 23516 MB | samples: 102
+    [14/30] ✓  2555.657 J | 56.3 tok/s | VRAM: 23516 MB | samples: 101
+    [15/30] ✓  1982.944 J | 56.1 tok/s | VRAM: 23516 MB | samples: 81
+    [16/30] ✓  1703.170 J | 56.1 tok/s | VRAM: 23516 MB | samples: 71
+    [17/30] ✓  1052.910 J | 55.9 tok/s | VRAM: 23516 MB | samples: 49
+    [18/30] ✓  547.993 J | 55.6 tok/s | VRAM: 23516 MB | samples: 31
+    [19/30] ✓  2566.782 J | 56.2 tok/s | VRAM: 23516 MB | samples: 101
+    [20/30] ✓  1302.019 J | 56.1 tok/s | VRAM: 23516 MB | samples: 58
+    [21/30] ✓  839.257 J | 55.9 tok/s | VRAM: 23516 MB | samples: 41
+    [22/30] ✓  650.419 J | 55.6 tok/s | VRAM: 23516 MB | samples: 36
+    [23/30] ✓  1341.890 J | 56.1 tok/s | VRAM: 23516 MB | samples: 59
+    [24/30] ✓  1742.626 J | 56.3 tok/s | VRAM: 23516 MB | samples: 73
+    [25/30] ✓  814.876 J | 55.9 tok/s | VRAM: 23516 MB | samples: 42
+    [26/30] ✓  1159.448 J | 56.1 tok/s | VRAM: 23516 MB | samples: 53
+    [27/30] ✓  2406.542 J | 56.2 tok/s | VRAM: 23516 MB | samples: 96
+    [28/30] ✓  1319.631 J | 56.2 tok/s | VRAM: 23516 MB | samples: 58
+    [29/30] ✓  309.845 J | 54.6 tok/s | VRAM: 23516 MB | samples: 25
+    [30/30] ✓  1867.235 J | 56.0 tok/s | VRAM: 23516 MB | samples: 78
+
+[ 28/81]  rep=3
+  fp16_b1_o512_caseA_rep3  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1216.248 J | 56.1 tok/s | VRAM: 23516 MB | samples: 55
+    [2/30] ✓  1142.911 J | 56.1 tok/s | VRAM: 23516 MB | samples: 52
+    [3/30] ✓  1146.839 J | 56.0 tok/s | VRAM: 23516 MB | samples: 53
+    [4/30] ✓  1401.797 J | 56.2 tok/s | VRAM: 23516 MB | samples: 62
+    [5/30] ✓  1363.943 J | 56.0 tok/s | VRAM: 23516 MB | samples: 60
+    [6/30] ✓  1272.355 J | 55.8 tok/s | VRAM: 23516 MB | samples: 57
+    [7/30] ✓  1283.732 J | 56.0 tok/s | VRAM: 23516 MB | samples: 56
+    [8/30] ✓  303.293 J | 54.4 tok/s | VRAM: 23516 MB | samples: 24
+    [9/30] ✓  761.795 J | 55.6 tok/s | VRAM: 23516 MB | samples: 40
+    [10/30] ✓  1692.536 J | 56.3 tok/s | VRAM: 23516 MB | samples: 72
+    [11/30] ✓  131.074 J | 52.5 tok/s | VRAM: 23516 MB | samples: 17
+    [12/30] ✓  1796.620 J | 56.1 tok/s | VRAM: 23516 MB | samples: 75
+    [13/30] ✓  2563.113 J | 56.4 tok/s | VRAM: 23516 MB | samples: 101
+    [14/30] ✓  2587.008 J | 56.4 tok/s | VRAM: 23516 MB | samples: 101
+    [15/30] ✓  1998.916 J | 56.0 tok/s | VRAM: 23516 MB | samples: 81
+    [16/30] ✓  1704.166 J | 56.1 tok/s | VRAM: 23516 MB | samples: 71
+    [17/30] ✓  1039.724 J | 55.9 tok/s | VRAM: 23516 MB | samples: 49
+    [18/30] ✓  508.971 J | 55.2 tok/s | VRAM: 23516 MB | samples: 32
+    [19/30] ✓  2573.249 J | 56.3 tok/s | VRAM: 23516 MB | samples: 101
+    [20/30] ✓  1304.549 J | 56.1 tok/s | VRAM: 23516 MB | samples: 58
+    [21/30] ✓  801.335 J | 55.9 tok/s | VRAM: 23516 MB | samples: 41
+    [22/30] ✓  670.077 J | 55.5 tok/s | VRAM: 23516 MB | samples: 36
+    [23/30] ✓  1339.898 J | 56.1 tok/s | VRAM: 23516 MB | samples: 59
+    [24/30] ✓  1788.490 J | 56.1 tok/s | VRAM: 23516 MB | samples: 74
+    [25/30] ✓  847.938 J | 55.8 tok/s | VRAM: 23516 MB | samples: 42
+    [26/30] ✓  1181.670 J | 56.1 tok/s | VRAM: 23516 MB | samples: 53
+    [27/30] ✓  2437.522 J | 56.2 tok/s | VRAM: 23516 MB | samples: 96
+    [28/30] ✓  1328.470 J | 55.8 tok/s | VRAM: 23516 MB | samples: 58
+    [29/30] ✓  346.701 J | 55.0 tok/s | VRAM: 23516 MB | samples: 25
+    [30/30] ✓  1916.711 J | 56.3 tok/s | VRAM: 23516 MB | samples: 78
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=64  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 29/81]  rep=2
+  fp16_b8_o64_caseB_rep2  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  535.360 J | 267.3 tok/s | VRAM: 23516 MB | samples: 30
+    [2/4] ✓  494.646 J | 270.2 tok/s | VRAM: 23516 MB | samples: 29
+    [3/4] ✓  499.419 J | 268.5 tok/s | VRAM: 23516 MB | samples: 30
+    [4/4] ✓  459.506 J | 266.0 tok/s | VRAM: 23906 MB | samples: 28 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=64  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 30/81]  rep=3
+  fp16_b8_o64_caseC_rep3  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1546.025 J | 115.4 tok/s | VRAM: 23516 MB | samples: 55
+    [2/4] ✓  1530.220 J | 115.1 tok/s | VRAM: 23516 MB | samples: 55
+    [3/4] ✓  1538.105 J | 115.3 tok/s | VRAM: 23516 MB | samples: 55
+    [4/4] ✓  1519.194 J | 112.4 tok/s | VRAM: 23516 MB | samples: 56 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=512  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 31/81]  rep=2
+  fp16_b4_o512_caseA_rep2  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1349.398 J | 188.2 tok/s | VRAM: 23516 MB | samples: 64
+    [2/8] ✓  1287.029 J | 166.4 tok/s | VRAM: 23516 MB | samples: 63
+    [3/8] ✓  1667.384 J | 136.3 tok/s | VRAM: 23516 MB | samples: 77
+    [4/8] ✓  2389.678 J | 182.7 tok/s | VRAM: 23516 MB | samples: 105
+    [5/8] ✓  2483.937 J | 119.3 tok/s | VRAM: 23516 MB | samples: 103
+    [6/8] ✓  1656.883 J | 144.2 tok/s | VRAM: 23516 MB | samples: 76
+    [7/8] ✓  2190.796 J | 138.0 tok/s | VRAM: 23516 MB | samples: 93
+    [8/8] ✓  1771.761 J | 136.2 tok/s | VRAM: 23516 MB | samples: 79 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=64  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 32/81]  rep=2
+  fp16_b8_o64_caseC_rep2  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1555.715 J | 114.7 tok/s | VRAM: 23516 MB | samples: 55
+    [2/4] ✓  1522.116 J | 111.3 tok/s | VRAM: 23516 MB | samples: 56
+    [3/4] ✓  1562.184 J | 114.8 tok/s | VRAM: 23516 MB | samples: 55
+    [4/4] ✓  1566.605 J | 114.2 tok/s | VRAM: 23516 MB | samples: 55 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=256  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 33/81]  rep=2
+  fp16_b4_o256_caseB_rep2  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1288.426 J | 159.7 tok/s | VRAM: 23516 MB | samples: 62
+    [2/8] ✓  843.442 J | 128.0 tok/s | VRAM: 23516 MB | samples: 44
+    [3/8] ✓  888.565 J | 158.0 tok/s | VRAM: 23516 MB | samples: 46
+    [4/8] ✓  819.098 J | 149.1 tok/s | VRAM: 23516 MB | samples: 43
+    [5/8] ✓  869.669 J | 171.8 tok/s | VRAM: 23516 MB | samples: 46
+    [6/8] ✓  1249.483 J | 147.4 tok/s | VRAM: 23516 MB | samples: 61
+    [7/8] ✓  1266.486 J | 187.2 tok/s | VRAM: 23516 MB | samples: 62
+    [8/8] ✓  1289.980 J | 169.6 tok/s | VRAM: 23516 MB | samples: 62 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=64  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 34/81]  rep=2
+  fp16_b1_o64_caseC_rep2  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  398.132 J | 40.9 tok/s | VRAM: 23516 MB | samples: 26
+    [2/30] ✓  395.577 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [3/30] ✓  396.508 J | 41.1 tok/s | VRAM: 23516 MB | samples: 26
+    [4/30] ✓  371.202 J | 40.9 tok/s | VRAM: 23516 MB | samples: 26
+    [5/30] ✓  376.391 J | 40.9 tok/s | VRAM: 23516 MB | samples: 26
+    [6/30] ✓  385.010 J | 40.9 tok/s | VRAM: 23516 MB | samples: 25
+    [7/30] ✓  343.895 J | 40.9 tok/s | VRAM: 23516 MB | samples: 26
+    [8/30] ✓  348.245 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [9/30] ✓  381.163 J | 40.0 tok/s | VRAM: 23516 MB | samples: 26
+    [10/30] ✓  393.988 J | 40.0 tok/s | VRAM: 23516 MB | samples: 26
+    [11/30] ✓  355.429 J | 37.6 tok/s | VRAM: 23516 MB | samples: 27
+    [12/30] ✓  382.840 J | 40.7 tok/s | VRAM: 23516 MB | samples: 26
+    [13/30] ✓  397.131 J | 40.5 tok/s | VRAM: 23516 MB | samples: 26
+    [14/30] ✓  397.771 J | 40.6 tok/s | VRAM: 23516 MB | samples: 26
+    [15/30] ✓  361.266 J | 40.7 tok/s | VRAM: 23516 MB | samples: 26
+    [16/30] ✓  379.195 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [17/30] ✓  394.296 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [18/30] ✓  391.055 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [19/30] ✓  379.456 J | 41.2 tok/s | VRAM: 23516 MB | samples: 26
+    [20/30] ✓  387.930 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [21/30] ✓  404.037 J | 41.2 tok/s | VRAM: 23516 MB | samples: 26
+    [22/30] ✓  393.399 J | 40.9 tok/s | VRAM: 23516 MB | samples: 26
+    [23/30] ✓  373.353 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [24/30] ✓  379.855 J | 40.1 tok/s | VRAM: 23516 MB | samples: 26
+    [25/30] ✓  399.145 J | 40.0 tok/s | VRAM: 23516 MB | samples: 26
+    [26/30] ✓  419.744 J | 39.8 tok/s | VRAM: 23516 MB | samples: 27
+    [27/30] ✓  383.866 J | 40.7 tok/s | VRAM: 23516 MB | samples: 26
+    [28/30] ✓  403.408 J | 40.7 tok/s | VRAM: 23516 MB | samples: 26
+    [29/30] ✓  403.024 J | 41.0 tok/s | VRAM: 23516 MB | samples: 26
+    [30/30] ✓  334.321 J | 40.2 tok/s | VRAM: 23516 MB | samples: 25
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=256  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 35/81]  rep=1
+  fp16_b8_o256_caseB_rep1  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1467.464 J | 212.0 tok/s | VRAM: 23516 MB | samples: 66
+    [2/4] ✓  1180.164 J | 262.1 tok/s | VRAM: 23516 MB | samples: 54
+    [3/4] ✓  1476.819 J | 254.0 tok/s | VRAM: 23516 MB | samples: 66
+    [4/4] ✓  1544.651 J | 327.7 tok/s | VRAM: 23516 MB | samples: 67 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=64  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 36/81]  rep=3
+  fp16_b1_o64_caseA_rep3  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  268.917 J | 53.1 tok/s | VRAM: 23516 MB | samples: 23
+    [2/30] ✓  259.206 J | 52.5 tok/s | VRAM: 23516 MB | samples: 23
+    [3/30] ✓  270.778 J | 52.1 tok/s | VRAM: 23516 MB | samples: 23
+    [4/30] ✓  250.694 J | 51.9 tok/s | VRAM: 23516 MB | samples: 23
+    [5/30] ✓  238.822 J | 53.8 tok/s | VRAM: 23516 MB | samples: 22
+    [6/30] ✓  246.280 J | 53.9 tok/s | VRAM: 23516 MB | samples: 22
+    [7/30] ✓  248.904 J | 53.7 tok/s | VRAM: 23516 MB | samples: 22
+    [8/30] ✓  256.063 J | 52.9 tok/s | VRAM: 23516 MB | samples: 23
+    [9/30] ✓  257.562 J | 51.7 tok/s | VRAM: 23516 MB | samples: 23
+    [10/30] ✓  276.329 J | 49.8 tok/s | VRAM: 23516 MB | samples: 23
+    [11/30] ✓  121.566 J | 51.9 tok/s | VRAM: 23516 MB | samples: 17
+    [12/30] ✓  272.210 J | 50.6 tok/s | VRAM: 23516 MB | samples: 23
+    [13/30] ✓  273.975 J | 52.9 tok/s | VRAM: 23516 MB | samples: 23
+    [14/30] ✓  288.369 J | 53.2 tok/s | VRAM: 23516 MB | samples: 23
+    [15/30] ✓  278.041 J | 51.3 tok/s | VRAM: 23516 MB | samples: 23
+    [16/30] ✓  227.922 J | 54.1 tok/s | VRAM: 23516 MB | samples: 22
+    [17/30] ✓  272.619 J | 54.4 tok/s | VRAM: 23516 MB | samples: 22
+    [18/30] ✓  234.414 J | 54.5 tok/s | VRAM: 23516 MB | samples: 22
+    [19/30] ✓  261.138 J | 54.2 tok/s | VRAM: 23516 MB | samples: 22
+    [20/30] ✓  215.875 J | 54.5 tok/s | VRAM: 23516 MB | samples: 22
+    [21/30] ✓  266.104 J | 54.3 tok/s | VRAM: 23516 MB | samples: 22
+    [22/30] ✓  239.338 J | 52.3 tok/s | VRAM: 23516 MB | samples: 23
+    [23/30] ✓  279.930 J | 53.1 tok/s | VRAM: 23516 MB | samples: 23
+    [24/30] ✓  250.553 J | 51.8 tok/s | VRAM: 23516 MB | samples: 23
+    [25/30] ✓  262.820 J | 53.4 tok/s | VRAM: 23516 MB | samples: 22
+    [26/30] ✓  244.089 J | 53.5 tok/s | VRAM: 23516 MB | samples: 22
+    [27/30] ✓  268.594 J | 53.2 tok/s | VRAM: 23516 MB | samples: 23
+    [28/30] ✓  262.094 J | 53.6 tok/s | VRAM: 23516 MB | samples: 22
+    [29/30] ✓  238.155 J | 53.2 tok/s | VRAM: 23516 MB | samples: 23
+    [30/30] ✓  278.656 J | 53.1 tok/s | VRAM: 23516 MB | samples: 23
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=256  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 37/81]  rep=2
+  fp16_b1_o256_caseC_rep2  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1430.390 J | 49.5 tok/s | VRAM: 23516 MB | samples: 62
+    [2/30] ✓  816.422 J | 47.6 tok/s | VRAM: 23516 MB | samples: 41
+    [3/30] ✓  1214.574 J | 48.9 tok/s | VRAM: 23516 MB | samples: 55
+    [4/30] ✓  1437.994 J | 49.3 tok/s | VRAM: 23516 MB | samples: 62
+    [5/30] ✓  1111.465 J | 48.2 tok/s | VRAM: 23516 MB | samples: 50
+    [6/30] ✓  920.067 J | 47.5 tok/s | VRAM: 23516 MB | samples: 45
+    [7/30] ✓  470.872 J | 41.4 tok/s | VRAM: 23516 MB | samples: 30
+    [8/30] ✓  1306.816 J | 49.3 tok/s | VRAM: 23516 MB | samples: 58
+    [9/30] ✓  1430.527 J | 49.4 tok/s | VRAM: 23516 MB | samples: 62
+    [10/30] ✓  1100.182 J | 48.3 tok/s | VRAM: 23516 MB | samples: 51
+    [11/30] ✓  1463.305 J | 49.8 tok/s | VRAM: 23516 MB | samples: 62
+    [12/30] ✓  1464.427 J | 50.0 tok/s | VRAM: 23516 MB | samples: 62
+    [13/30] ✓  478.357 J | 42.8 tok/s | VRAM: 23516 MB | samples: 29
+    [14/30] ✓  775.269 J | 47.2 tok/s | VRAM: 23516 MB | samples: 39
+    [15/30] ✓  1416.787 J | 50.7 tok/s | VRAM: 23516 MB | samples: 61
+    [16/30] ✓  1425.477 J | 50.7 tok/s | VRAM: 23516 MB | samples: 61
+    [17/30] ✓  1428.235 J | 50.2 tok/s | VRAM: 23516 MB | samples: 61
+    [18/30] ✓  1400.146 J | 50.6 tok/s | VRAM: 23516 MB | samples: 61
+    [19/30] ✓  518.877 J | 43.2 tok/s | VRAM: 23516 MB | samples: 31
+    [20/30] ✓  1430.095 J | 49.5 tok/s | VRAM: 23516 MB | samples: 62
+    [21/30] ✓  1412.319 J | 49.9 tok/s | VRAM: 23516 MB | samples: 62
+    [22/30] ✓  1452.081 J | 48.7 tok/s | VRAM: 23516 MB | samples: 63
+    [23/30] ✓  1413.478 J | 49.9 tok/s | VRAM: 23516 MB | samples: 62
+    [24/30] ✓  1450.245 J | 50.9 tok/s | VRAM: 23516 MB | samples: 61
+    [25/30] ✓  1127.768 J | 48.6 tok/s | VRAM: 23516 MB | samples: 51
+    [26/30] ✓  1450.808 J | 49.2 tok/s | VRAM: 23516 MB | samples: 62
+    [27/30] ✓  625.360 J | 43.5 tok/s | VRAM: 23516 MB | samples: 34
+    [28/30] ✓  1429.818 J | 50.5 tok/s | VRAM: 23516 MB | samples: 61
+    [29/30] ✓  882.506 J | 48.0 tok/s | VRAM: 23516 MB | samples: 42
+    [30/30] ✓  332.268 J | 40.2 tok/s | VRAM: 23516 MB | samples: 25
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=256  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 38/81]  rep=3
+  fp16_b4_o256_caseA_rep3  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1194.952 J | 198.9 tok/s | VRAM: 23516 MB | samples: 59
+    [2/8] ✓  1167.088 J | 176.4 tok/s | VRAM: 23516 MB | samples: 58
+    [3/8] ✓  1138.678 J | 147.8 tok/s | VRAM: 23516 MB | samples: 59
+    [4/8] ✓  1201.072 J | 213.1 tok/s | VRAM: 23516 MB | samples: 58
+    [5/8] ✓  1198.329 J | 170.3 tok/s | VRAM: 23516 MB | samples: 60
+    [6/8] ✓  1178.796 J | 169.4 tok/s | VRAM: 23516 MB | samples: 59
+    [7/8] ✓  1184.380 J | 190.3 tok/s | VRAM: 23516 MB | samples: 59
+    [8/8] ✓  1187.337 J | 168.1 tok/s | VRAM: 23516 MB | samples: 59 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=512  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 39/81]  rep=2
+  fp16_b1_o512_caseB_rep2  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1811.387 J | 54.1 tok/s | VRAM: 23516 MB | samples: 76
+    [2/30] ✓  1164.999 J | 54.1 tok/s | VRAM: 23516 MB | samples: 53
+    [3/30] ✓  601.876 J | 51.3 tok/s | VRAM: 23516 MB | samples: 35
+    [4/30] ✓  1009.627 J | 53.7 tok/s | VRAM: 23516 MB | samples: 49
+    [5/30] ✓  411.296 J | 51.2 tok/s | VRAM: 23516 MB | samples: 27
+    [6/30] ✓  720.776 J | 52.9 tok/s | VRAM: 23516 MB | samples: 38
+    [7/30] ✓  287.205 J | 50.8 tok/s | VRAM: 23516 MB | samples: 24
+    [8/30] ✓  531.998 J | 50.8 tok/s | VRAM: 23516 MB | samples: 32
+    [9/30] ✓  803.731 J | 54.1 tok/s | VRAM: 23516 MB | samples: 41
+    [10/30] ✓  414.867 J | 52.3 tok/s | VRAM: 23516 MB | samples: 27
+    [11/30] ✓  723.176 J | 53.1 tok/s | VRAM: 23516 MB | samples: 38
+    [12/30] ✓  867.356 J | 53.5 tok/s | VRAM: 23516 MB | samples: 43
+    [13/30] ✓  447.701 J | 52.4 tok/s | VRAM: 23516 MB | samples: 28
+    [14/30] ✓  562.457 J | 49.6 tok/s | VRAM: 23516 MB | samples: 34
+    [15/30] ✓  791.326 J | 52.8 tok/s | VRAM: 23516 MB | samples: 40
+    [16/30] ✓  524.976 J | 50.8 tok/s | VRAM: 23516 MB | samples: 33
+    [17/30] ✓  517.751 J | 51.8 tok/s | VRAM: 23516 MB | samples: 31
+    [18/30] ✓  815.924 J | 52.9 tok/s | VRAM: 23516 MB | samples: 41
+    [19/30] ✓  817.265 J | 50.8 tok/s | VRAM: 23516 MB | samples: 43
+    [20/30] ✓  777.022 J | 54.3 tok/s | VRAM: 23516 MB | samples: 41
+    [21/30] ✓  665.812 J | 53.2 tok/s | VRAM: 23516 MB | samples: 37
+    [22/30] ✓  487.362 J | 53.4 tok/s | VRAM: 23516 MB | samples: 30
+    [23/30] ✓  2656.329 J | 54.8 tok/s | VRAM: 23516 MB | samples: 104
+    [24/30] ✓  1472.562 J | 55.0 tok/s | VRAM: 23516 MB | samples: 64
+    [25/30] ✓  1237.387 J | 53.5 tok/s | VRAM: 23516 MB | samples: 56
+    [26/30] ✓  2672.876 J | 54.2 tok/s | VRAM: 23516 MB | samples: 105
+    [27/30] ✓  1269.850 J | 53.7 tok/s | VRAM: 23516 MB | samples: 56
+    [28/30] ✓  1125.330 J | 53.7 tok/s | VRAM: 23516 MB | samples: 53
+    [29/30] ✓  1327.604 J | 54.1 tok/s | VRAM: 23516 MB | samples: 58
+    [30/30] ✓  653.740 J | 52.5 tok/s | VRAM: 23516 MB | samples: 36
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=256  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 40/81]  rep=1
+  fp16_b4_o256_caseC_rep1  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1932.859 J | 129.5 tok/s | VRAM: 23516 MB | samples: 78
+    [2/8] ✓  1705.996 J | 109.7 tok/s | VRAM: 23516 MB | samples: 71
+    [3/8] ✓  1903.522 J | 144.7 tok/s | VRAM: 23516 MB | samples: 76
+    [4/8] ✓  1855.540 J | 112.2 tok/s | VRAM: 23516 MB | samples: 75
+    [5/8] ✓  1900.781 J | 130.9 tok/s | VRAM: 23516 MB | samples: 76
+    [6/8] ✓  1933.350 J | 150.0 tok/s | VRAM: 23516 MB | samples: 79
+    [7/8] ✓  1900.129 J | 120.8 tok/s | VRAM: 23516 MB | samples: 77
+    [8/8] ✓  1891.861 J | 93.6 tok/s | VRAM: 23516 MB | samples: 76 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=512  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 41/81]  rep=1
+  fp16_b1_o512_caseC_rep1  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  2879.142 J | 51.9 tok/s | VRAM: 23516 MB | samples: 109
+    [2/30] ✓  846.669 J | 46.5 tok/s | VRAM: 23516 MB | samples: 42
+    [3/30] ✓  1245.137 J | 48.8 tok/s | VRAM: 23516 MB | samples: 55
+    [4/30] ✓  2861.245 J | 51.6 tok/s | VRAM: 23516 MB | samples: 109
+    [5/30] ✓  1145.090 J | 44.2 tok/s | VRAM: 23516 MB | samples: 54
+    [6/30] ✓  926.422 J | 47.8 tok/s | VRAM: 23516 MB | samples: 44
+    [7/30] ✓  479.269 J | 42.2 tok/s | VRAM: 23516 MB | samples: 29
+    [8/30] ✓  1329.152 J | 49.5 tok/s | VRAM: 23516 MB | samples: 58
+    [9/30] ✓  2813.815 J | 51.9 tok/s | VRAM: 23516 MB | samples: 109
+    [10/30] ✓  1101.388 J | 49.0 tok/s | VRAM: 23516 MB | samples: 51
+    [11/30] ✓  2707.028 J | 50.1 tok/s | VRAM: 23516 MB | samples: 107
+    [12/30] ✓  2135.880 J | 51.1 tok/s | VRAM: 23516 MB | samples: 87
+    [13/30] ✓  482.593 J | 40.6 tok/s | VRAM: 23516 MB | samples: 30
+    [14/30] ✓  772.683 J | 45.5 tok/s | VRAM: 23516 MB | samples: 40
+    [15/30] ✓  2797.153 J | 52.5 tok/s | VRAM: 23516 MB | samples: 105
+    [16/30] ✓  2132.479 J | 52.0 tok/s | VRAM: 23516 MB | samples: 85
+    [17/30] ✓  2835.697 J | 52.9 tok/s | VRAM: 23516 MB | samples: 107
+    [18/30] ✓  2855.221 J | 51.4 tok/s | VRAM: 23516 MB | samples: 110
+    [19/30] ✓  565.850 J | 43.5 tok/s | VRAM: 23516 MB | samples: 31
+    [20/30] ✓  2872.766 J | 51.4 tok/s | VRAM: 23516 MB | samples: 110
+    [21/30] ✓  2808.917 J | 51.2 tok/s | VRAM: 23516 MB | samples: 110
+    [22/30] ✓  1629.413 J | 50.9 tok/s | VRAM: 23516 MB | samples: 68
+    [23/30] ✓  2844.011 J | 51.6 tok/s | VRAM: 23516 MB | samples: 110
+    [24/30] ✓  2898.353 J | 51.3 tok/s | VRAM: 23906 MB | samples: 109
+    [25/30] ✓  1129.099 J | 48.5 tok/s | VRAM: 23516 MB | samples: 51
+    [26/30] ✓  1923.179 J | 50.4 tok/s | VRAM: 23516 MB | samples: 79
+    [27/30] ✓  574.300 J | 45.4 tok/s | VRAM: 23516 MB | samples: 33
+    [28/30] ✓  2805.111 J | 52.8 tok/s | VRAM: 23516 MB | samples: 107
+    [29/30] ✓  846.940 J | 47.5 tok/s | VRAM: 23516 MB | samples: 42
+    [30/30] ✓  372.592 J | 39.9 tok/s | VRAM: 23516 MB | samples: 25
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=64  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 42/81]  rep=3
+  fp16_b1_o64_caseB_rep3  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  255.280 J | 49.7 tok/s | VRAM: 23516 MB | samples: 23
+    [2/30] ✓  275.188 J | 49.7 tok/s | VRAM: 23516 MB | samples: 23
+    [3/30] ✓  259.775 J | 49.7 tok/s | VRAM: 23516 MB | samples: 23
+    [4/30] ✓  245.047 J | 49.4 tok/s | VRAM: 23516 MB | samples: 23
+    [5/30] ✓  280.082 J | 50.3 tok/s | VRAM: 23516 MB | samples: 23
+    [6/30] ✓  260.063 J | 50.7 tok/s | VRAM: 23516 MB | samples: 23
+    [7/30] ✓  247.174 J | 50.3 tok/s | VRAM: 23516 MB | samples: 23
+    [8/30] ✓  278.963 J | 49.3 tok/s | VRAM: 23516 MB | samples: 23
+    [9/30] ✓  265.510 J | 49.9 tok/s | VRAM: 23516 MB | samples: 23
+    [10/30] ✓  251.061 J | 48.7 tok/s | VRAM: 23516 MB | samples: 24
+    [11/30] ✓  270.662 J | 50.6 tok/s | VRAM: 23516 MB | samples: 23
+    [12/30] ✓  271.102 J | 50.3 tok/s | VRAM: 23516 MB | samples: 23
+    [13/30] ✓  241.371 J | 50.1 tok/s | VRAM: 23516 MB | samples: 23
+    [14/30] ✓  264.124 J | 50.2 tok/s | VRAM: 23516 MB | samples: 23
+    [15/30] ✓  301.083 J | 48.6 tok/s | VRAM: 23516 MB | samples: 24
+    [16/30] ✓  261.302 J | 50.1 tok/s | VRAM: 23516 MB | samples: 23
+    [17/30] ✓  283.811 J | 50.1 tok/s | VRAM: 23516 MB | samples: 23
+    [18/30] ✓  273.720 J | 49.3 tok/s | VRAM: 23516 MB | samples: 23
+    [19/30] ✓  265.936 J | 49.1 tok/s | VRAM: 23516 MB | samples: 23
+    [20/30] ✓  289.118 J | 49.7 tok/s | VRAM: 23516 MB | samples: 23
+    [21/30] ✓  279.669 J | 49.2 tok/s | VRAM: 23516 MB | samples: 23
+    [22/30] ✓  309.688 J | 49.1 tok/s | VRAM: 23516 MB | samples: 24
+    [23/30] ✓  257.228 J | 49.3 tok/s | VRAM: 23516 MB | samples: 23
+    [24/30] ✓  277.137 J | 49.3 tok/s | VRAM: 23516 MB | samples: 23
+    [25/30] ✓  308.344 J | 48.3 tok/s | VRAM: 23516 MB | samples: 24
+    [26/30] ✓  275.398 J | 50.4 tok/s | VRAM: 23516 MB | samples: 23
+    [27/30] ✓  263.891 J | 50.5 tok/s | VRAM: 23516 MB | samples: 23
+    [28/30] ✓  286.358 J | 50.9 tok/s | VRAM: 23516 MB | samples: 23
+    [29/30] ✓  274.993 J | 49.6 tok/s | VRAM: 23516 MB | samples: 23
+    [30/30] ✓  245.683 J | 50.3 tok/s | VRAM: 23516 MB | samples: 23
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=64  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 43/81]  rep=1
+  fp16_b1_o64_caseC_rep1  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  422.215 J | 40.3 tok/s | VRAM: 23516 MB | samples: 26
+    [2/30] ✓  410.526 J | 40.7 tok/s | VRAM: 23516 MB | samples: 26
+    [3/30] ✓  392.081 J | 36.3 tok/s | VRAM: 23516 MB | samples: 28
+    [4/30] ✓  415.544 J | 39.6 tok/s | VRAM: 23516 MB | samples: 27
+    [5/30] ✓  374.622 J | 40.6 tok/s | VRAM: 23516 MB | samples: 26
+    [6/30] ✓  377.077 J | 40.1 tok/s | VRAM: 23516 MB | samples: 26
+    [7/30] ✓  415.353 J | 40.0 tok/s | VRAM: 23516 MB | samples: 26
+    [8/30] ✓  363.715 J | 40.5 tok/s | VRAM: 23516 MB | samples: 26
+    [9/30] ✓  373.510 J | 40.5 tok/s | VRAM: 23516 MB | samples: 26
+    [10/30] ✓  382.421 J | 40.1 tok/s | VRAM: 23516 MB | samples: 26
+    [11/30] ✓  413.976 J | 40.5 tok/s | VRAM: 23516 MB | samples: 26
+    [12/30] ✓  368.919 J | 40.6 tok/s | VRAM: 23516 MB | samples: 26
+    [13/30] ✓  364.165 J | 40.4 tok/s | VRAM: 23516 MB | samples: 26
+    [14/30] ✓  377.841 J | 40.1 tok/s | VRAM: 23516 MB | samples: 26
+    [15/30] ✓  405.219 J | 40.4 tok/s | VRAM: 23516 MB | samples: 26
+    [16/30] ✓  363.590 J | 40.4 tok/s | VRAM: 23516 MB | samples: 26
+    [17/30] ✓  374.128 J | 40.5 tok/s | VRAM: 23516 MB | samples: 26
+    [18/30] ✓  386.360 J | 40.4 tok/s | VRAM: 23516 MB | samples: 26
+    [19/30] ✓  430.750 J | 39.7 tok/s | VRAM: 23516 MB | samples: 27
+    [20/30] ✓  369.762 J | 40.8 tok/s | VRAM: 23516 MB | samples: 26
+    [21/30] ✓  385.431 J | 40.9 tok/s | VRAM: 23516 MB | samples: 26
+    [22/30] ✓  415.722 J | 41.2 tok/s | VRAM: 23516 MB | samples: 26
+    [23/30] ✓  360.313 J | 40.6 tok/s | VRAM: 23516 MB | samples: 26
+    [24/30] ✓  365.434 J | 40.8 tok/s | VRAM: 23516 MB | samples: 26
+    [25/30] ✓  377.553 J | 40.5 tok/s | VRAM: 23516 MB | samples: 26
+    [26/30] ✓  403.885 J | 40.8 tok/s | VRAM: 23516 MB | samples: 26
+    [27/30] ✓  358.917 J | 40.3 tok/s | VRAM: 23516 MB | samples: 26
+    [28/30] ✓  378.529 J | 41.1 tok/s | VRAM: 23516 MB | samples: 26
+    [29/30] ✓  385.310 J | 40.2 tok/s | VRAM: 23516 MB | samples: 26
+    [30/30] ✓  391.623 J | 39.2 tok/s | VRAM: 23516 MB | samples: 26
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=512  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 44/81]  rep=3
+  fp16_b4_o512_caseA_rep3  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1330.871 J | 188.1 tok/s | VRAM: 23516 MB | samples: 64
+    [2/8] ✓  1297.033 J | 168.1 tok/s | VRAM: 23516 MB | samples: 62
+    [3/8] ✓  1688.195 J | 134.0 tok/s | VRAM: 23516 MB | samples: 78
+    [4/8] ✓  2416.445 J | 176.7 tok/s | VRAM: 23516 MB | samples: 108
+    [5/8] ✓  2530.875 J | 116.4 tok/s | VRAM: 23516 MB | samples: 106
+    [6/8] ✓  1710.092 J | 140.1 tok/s | VRAM: 23516 MB | samples: 78
+    [7/8] ✓  2207.329 J | 134.2 tok/s | VRAM: 23516 MB | samples: 95
+    [8/8] ✓  1828.394 J | 134.0 tok/s | VRAM: 23516 MB | samples: 81 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=512  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 45/81]  rep=3
+  fp16_b8_o512_caseA_rep3  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1427.503 J | 332.9 tok/s | VRAM: 23516 MB | samples: 67
+    [2/4] ✓  2523.358 J | 273.9 tok/s | VRAM: 23516 MB | samples: 107
+    [3/4] ✓  2527.471 J | 217.2 tok/s | VRAM: 23516 MB | samples: 106
+    [4/4] ✓  2215.984 J | 245.7 tok/s | VRAM: 23516 MB | samples: 95 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=256  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 46/81]  rep=1
+  fp16_b1_o256_caseA_rep1  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1178.791 J | 55.5 tok/s | VRAM: 23516 MB | samples: 55
+    [2/30] ✓  1160.080 J | 55.9 tok/s | VRAM: 23516 MB | samples: 52
+    [3/30] ✓  1147.277 J | 56.0 tok/s | VRAM: 23516 MB | samples: 53
+    [4/30] ✓  1247.471 J | 55.7 tok/s | VRAM: 23516 MB | samples: 56
+    [5/30] ✓  1236.223 J | 55.9 tok/s | VRAM: 23516 MB | samples: 56
+    [6/30] ✓  1289.244 J | 54.1 tok/s | VRAM: 23516 MB | samples: 58
+    [7/30] ✓  1255.253 J | 55.6 tok/s | VRAM: 23516 MB | samples: 56
+    [8/30] ✓  310.429 J | 54.1 tok/s | VRAM: 23516 MB | samples: 24
+    [9/30] ✓  766.629 J | 55.7 tok/s | VRAM: 23516 MB | samples: 40
+    [10/30] ✓  1222.478 J | 56.0 tok/s | VRAM: 23516 MB | samples: 56
+    [11/30] ✓  130.109 J | 52.6 tok/s | VRAM: 23516 MB | samples: 17
+    [12/30] ✓  1226.061 J | 54.4 tok/s | VRAM: 23516 MB | samples: 57
+    [13/30] ✓  1279.636 J | 53.0 tok/s | VRAM: 23516 MB | samples: 59
+    [14/30] ✓  1252.339 J | 54.6 tok/s | VRAM: 23516 MB | samples: 57
+    [15/30] ✓  1257.610 J | 56.0 tok/s | VRAM: 23516 MB | samples: 56
+    [16/30] ✓  1218.584 J | 56.1 tok/s | VRAM: 23516 MB | samples: 56
+    [17/30] ✓  1051.728 J | 56.0 tok/s | VRAM: 23516 MB | samples: 49
+    [18/30] ✓  534.620 J | 52.8 tok/s | VRAM: 23516 MB | samples: 33
+    [19/30] ✓  1283.804 J | 54.1 tok/s | VRAM: 23516 MB | samples: 58
+    [20/30] ✓  1277.794 J | 54.0 tok/s | VRAM: 23516 MB | samples: 58
+    [21/30] ✓  822.908 J | 53.9 tok/s | VRAM: 23516 MB | samples: 43
+    [22/30] ✓  679.764 J | 53.7 tok/s | VRAM: 23516 MB | samples: 37
+    [23/30] ✓  1258.947 J | 53.2 tok/s | VRAM: 23516 MB | samples: 58
+    [24/30] ✓  1238.926 J | 54.0 tok/s | VRAM: 23516 MB | samples: 58
+    [25/30] ✓  859.730 J | 53.1 tok/s | VRAM: 23516 MB | samples: 43
+    [26/30] ✓  1192.874 J | 54.2 tok/s | VRAM: 23516 MB | samples: 55
+    [27/30] ✓  1276.240 J | 54.0 tok/s | VRAM: 23516 MB | samples: 58
+    [28/30] ✓  1258.993 J | 53.4 tok/s | VRAM: 23516 MB | samples: 58
+    [29/30] ✓  375.548 J | 52.9 tok/s | VRAM: 23516 MB | samples: 26
+    [30/30] ✓  1244.317 J | 54.0 tok/s | VRAM: 23516 MB | samples: 58
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=256  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 47/81]  rep=3
+  fp16_b8_o256_caseC_rep3  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  2728.234 J | 175.8 tok/s | VRAM: 23516 MB | samples: 98
+    [2/4] ✓  2707.498 J | 189.9 tok/s | VRAM: 23516 MB | samples: 99
+    [3/4] ✓  2808.007 J | 208.4 tok/s | VRAM: 23516 MB | samples: 101
+    [4/4] ✓  2678.956 J | 159.0 tok/s | VRAM: 23516 MB | samples: 100 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=512  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 48/81]  rep=1
+  fp16_b1_o512_caseB_rep1  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1838.021 J | 53.2 tok/s | VRAM: 23516 MB | samples: 77
+    [2/30] ✓  1196.118 J | 53.2 tok/s | VRAM: 23516 MB | samples: 54
+    [3/30] ✓  605.825 J | 53.5 tok/s | VRAM: 23516 MB | samples: 34
+    [4/30] ✓  1025.221 J | 54.6 tok/s | VRAM: 23516 MB | samples: 48
+    [5/30] ✓  372.074 J | 52.4 tok/s | VRAM: 23516 MB | samples: 27
+    [6/30] ✓  743.344 J | 54.1 tok/s | VRAM: 23516 MB | samples: 38
+    [7/30] ✓  320.951 J | 49.9 tok/s | VRAM: 23516 MB | samples: 25
+    [8/30] ✓  509.120 J | 53.2 tok/s | VRAM: 23516 MB | samples: 31
+    [9/30] ✓  835.543 J | 54.2 tok/s | VRAM: 23516 MB | samples: 41
+    [10/30] ✓  411.155 J | 52.3 tok/s | VRAM: 23516 MB | samples: 27
+    [11/30] ✓  718.117 J | 53.5 tok/s | VRAM: 23516 MB | samples: 38
+    [12/30] ✓  805.342 J | 54.4 tok/s | VRAM: 23516 MB | samples: 42
+    [13/30] ✓  445.021 J | 53.0 tok/s | VRAM: 23516 MB | samples: 28
+    [14/30] ✓  541.412 J | 53.2 tok/s | VRAM: 23516 MB | samples: 32
+    [15/30] ✓  755.844 J | 54.1 tok/s | VRAM: 23516 MB | samples: 39
+    [16/30] ✓  551.074 J | 53.4 tok/s | VRAM: 23516 MB | samples: 32
+    [17/30] ✓  477.412 J | 52.9 tok/s | VRAM: 23516 MB | samples: 31
+    [18/30] ✓  784.447 J | 54.2 tok/s | VRAM: 23516 MB | samples: 41
+    [19/30] ✓  822.213 J | 54.4 tok/s | VRAM: 23516 MB | samples: 41
+    [20/30] ✓  809.368 J | 53.9 tok/s | VRAM: 23516 MB | samples: 41
+    [21/30] ✓  656.605 J | 53.7 tok/s | VRAM: 23516 MB | samples: 37
+    [22/30] ✓  497.176 J | 52.9 tok/s | VRAM: 23516 MB | samples: 30
+    [23/30] ✓  2642.456 J | 55.7 tok/s | VRAM: 23516 MB | samples: 102
+    [24/30] ✓  1466.635 J | 54.7 tok/s | VRAM: 23516 MB | samples: 64
+    [25/30] ✓  1217.161 J | 54.8 tok/s | VRAM: 23516 MB | samples: 54
+    [26/30] ✓  2638.533 J | 55.6 tok/s | VRAM: 23516 MB | samples: 102
+    [27/30] ✓  1211.200 J | 54.7 tok/s | VRAM: 23516 MB | samples: 55
+    [28/30] ✓  1138.242 J | 54.7 tok/s | VRAM: 23516 MB | samples: 52
+    [29/30] ✓  1299.719 J | 54.8 tok/s | VRAM: 23516 MB | samples: 57
+    [30/30] ✓  615.988 J | 53.8 tok/s | VRAM: 23516 MB | samples: 35
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=256  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 49/81]  rep=2
+  fp16_b8_o256_caseB_rep2  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1473.116 J | 213.5 tok/s | VRAM: 23516 MB | samples: 65
+    [2/4] ✓  1171.651 J | 264.8 tok/s | VRAM: 23516 MB | samples: 54
+    [3/4] ✓  1464.615 J | 255.7 tok/s | VRAM: 23516 MB | samples: 66
+    [4/4] ✓  1501.045 J | 330.5 tok/s | VRAM: 23516 MB | samples: 66 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=64  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 50/81]  rep=1
+  fp16_b8_o64_caseC_rep1  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1552.447 J | 112.9 tok/s | VRAM: 23516 MB | samples: 56
+    [2/4] ✓  1551.721 J | 113.2 tok/s | VRAM: 23516 MB | samples: 56
+    [3/4] ✓  1566.585 J | 113.0 tok/s | VRAM: 23906 MB | samples: 56
+    [4/4] ✓  1579.338 J | 111.3 tok/s | VRAM: 23516 MB | samples: 56 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=256  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 51/81]  rep=2
+  fp16_b1_o256_caseA_rep2  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1214.954 J | 54.0 tok/s | VRAM: 23516 MB | samples: 56
+    [2/30] ✓  1163.748 J | 54.0 tok/s | VRAM: 23516 MB | samples: 54
+    [3/30] ✓  1165.237 J | 53.8 tok/s | VRAM: 23516 MB | samples: 54
+    [4/30] ✓  1267.026 J | 54.3 tok/s | VRAM: 23516 MB | samples: 58
+    [5/30] ✓  1272.960 J | 54.1 tok/s | VRAM: 23516 MB | samples: 58
+    [6/30] ✓  1283.392 J | 53.7 tok/s | VRAM: 23516 MB | samples: 58
+    [7/30] ✓  1240.315 J | 54.2 tok/s | VRAM: 23516 MB | samples: 57
+    [8/30] ✓  329.153 J | 52.7 tok/s | VRAM: 23516 MB | samples: 25
+    [9/30] ✓  843.769 J | 51.7 tok/s | VRAM: 23516 MB | samples: 43
+    [10/30] ✓  1275.790 J | 54.1 tok/s | VRAM: 23516 MB | samples: 58
+    [11/30] ✓  121.509 J | 51.2 tok/s | VRAM: 23516 MB | samples: 17
+    [12/30] ✓  1297.984 J | 53.9 tok/s | VRAM: 23516 MB | samples: 58
+    [13/30] ✓  1272.341 J | 53.8 tok/s | VRAM: 23516 MB | samples: 58
+    [14/30] ✓  1243.108 J | 54.0 tok/s | VRAM: 23516 MB | samples: 58
+    [15/30] ✓  1271.626 J | 53.7 tok/s | VRAM: 23516 MB | samples: 58
+    [16/30] ✓  1279.261 J | 53.9 tok/s | VRAM: 23516 MB | samples: 58
+    [17/30] ✓  1023.632 J | 54.0 tok/s | VRAM: 23516 MB | samples: 50
+    [18/30] ✓  502.577 J | 53.5 tok/s | VRAM: 23516 MB | samples: 32
+    [19/30] ✓  1263.685 J | 54.1 tok/s | VRAM: 23516 MB | samples: 58
+    [20/30] ✓  1255.311 J | 53.8 tok/s | VRAM: 23516 MB | samples: 58
+    [21/30] ✓  838.570 J | 53.7 tok/s | VRAM: 23516 MB | samples: 43
+    [22/30] ✓  664.435 J | 53.2 tok/s | VRAM: 23516 MB | samples: 37
+    [23/30] ✓  1292.677 J | 54.1 tok/s | VRAM: 23516 MB | samples: 58
+    [24/30] ✓  1291.231 J | 54.1 tok/s | VRAM: 23516 MB | samples: 58
+    [25/30] ✓  821.875 J | 53.5 tok/s | VRAM: 23516 MB | samples: 43
+    [26/30] ✓  1216.868 J | 54.0 tok/s | VRAM: 23516 MB | samples: 55
+    [27/30] ✓  1286.087 J | 54.0 tok/s | VRAM: 23516 MB | samples: 58
+    [28/30] ✓  1298.563 J | 54.0 tok/s | VRAM: 23516 MB | samples: 58
+    [29/30] ✓  354.718 J | 53.0 tok/s | VRAM: 23516 MB | samples: 26
+    [30/30] ✓  1277.487 J | 53.6 tok/s | VRAM: 23516 MB | samples: 58
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=512  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 52/81]  rep=1
+  fp16_b4_o512_caseB_rep1  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1862.925 J | 128.6 tok/s | VRAM: 23516 MB | samples: 82
+    [2/8] ✓  845.938 J | 123.4 tok/s | VRAM: 23516 MB | samples: 45
+    [3/8] ✓  882.285 J | 153.2 tok/s | VRAM: 23516 MB | samples: 47
+    [4/8] ✓  826.693 J | 148.1 tok/s | VRAM: 23516 MB | samples: 43
+    [5/8] ✓  873.050 J | 170.7 tok/s | VRAM: 23516 MB | samples: 46
+    [6/8] ✓  2613.153 J | 108.3 tok/s | VRAM: 23516 MB | samples: 107
+    [7/8] ✓  2625.517 J | 126.1 tok/s | VRAM: 23516 MB | samples: 108
+    [8/8] ✓  1790.924 J | 141.7 tok/s | VRAM: 23516 MB | samples: 79 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=64  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 53/81]  rep=1
+  fp16_b1_o64_caseA_rep1  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  266.603 J | 54.2 tok/s | VRAM: 23516 MB | samples: 22
+    [2/30] ✓  259.954 J | 53.5 tok/s | VRAM: 23516 MB | samples: 22
+    [3/30] ✓  227.385 J | 54.5 tok/s | VRAM: 23516 MB | samples: 22
+    [4/30] ✓  274.284 J | 54.7 tok/s | VRAM: 23516 MB | samples: 22
+    [5/30] ✓  230.598 J | 54.6 tok/s | VRAM: 23516 MB | samples: 22
+    [6/30] ✓  262.312 J | 54.0 tok/s | VRAM: 23516 MB | samples: 22
+    [7/30] ✓  216.316 J | 54.5 tok/s | VRAM: 23516 MB | samples: 22
+    [8/30] ✓  259.728 J | 54.5 tok/s | VRAM: 23516 MB | samples: 22
+    [9/30] ✓  221.993 J | 53.4 tok/s | VRAM: 23516 MB | samples: 22
+    [10/30] ✓  245.029 J | 54.0 tok/s | VRAM: 23516 MB | samples: 22
+    [11/30] ✓  121.099 J | 52.8 tok/s | VRAM: 23516 MB | samples: 17
+    [12/30] ✓  227.579 J | 53.6 tok/s | VRAM: 23516 MB | samples: 22
+    [13/30] ✓  280.052 J | 52.0 tok/s | VRAM: 23516 MB | samples: 23
+    [14/30] ✓  262.449 J | 49.9 tok/s | VRAM: 23516 MB | samples: 23
+    [15/30] ✓  235.135 J | 51.9 tok/s | VRAM: 23516 MB | samples: 23
+    [16/30] ✓  273.596 J | 51.8 tok/s | VRAM: 23516 MB | samples: 23
+    [17/30] ✓  243.797 J | 54.1 tok/s | VRAM: 23516 MB | samples: 22
+    [18/30] ✓  252.394 J | 54.3 tok/s | VRAM: 23516 MB | samples: 22
+    [19/30] ✓  227.081 J | 53.7 tok/s | VRAM: 23516 MB | samples: 22
+    [20/30] ✓  261.467 J | 54.0 tok/s | VRAM: 23516 MB | samples: 22
+    [21/30] ✓  228.021 J | 54.3 tok/s | VRAM: 23516 MB | samples: 22
+    [22/30] ✓  253.740 J | 54.4 tok/s | VRAM: 23516 MB | samples: 22
+    [23/30] ✓  209.369 J | 54.1 tok/s | VRAM: 23516 MB | samples: 22
+    [24/30] ✓  262.896 J | 54.3 tok/s | VRAM: 23516 MB | samples: 22
+    [25/30] ✓  238.038 J | 51.3 tok/s | VRAM: 23516 MB | samples: 23
+    [26/30] ✓  272.430 J | 52.1 tok/s | VRAM: 23516 MB | samples: 23
+    [27/30] ✓  226.703 J | 54.4 tok/s | VRAM: 23516 MB | samples: 22
+    [28/30] ✓  241.952 J | 54.2 tok/s | VRAM: 23516 MB | samples: 22
+    [29/30] ✓  226.892 J | 54.1 tok/s | VRAM: 23516 MB | samples: 22
+    [30/30] ✓  253.018 J | 54.7 tok/s | VRAM: 23516 MB | samples: 22
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=512  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 54/81]  rep=1
+  fp16_b4_o512_caseC_rep1  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  3214.729 J | 115.8 tok/s | VRAM: 23516 MB | samples: 130
+    [2/8] ✓  1785.755 J | 107.1 tok/s | VRAM: 23516 MB | samples: 73
+    [3/8] ✓  3256.111 J | 132.4 tok/s | VRAM: 23516 MB | samples: 130
+    [4/8] ✓  3231.084 J | 95.3 tok/s | VRAM: 23516 MB | samples: 127
+    [5/8] ✓  3332.793 J | 135.5 tok/s | VRAM: 23516 MB | samples: 131
+    [6/8] ✓  3315.183 J | 148.7 tok/s | VRAM: 23516 MB | samples: 133
+    [7/8] ✓  3293.334 J | 97.9 tok/s | VRAM: 23516 MB | samples: 128
+    [8/8] ✓  3332.030 J | 75.8 tok/s | VRAM: 23516 MB | samples: 125 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=512  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 55/81]  rep=1
+  fp16_b8_o512_caseB_rep1  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1978.364 J | 170.7 tok/s | VRAM: 23516 MB | samples: 85
+    [2/4] ✓  1208.764 J | 253.5 tok/s | VRAM: 23516 MB | samples: 56
+    [3/4] ✓  2791.913 J | 162.1 tok/s | VRAM: 23516 MB | samples: 115
+    [4/4] ✓  2846.787 J | 208.1 tok/s | VRAM: 23516 MB | samples: 116 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=256  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 56/81]  rep=2
+  fp16_b4_o256_caseA_rep2  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1196.109 J | 196.4 tok/s | VRAM: 23516 MB | samples: 60
+    [2/8] ✓  1187.166 J | 169.8 tok/s | VRAM: 23516 MB | samples: 60
+    [3/8] ✓  1179.777 J | 144.9 tok/s | VRAM: 23516 MB | samples: 60
+    [4/8] ✓  1187.807 J | 214.5 tok/s | VRAM: 23516 MB | samples: 58
+    [5/8] ✓  1188.583 J | 177.1 tok/s | VRAM: 23516 MB | samples: 58
+    [6/8] ✓  1181.732 J | 173.9 tok/s | VRAM: 23516 MB | samples: 58
+    [7/8] ✓  1159.879 J | 196.2 tok/s | VRAM: 23516 MB | samples: 58
+    [8/8] ✓  1189.129 J | 171.6 tok/s | VRAM: 23516 MB | samples: 58 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=512  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 57/81]  rep=2
+  fp16_b8_o512_caseB_rep2  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1970.885 J | 177.2 tok/s | VRAM: 23516 MB | samples: 82
+    [2/4] ✓  1173.946 J | 265.3 tok/s | VRAM: 23516 MB | samples: 54
+    [3/4] ✓  2803.110 J | 169.0 tok/s | VRAM: 23516 MB | samples: 111
+    [4/4] ✓  2821.793 J | 215.5 tok/s | VRAM: 23516 MB | samples: 112 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=512  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 58/81]  rep=3
+  fp16_b8_o512_caseC_rep3  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  3968.442 J | 153.9 tok/s | VRAM: 23516 MB | samples: 144
+    [2/4] ✓  4211.057 J | 193.3 tok/s | VRAM: 23516 MB | samples: 149
+    [3/4] ✓  4343.946 J | 241.0 tok/s | VRAM: 23516 MB | samples: 154
+    [4/4] ✓  3994.329 J | 150.9 tok/s | VRAM: 23516 MB | samples: 144 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=512  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 59/81]  rep=3
+  fp16_b1_o512_caseC_rep3  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  2846.957 J | 52.9 tok/s | VRAM: 23516 MB | samples: 107
+    [2/30] ✓  859.224 J | 47.8 tok/s | VRAM: 23516 MB | samples: 41
+    [3/30] ✓  1169.731 J | 50.0 tok/s | VRAM: 23516 MB | samples: 53
+    [4/30] ✓  2839.611 J | 53.0 tok/s | VRAM: 23516 MB | samples: 107
+    [5/30] ✓  1075.095 J | 49.6 tok/s | VRAM: 23516 MB | samples: 49
+    [6/30] ✓  899.825 J | 48.7 tok/s | VRAM: 23516 MB | samples: 44
+    [7/30] ✓  500.815 J | 41.5 tok/s | VRAM: 23516 MB | samples: 30
+    [8/30] ✓  1352.317 J | 48.2 tok/s | VRAM: 23516 MB | samples: 59
+    [9/30] ✓  2816.865 J | 52.5 tok/s | VRAM: 23516 MB | samples: 108
+    [10/30] ✓  1115.332 J | 49.4 tok/s | VRAM: 23516 MB | samples: 50
+    [11/30] ✓  2681.275 J | 50.8 tok/s | VRAM: 23516 MB | samples: 106
+    [12/30] ✓  2144.537 J | 52.2 tok/s | VRAM: 23516 MB | samples: 86
+    [13/30] ✓  467.856 J | 43.0 tok/s | VRAM: 23516 MB | samples: 29
+    [14/30] ✓  793.489 J | 47.3 tok/s | VRAM: 23516 MB | samples: 39
+    [15/30] ✓  2853.498 J | 52.7 tok/s | VRAM: 23516 MB | samples: 108
+    [16/30] ✓  2141.062 J | 52.3 tok/s | VRAM: 23516 MB | samples: 84
+    [17/30] ✓  2813.248 J | 52.7 tok/s | VRAM: 23516 MB | samples: 107
+    [18/30] ✓  2768.222 J | 53.0 tok/s | VRAM: 23516 MB | samples: 107
+    [19/30] ✓  532.884 J | 44.1 tok/s | VRAM: 23516 MB | samples: 31
+    [20/30] ✓  2836.808 J | 52.8 tok/s | VRAM: 23516 MB | samples: 107
+    [21/30] ✓  2783.803 J | 52.9 tok/s | VRAM: 23516 MB | samples: 107
+    [22/30] ✓  1656.417 J | 51.3 tok/s | VRAM: 23516 MB | samples: 68
+    [23/30] ✓  2795.808 J | 52.8 tok/s | VRAM: 23516 MB | samples: 107
+    [24/30] ✓  2829.416 J | 52.7 tok/s | VRAM: 23516 MB | samples: 108
+    [25/30] ✓  1102.871 J | 49.8 tok/s | VRAM: 23516 MB | samples: 50
+    [26/30] ✓  1912.876 J | 51.8 tok/s | VRAM: 23516 MB | samples: 77
+    [27/30] ✓  550.256 J | 45.6 tok/s | VRAM: 23516 MB | samples: 33
+    [28/30] ✓  2817.004 J | 52.9 tok/s | VRAM: 23516 MB | samples: 107
+    [29/30] ✓  892.000 J | 48.1 tok/s | VRAM: 23516 MB | samples: 42
+    [30/30] ✓  365.305 J | 40.6 tok/s | VRAM: 23516 MB | samples: 25
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=64  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 60/81]  rep=2
+  fp16_b4_o64_caseC_rep2  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  894.676 J | 91.0 tok/s | VRAM: 23516 MB | samples: 39
+    [2/8] ✓  858.413 J | 91.2 tok/s | VRAM: 23516 MB | samples: 39
+    [3/8] ✓  819.599 J | 91.8 tok/s | VRAM: 23516 MB | samples: 38
+    [4/8] ✓  862.435 J | 91.3 tok/s | VRAM: 23516 MB | samples: 38
+    [5/8] ✓  868.286 J | 90.4 tok/s | VRAM: 23516 MB | samples: 39
+    [6/8] ✓  842.222 J | 91.9 tok/s | VRAM: 23516 MB | samples: 38
+    [7/8] ✓  794.789 J | 91.4 tok/s | VRAM: 23516 MB | samples: 38
+    [8/8] ✓  862.203 J | 90.0 tok/s | VRAM: 23516 MB | samples: 38 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=256  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 61/81]  rep=3
+  fp16_b4_o256_caseC_rep3  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1878.466 J | 133.1 tok/s | VRAM: 23516 MB | samples: 76
+    [2/8] ✓  1713.886 J | 110.3 tok/s | VRAM: 23516 MB | samples: 71
+    [3/8] ✓  1863.741 J | 146.4 tok/s | VRAM: 23516 MB | samples: 76
+    [4/8] ✓  1858.852 J | 112.4 tok/s | VRAM: 23516 MB | samples: 75
+    [5/8] ✓  1893.378 J | 131.4 tok/s | VRAM: 23516 MB | samples: 76
+    [6/8] ✓  1927.378 J | 154.3 tok/s | VRAM: 23516 MB | samples: 77
+    [7/8] ✓  1841.765 J | 123.9 tok/s | VRAM: 23516 MB | samples: 76
+    [8/8] ✓  1911.447 J | 91.9 tok/s | VRAM: 23516 MB | samples: 77 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=256  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 62/81]  rep=3
+  fp16_b4_o256_caseB_rep3  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1277.893 J | 160.0 tok/s | VRAM: 23516 MB | samples: 62
+    [2/8] ✓  836.069 J | 128.0 tok/s | VRAM: 23516 MB | samples: 44
+    [3/8] ✓  859.058 J | 157.9 tok/s | VRAM: 23516 MB | samples: 46
+    [4/8] ✓  806.228 J | 148.4 tok/s | VRAM: 23516 MB | samples: 43
+    [5/8] ✓  860.067 J | 172.5 tok/s | VRAM: 23516 MB | samples: 46
+    [6/8] ✓  1282.435 J | 146.3 tok/s | VRAM: 23516 MB | samples: 62
+    [7/8] ✓  1300.592 J | 188.6 tok/s | VRAM: 23516 MB | samples: 62
+    [8/8] ✓  1278.500 J | 170.4 tok/s | VRAM: 23516 MB | samples: 62 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=512  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 63/81]  rep=1
+  fp16_b4_o512_caseA_rep1  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  1342.939 J | 188.5 tok/s | VRAM: 23516 MB | samples: 64
+    [2/8] ✓  1253.999 J | 168.0 tok/s | VRAM: 23516 MB | samples: 62
+    [3/8] ✓  1674.310 J | 135.5 tok/s | VRAM: 23516 MB | samples: 77
+    [4/8] ✓  2387.402 J | 182.6 tok/s | VRAM: 23516 MB | samples: 105
+    [5/8] ✓  2465.137 J | 119.4 tok/s | VRAM: 23516 MB | samples: 103
+    [6/8] ✓  1703.284 J | 144.5 tok/s | VRAM: 23516 MB | samples: 76
+    [7/8] ✓  2203.353 J | 138.2 tok/s | VRAM: 23516 MB | samples: 93
+    [8/8] ✓  1817.532 J | 134.9 tok/s | VRAM: 23516 MB | samples: 80 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=512  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 64/81]  rep=2
+  fp16_b1_o512_caseC_rep2  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  2854.861 J | 52.9 tok/s | VRAM: 23516 MB | samples: 107
+    [2/30] ✓  864.407 J | 47.8 tok/s | VRAM: 23516 MB | samples: 41
+    [3/30] ✓  1192.485 J | 50.2 tok/s | VRAM: 23516 MB | samples: 53
+    [4/30] ✓  2814.208 J | 52.9 tok/s | VRAM: 23516 MB | samples: 107
+    [5/30] ✓  1076.745 J | 49.3 tok/s | VRAM: 23516 MB | samples: 49
+    [6/30] ✓  917.167 J | 48.5 tok/s | VRAM: 23516 MB | samples: 44
+    [7/30] ✓  448.803 J | 43.2 tok/s | VRAM: 23516 MB | samples: 29
+    [8/30] ✓  1340.618 J | 50.5 tok/s | VRAM: 23516 MB | samples: 57
+    [9/30] ✓  2800.176 J | 52.8 tok/s | VRAM: 23516 MB | samples: 107
+    [10/30] ✓  1111.263 J | 49.7 tok/s | VRAM: 23516 MB | samples: 50
+    [11/30] ✓  2624.774 J | 52.6 tok/s | VRAM: 23516 MB | samples: 103
+    [12/30] ✓  2176.686 J | 52.0 tok/s | VRAM: 23516 MB | samples: 86
+    [13/30] ✓  476.371 J | 42.9 tok/s | VRAM: 23516 MB | samples: 29
+    [14/30] ✓  783.206 J | 47.6 tok/s | VRAM: 23516 MB | samples: 39
+    [15/30] ✓  2827.262 J | 52.9 tok/s | VRAM: 23516 MB | samples: 107
+    [16/30] ✓  2098.566 J | 51.4 tok/s | VRAM: 23516 MB | samples: 85
+    [17/30] ✓  2798.371 J | 52.6 tok/s | VRAM: 23516 MB | samples: 108
+    [18/30] ✓  2798.398 J | 52.8 tok/s | VRAM: 23516 MB | samples: 107
+    [19/30] ✓  534.653 J | 44.4 tok/s | VRAM: 23516 MB | samples: 31
+    [20/30] ✓  2829.751 J | 52.6 tok/s | VRAM: 23516 MB | samples: 108
+    [21/30] ✓  2849.871 J | 52.7 tok/s | VRAM: 23516 MB | samples: 108
+    [22/30] ✓  1626.694 J | 51.5 tok/s | VRAM: 23516 MB | samples: 67
+    [23/30] ✓  2798.891 J | 52.8 tok/s | VRAM: 23516 MB | samples: 107
+    [24/30] ✓  2810.324 J | 52.8 tok/s | VRAM: 23516 MB | samples: 107
+    [25/30] ✓  1082.564 J | 49.0 tok/s | VRAM: 23516 MB | samples: 50
+    [26/30] ✓  1910.791 J | 51.9 tok/s | VRAM: 23516 MB | samples: 77
+    [27/30] ✓  600.510 J | 45.4 tok/s | VRAM: 23516 MB | samples: 33
+    [28/30] ✓  2828.108 J | 52.6 tok/s | VRAM: 23516 MB | samples: 108
+    [29/30] ✓  840.974 J | 48.1 tok/s | VRAM: 23516 MB | samples: 42
+    [30/30] ✓  360.663 J | 39.9 tok/s | VRAM: 23516 MB | samples: 25
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=512  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 65/81]  rep=2
+  fp16_b8_o512_caseA_rep2  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1418.699 J | 339.3 tok/s | VRAM: 23516 MB | samples: 66
+    [2/4] ✓  2507.073 J | 273.3 tok/s | VRAM: 23516 MB | samples: 107
+    [3/4] ✓  2553.620 J | 217.5 tok/s | VRAM: 23906 MB | samples: 104
+    [4/4] ✓  2268.232 J | 235.1 tok/s | VRAM: 23516 MB | samples: 99 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=256  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 66/81]  rep=2
+  fp16_b8_o256_caseA_rep2  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1287.223 J | 365.9 tok/s | VRAM: 23516 MB | samples: 60
+    [2/4] ✓  1271.814 J | 352.1 tok/s | VRAM: 23516 MB | samples: 60
+    [3/4] ✓  1253.702 J | 342.5 tok/s | VRAM: 23516 MB | samples: 60
+    [4/4] ✓  1247.542 J | 350.5 tok/s | VRAM: 23516 MB | samples: 60 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=64  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 67/81]  rep=3
+  fp16_b4_o64_caseA_rep3  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  271.157 J | 198.1 tok/s | VRAM: 23516 MB | samples: 23
+    [2/8] ✓  229.217 J | 200.9 tok/s | VRAM: 23516 MB | samples: 23
+    [3/8] ✓  249.503 J | 179.3 tok/s | VRAM: 23516 MB | samples: 23
+    [4/8] ✓  261.107 J | 200.9 tok/s | VRAM: 23516 MB | samples: 23
+    [5/8] ✓  271.830 J | 201.6 tok/s | VRAM: 23516 MB | samples: 23
+    [6/8] ✓  265.026 J | 199.9 tok/s | VRAM: 23516 MB | samples: 23
+    [7/8] ✓  247.066 J | 199.8 tok/s | VRAM: 23516 MB | samples: 23
+    [8/8] ✓  273.364 J | 199.7 tok/s | VRAM: 23516 MB | samples: 23 [padded]
+
+[ 68/81]  rep=1
+  fp16_b4_o64_caseA_rep1  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  271.391 J | 199.7 tok/s | VRAM: 23516 MB | samples: 23
+    [2/8] ✓  247.394 J | 199.5 tok/s | VRAM: 23516 MB | samples: 23
+    [3/8] ✓  271.648 J | 176.3 tok/s | VRAM: 23516 MB | samples: 23
+    [4/8] ✓  274.890 J | 199.9 tok/s | VRAM: 23516 MB | samples: 23
+    [5/8] ✓  247.144 J | 200.0 tok/s | VRAM: 23516 MB | samples: 23
+    [6/8] ✓  254.913 J | 198.0 tok/s | VRAM: 23516 MB | samples: 23
+    [7/8] ✓  273.947 J | 198.1 tok/s | VRAM: 23516 MB | samples: 23
+    [8/8] ✓  249.237 J | 199.2 tok/s | VRAM: 23516 MB | samples: 23 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=512  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 69/81]  rep=1
+  fp16_b8_o512_caseA_rep1  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  1426.075 J | 334.5 tok/s | VRAM: 23516 MB | samples: 67
+    [2/4] ✓  2511.313 J | 274.0 tok/s | VRAM: 23516 MB | samples: 107
+    [3/4] ✓  2557.895 J | 217.8 tok/s | VRAM: 23516 MB | samples: 106
+    [4/4] ✓  2230.147 J | 239.0 tok/s | VRAM: 23516 MB | samples: 97 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=512  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 70/81]  rep=2
+  fp16_b8_o512_caseC_rep2  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  4006.330 J | 148.1 tok/s | VRAM: 23516 MB | samples: 149
+    [2/4] ✓  4215.131 J | 187.0 tok/s | VRAM: 23516 MB | samples: 153
+    [3/4] ✓  4413.269 J | 230.9 tok/s | VRAM: 23606 MB | samples: 158
+    [4/4] ✓  3997.115 J | 151.5 tok/s | VRAM: 23516 MB | samples: 144 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=64  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 71/81]  rep=2
+  fp16_b1_o64_caseB_rep2  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  254.430 J | 50.2 tok/s | VRAM: 23516 MB | samples: 23
+    [2/30] ✓  267.697 J | 50.6 tok/s | VRAM: 23516 MB | samples: 23
+    [3/30] ✓  278.053 J | 50.6 tok/s | VRAM: 23516 MB | samples: 23
+    [4/30] ✓  241.982 J | 51.0 tok/s | VRAM: 23516 MB | samples: 23
+    [5/30] ✓  280.086 J | 51.1 tok/s | VRAM: 23516 MB | samples: 23
+    [6/30] ✓  256.599 J | 51.2 tok/s | VRAM: 23516 MB | samples: 23
+    [7/30] ✓  294.959 J | 51.1 tok/s | VRAM: 23516 MB | samples: 23
+    [8/30] ✓  294.104 J | 50.8 tok/s | VRAM: 23516 MB | samples: 23
+    [9/30] ✓  262.664 J | 50.5 tok/s | VRAM: 23516 MB | samples: 23
+    [10/30] ✓  278.748 J | 51.1 tok/s | VRAM: 23516 MB | samples: 23
+    [11/30] ✓  295.505 J | 50.9 tok/s | VRAM: 23516 MB | samples: 23
+    [12/30] ✓  262.825 J | 51.3 tok/s | VRAM: 23516 MB | samples: 23
+    [13/30] ✓  290.091 J | 46.6 tok/s | VRAM: 23516 MB | samples: 24
+    [14/30] ✓  283.593 J | 50.9 tok/s | VRAM: 23516 MB | samples: 23
+    [15/30] ✓  286.256 J | 51.1 tok/s | VRAM: 23516 MB | samples: 23
+    [16/30] ✓  289.847 J | 50.4 tok/s | VRAM: 23516 MB | samples: 23
+    [17/30] ✓  285.762 J | 50.5 tok/s | VRAM: 23516 MB | samples: 23
+    [18/30] ✓  262.919 J | 51.0 tok/s | VRAM: 23516 MB | samples: 23
+    [19/30] ✓  292.810 J | 51.1 tok/s | VRAM: 23516 MB | samples: 23
+    [20/30] ✓  289.998 J | 51.0 tok/s | VRAM: 23516 MB | samples: 23
+    [21/30] ✓  264.456 J | 51.0 tok/s | VRAM: 23516 MB | samples: 23
+    [22/30] ✓  272.660 J | 50.6 tok/s | VRAM: 23516 MB | samples: 23
+    [23/30] ✓  295.204 J | 51.0 tok/s | VRAM: 23516 MB | samples: 23
+    [24/30] ✓  265.447 J | 50.7 tok/s | VRAM: 23516 MB | samples: 23
+    [25/30] ✓  274.590 J | 50.9 tok/s | VRAM: 23516 MB | samples: 23
+    [26/30] ✓  273.425 J | 51.1 tok/s | VRAM: 23516 MB | samples: 23
+    [27/30] ✓  265.911 J | 51.1 tok/s | VRAM: 23516 MB | samples: 23
+    [28/30] ✓  274.547 J | 50.2 tok/s | VRAM: 23516 MB | samples: 23
+    [29/30] ✓  274.146 J | 50.8 tok/s | VRAM: 23516 MB | samples: 23
+    [30/30] ✓  266.211 J | 50.7 tok/s | VRAM: 23516 MB | samples: 23
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=64  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 72/81]  rep=1
+  fp16_b8_o64_caseA_rep1  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  331.481 J | 366.4 tok/s | VRAM: 23516 MB | samples: 24
+    [2/4] ✓  327.580 J | 343.5 tok/s | VRAM: 23516 MB | samples: 25
+    [3/4] ✓  319.536 J | 364.1 tok/s | VRAM: 23516 MB | samples: 25
+    [4/4] ✓  295.631 J | 366.3 tok/s | VRAM: 23516 MB | samples: 24 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=256  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 73/81]  rep=3
+  fp16_b1_o256_caseA_rep3  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1189.106 J | 55.8 tok/s | VRAM: 23516 MB | samples: 55
+    [2/30] ✓  1144.122 J | 55.8 tok/s | VRAM: 23516 MB | samples: 52
+    [3/30] ✓  1169.267 J | 56.0 tok/s | VRAM: 23516 MB | samples: 53
+    [4/30] ✓  1259.682 J | 55.7 tok/s | VRAM: 23516 MB | samples: 56
+    [5/30] ✓  1250.815 J | 56.0 tok/s | VRAM: 23516 MB | samples: 56
+    [6/30] ✓  1262.916 J | 56.0 tok/s | VRAM: 23516 MB | samples: 56
+    [7/30] ✓  1265.131 J | 56.3 tok/s | VRAM: 23516 MB | samples: 56
+    [8/30] ✓  278.171 J | 54.7 tok/s | VRAM: 23516 MB | samples: 24
+    [9/30] ✓  799.360 J | 55.7 tok/s | VRAM: 23516 MB | samples: 40
+    [10/30] ✓  1224.668 J | 56.0 tok/s | VRAM: 23516 MB | samples: 56
+    [11/30] ✓  122.682 J | 51.3 tok/s | VRAM: 23516 MB | samples: 17
+    [12/30] ✓  1269.155 J | 55.9 tok/s | VRAM: 23516 MB | samples: 56
+    [13/30] ✓  1226.443 J | 56.0 tok/s | VRAM: 23516 MB | samples: 56
+    [14/30] ✓  1231.460 J | 56.0 tok/s | VRAM: 23516 MB | samples: 56
+    [15/30] ✓  1240.725 J | 55.9 tok/s | VRAM: 23516 MB | samples: 56
+    [16/30] ✓  1278.592 J | 55.6 tok/s | VRAM: 23516 MB | samples: 57
+    [17/30] ✓  1025.257 J | 55.9 tok/s | VRAM: 23516 MB | samples: 49
+    [18/30] ✓  501.131 J | 55.1 tok/s | VRAM: 23516 MB | samples: 32
+    [19/30] ✓  1256.588 J | 56.1 tok/s | VRAM: 23516 MB | samples: 56
+    [20/30] ✓  1255.448 J | 56.0 tok/s | VRAM: 23516 MB | samples: 56
+    [21/30] ✓  788.537 J | 54.2 tok/s | VRAM: 23516 MB | samples: 42
+    [22/30] ✓  662.463 J | 55.1 tok/s | VRAM: 23516 MB | samples: 36
+    [23/30] ✓  1254.330 J | 56.2 tok/s | VRAM: 23516 MB | samples: 56
+    [24/30] ✓  1227.770 J | 56.1 tok/s | VRAM: 23516 MB | samples: 56
+    [25/30] ✓  819.343 J | 55.8 tok/s | VRAM: 23516 MB | samples: 42
+    [26/30] ✓  1186.623 J | 56.2 tok/s | VRAM: 23516 MB | samples: 53
+    [27/30] ✓  1243.366 J | 55.8 tok/s | VRAM: 23516 MB | samples: 56
+    [28/30] ✓  1262.529 J | 56.3 tok/s | VRAM: 23516 MB | samples: 56
+    [29/30] ✓  364.290 J | 54.9 tok/s | VRAM: 23516 MB | samples: 25
+    [30/30] ✓  1229.884 J | 56.2 tok/s | VRAM: 23516 MB | samples: 56
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=8  output=256  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 74/81]  rep=1
+  fp16_b8_o256_caseC_rep1  (4 batch calls × 8 concurrent requests each)
+    [1/4] ✓  2659.663 J | 181.7 tok/s | VRAM: 23516 MB | samples: 95
+    [2/4] ✓  2696.180 J | 196.4 tok/s | VRAM: 23516 MB | samples: 97
+    [3/4] ✓  2789.328 J | 213.5 tok/s | VRAM: 23516 MB | samples: 99
+    [4/4] ✓  2647.378 J | 168.6 tok/s | VRAM: 23516 MB | samples: 95 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=256  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 75/81]  rep=2
+  fp16_b1_o256_caseB_rep2  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1267.705 J | 55.1 tok/s | VRAM: 23516 MB | samples: 57
+    [2/30] ✓  1154.141 J | 54.7 tok/s | VRAM: 23516 MB | samples: 53
+    [3/30] ✓  590.164 J | 53.6 tok/s | VRAM: 23516 MB | samples: 34
+    [4/30] ✓  991.749 J | 54.6 tok/s | VRAM: 23516 MB | samples: 48
+    [5/30] ✓  406.924 J | 52.1 tok/s | VRAM: 23516 MB | samples: 27
+    [6/30] ✓  710.342 J | 54.2 tok/s | VRAM: 23516 MB | samples: 38
+    [7/30] ✓  308.784 J | 51.4 tok/s | VRAM: 23516 MB | samples: 24
+    [8/30] ✓  518.695 J | 52.7 tok/s | VRAM: 23516 MB | samples: 31
+    [9/30] ✓  835.743 J | 54.0 tok/s | VRAM: 23516 MB | samples: 41
+    [10/30] ✓  376.179 J | 51.8 tok/s | VRAM: 23516 MB | samples: 27
+    [11/30] ✓  703.688 J | 54.0 tok/s | VRAM: 23516 MB | samples: 37
+    [12/30] ✓  803.016 J | 53.9 tok/s | VRAM: 23516 MB | samples: 42
+    [13/30] ✓  446.937 J | 52.9 tok/s | VRAM: 23516 MB | samples: 28
+    [14/30] ✓  529.331 J | 53.2 tok/s | VRAM: 23516 MB | samples: 32
+    [15/30] ✓  752.300 J | 54.1 tok/s | VRAM: 23516 MB | samples: 39
+    [16/30] ✓  535.253 J | 52.5 tok/s | VRAM: 23516 MB | samples: 32
+    [17/30] ✓  492.884 J | 52.9 tok/s | VRAM: 23516 MB | samples: 31
+    [18/30] ✓  786.779 J | 54.3 tok/s | VRAM: 23516 MB | samples: 41
+    [19/30] ✓  799.885 J | 54.2 tok/s | VRAM: 23516 MB | samples: 41
+    [20/30] ✓  826.338 J | 53.9 tok/s | VRAM: 23516 MB | samples: 41
+    [21/30] ✓  635.088 J | 53.8 tok/s | VRAM: 23516 MB | samples: 36
+    [22/30] ✓  471.984 J | 53.1 tok/s | VRAM: 23516 MB | samples: 30
+    [23/30] ✓  1262.968 J | 55.0 tok/s | VRAM: 23516 MB | samples: 57
+    [24/30] ✓  1291.345 J | 54.9 tok/s | VRAM: 23516 MB | samples: 57
+    [25/30] ✓  1175.298 J | 55.0 tok/s | VRAM: 23516 MB | samples: 54
+    [26/30] ✓  1249.541 J | 55.1 tok/s | VRAM: 23516 MB | samples: 57
+    [27/30] ✓  1226.080 J | 54.7 tok/s | VRAM: 23516 MB | samples: 55
+    [28/30] ✓  1145.016 J | 54.9 tok/s | VRAM: 23516 MB | samples: 52
+    [29/30] ✓  1297.053 J | 54.8 tok/s | VRAM: 23516 MB | samples: 57
+    [30/30] ✓  628.405 J | 53.8 tok/s | VRAM: 23516 MB | samples: 35
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=256  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 76/81]  rep=3
+  fp16_b1_o256_caseC_rep3  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1426.398 J | 50.8 tok/s | VRAM: 23516 MB | samples: 61
+    [2/30] ✓  804.226 J | 48.1 tok/s | VRAM: 23516 MB | samples: 41
+    [3/30] ✓  1212.494 J | 50.1 tok/s | VRAM: 23516 MB | samples: 54
+    [4/30] ✓  1412.137 J | 51.0 tok/s | VRAM: 23516 MB | samples: 61
+    [5/30] ✓  1086.919 J | 49.3 tok/s | VRAM: 23906 MB | samples: 48
+    [6/30] ✓  919.688 J | 48.6 tok/s | VRAM: 23516 MB | samples: 44
+    [7/30] ✓  450.415 J | 43.3 tok/s | VRAM: 23516 MB | samples: 29
+    [8/30] ✓  1306.731 J | 50.5 tok/s | VRAM: 23516 MB | samples: 57
+    [9/30] ✓  1412.001 J | 50.9 tok/s | VRAM: 23516 MB | samples: 61
+    [10/30] ✓  1108.318 J | 49.8 tok/s | VRAM: 23516 MB | samples: 50
+    [11/30] ✓  1438.423 J | 50.8 tok/s | VRAM: 23516 MB | samples: 61
+    [12/30] ✓  1377.950 J | 51.2 tok/s | VRAM: 23516 MB | samples: 60
+    [13/30] ✓  455.024 J | 43.1 tok/s | VRAM: 23516 MB | samples: 29
+    [14/30] ✓  793.786 J | 47.5 tok/s | VRAM: 23516 MB | samples: 39
+    [15/30] ✓  1432.405 J | 50.8 tok/s | VRAM: 23516 MB | samples: 61
+    [16/30] ✓  1400.292 J | 51.0 tok/s | VRAM: 23516 MB | samples: 61
+    [17/30] ✓  1418.195 J | 50.8 tok/s | VRAM: 23516 MB | samples: 61
+    [18/30] ✓  1429.779 J | 50.9 tok/s | VRAM: 23516 MB | samples: 61
+    [19/30] ✓  549.409 J | 44.6 tok/s | VRAM: 23516 MB | samples: 31
+    [20/30] ✓  1440.698 J | 50.6 tok/s | VRAM: 23516 MB | samples: 61
+    [21/30] ✓  1425.591 J | 50.7 tok/s | VRAM: 23516 MB | samples: 61
+    [22/30] ✓  1441.308 J | 51.0 tok/s | VRAM: 23516 MB | samples: 61
+    [23/30] ✓  1425.849 J | 50.7 tok/s | VRAM: 23516 MB | samples: 61
+    [24/30] ✓  1414.393 J | 50.7 tok/s | VRAM: 23516 MB | samples: 61
+    [25/30] ✓  1105.290 J | 49.7 tok/s | VRAM: 23516 MB | samples: 50
+    [26/30] ✓  1414.363 J | 50.8 tok/s | VRAM: 23516 MB | samples: 61
+    [27/30] ✓  638.425 J | 39.1 tok/s | VRAM: 23516 MB | samples: 37
+    [28/30] ✓  1409.868 J | 50.9 tok/s | VRAM: 23516 MB | samples: 61
+    [29/30] ✓  855.633 J | 48.0 tok/s | VRAM: 23516 MB | samples: 42
+    [30/30] ✓  391.425 J | 39.8 tok/s | VRAM: 23516 MB | samples: 26
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=64  case=A
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 77/81]  rep=2
+  fp16_b4_o64_caseA_rep2  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  246.013 J | 199.7 tok/s | VRAM: 23516 MB | samples: 23
+    [2/8] ✓  272.817 J | 199.7 tok/s | VRAM: 23516 MB | samples: 23
+    [3/8] ✓  249.919 J | 178.3 tok/s | VRAM: 23516 MB | samples: 23
+    [4/8] ✓  276.636 J | 199.7 tok/s | VRAM: 23516 MB | samples: 23
+    [5/8] ✓  271.291 J | 199.9 tok/s | VRAM: 23516 MB | samples: 23
+    [6/8] ✓  251.055 J | 198.4 tok/s | VRAM: 23516 MB | samples: 23
+    [7/8] ✓  290.954 J | 200.2 tok/s | VRAM: 23516 MB | samples: 23
+    [8/8] ✓  267.389 J | 174.9 tok/s | VRAM: 23516 MB | samples: 25 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=64  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 78/81]  rep=2
+  fp16_b4_o64_caseB_rep2  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  362.688 J | 163.5 tok/s | VRAM: 23516 MB | samples: 26
+    [2/8] ✓  331.855 J | 162.8 tok/s | VRAM: 23516 MB | samples: 26
+    [3/8] ✓  343.016 J | 163.2 tok/s | VRAM: 23516 MB | samples: 26
+    [4/8] ✓  360.252 J | 159.7 tok/s | VRAM: 23516 MB | samples: 26
+    [5/8] ✓  357.148 J | 162.3 tok/s | VRAM: 23516 MB | samples: 26
+    [6/8] ✓  331.459 J | 161.6 tok/s | VRAM: 23516 MB | samples: 26
+    [7/8] ✓  336.945 J | 163.4 tok/s | VRAM: 23516 MB | samples: 26
+    [8/8] ✓  378.499 J | 163.8 tok/s | VRAM: 23516 MB | samples: 26 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=4  output=64  case=C
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 79/81]  rep=3
+  fp16_b4_o64_caseC_rep3  (8 batch calls × 4 concurrent requests each)
+    [1/8] ✓  921.155 J | 91.2 tok/s | VRAM: 23516 MB | samples: 39
+    [2/8] ✓  846.104 J | 91.6 tok/s | VRAM: 23516 MB | samples: 38
+    [3/8] ✓  837.322 J | 91.7 tok/s | VRAM: 23516 MB | samples: 38
+    [4/8] ✓  868.416 J | 91.2 tok/s | VRAM: 23516 MB | samples: 38
+    [5/8] ✓  856.189 J | 91.9 tok/s | VRAM: 23516 MB | samples: 38
+    [6/8] ✓  857.081 J | 91.2 tok/s | VRAM: 23516 MB | samples: 39
+    [7/8] ✓  817.573 J | 91.4 tok/s | VRAM: 23516 MB | samples: 38
+    [8/8] ✓  855.334 J | 90.2 tok/s | VRAM: 23516 MB | samples: 38 [padded]
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=64  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 80/81]  rep=1
+  fp16_b1_o64_caseB_rep1  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  240.618 J | 51.1 tok/s | VRAM: 23516 MB | samples: 23
+    [2/30] ✓  259.436 J | 49.3 tok/s | VRAM: 23516 MB | samples: 23
+    [3/30] ✓  258.248 J | 51.0 tok/s | VRAM: 23516 MB | samples: 23
+    [4/30] ✓  270.608 J | 50.2 tok/s | VRAM: 23516 MB | samples: 23
+    [5/30] ✓  262.614 J | 49.6 tok/s | VRAM: 23516 MB | samples: 23
+    [6/30] ✓  257.740 J | 50.9 tok/s | VRAM: 23516 MB | samples: 23
+    [7/30] ✓  270.646 J | 50.2 tok/s | VRAM: 23516 MB | samples: 23
+    [8/30] ✓  267.565 J | 50.8 tok/s | VRAM: 23516 MB | samples: 23
+    [9/30] ✓  263.737 J | 51.0 tok/s | VRAM: 23516 MB | samples: 23
+    [10/30] ✓  297.596 J | 50.9 tok/s | VRAM: 23516 MB | samples: 23
+    [11/30] ✓  279.800 J | 50.6 tok/s | VRAM: 23516 MB | samples: 23
+    [12/30] ✓  241.577 J | 50.3 tok/s | VRAM: 23516 MB | samples: 23
+    [13/30] ✓  298.027 J | 51.0 tok/s | VRAM: 23516 MB | samples: 23
+    [14/30] ✓  280.496 J | 50.5 tok/s | VRAM: 23516 MB | samples: 23
+    [15/30] ✓  242.335 J | 50.5 tok/s | VRAM: 23516 MB | samples: 23
+    [16/30] ✓  297.697 J | 50.8 tok/s | VRAM: 23516 MB | samples: 23
+    [17/30] ✓  281.577 J | 50.9 tok/s | VRAM: 23516 MB | samples: 23
+    [18/30] ✓  241.497 J | 50.4 tok/s | VRAM: 23516 MB | samples: 23
+    [19/30] ✓  276.145 J | 51.0 tok/s | VRAM: 23516 MB | samples: 23
+    [20/30] ✓  277.274 J | 50.5 tok/s | VRAM: 23516 MB | samples: 23
+    [21/30] ✓  263.959 J | 50.8 tok/s | VRAM: 23516 MB | samples: 23
+    [22/30] ✓  272.249 J | 50.9 tok/s | VRAM: 23516 MB | samples: 23
+    [23/30] ✓  279.110 J | 50.9 tok/s | VRAM: 23516 MB | samples: 23
+    [24/30] ✓  285.557 J | 51.0 tok/s | VRAM: 23516 MB | samples: 23
+    [25/30] ✓  247.627 J | 51.1 tok/s | VRAM: 23516 MB | samples: 23
+    [26/30] ✓  281.475 J | 50.7 tok/s | VRAM: 23516 MB | samples: 23
+    [27/30] ✓  285.835 J | 51.0 tok/s | VRAM: 23516 MB | samples: 23
+    [28/30] ✓  247.065 J | 50.9 tok/s | VRAM: 23516 MB | samples: 23
+    [29/30] ✓  280.724 J | 50.8 tok/s | VRAM: 23516 MB | samples: 23
+    [30/30] ✓  282.807 J | 51.0 tok/s | VRAM: 23516 MB | samples: 23
+
+  [Cooling 120s ...]
+
+  ───────────────────────────────────────────────────────
+  New group: batch=1  output=256  case=B
+    [Warmup: 5 concurrent batch calls] .....
+
+[ 81/81]  rep=3
+  fp16_b1_o256_caseB_rep3  (30 batch calls × 1 concurrent requests each)
+    [1/30] ✓  1289.958 J | 53.6 tok/s | VRAM: 23516 MB | samples: 58
+    [2/30] ✓  1163.812 J | 54.6 tok/s | VRAM: 23516 MB | samples: 53
+    [3/30] ✓  598.312 J | 53.2 tok/s | VRAM: 23516 MB | samples: 34
+    [4/30] ✓  989.146 J | 54.4 tok/s | VRAM: 23516 MB | samples: 48
+    [5/30] ✓  400.575 J | 51.4 tok/s | VRAM: 23516 MB | samples: 27
+    [6/30] ✓  706.141 J | 53.7 tok/s | VRAM: 23516 MB | samples: 38
+    [7/30] ✓  299.233 J | 51.0 tok/s | VRAM: 23516 MB | samples: 24
+    [8/30] ✓  518.187 J | 53.0 tok/s | VRAM: 23516 MB | samples: 31
+    [9/30] ✓  806.508 J | 54.3 tok/s | VRAM: 23516 MB | samples: 40
+    [10/30] ✓  362.148 J | 52.0 tok/s | VRAM: 23516 MB | samples: 27
+    [11/30] ✓  688.737 J | 54.0 tok/s | VRAM: 23516 MB | samples: 37
+    [12/30] ✓  807.085 J | 54.0 tok/s | VRAM: 23516 MB | samples: 42
+    [13/30] ✓  448.723 J | 52.3 tok/s | VRAM: 23516 MB | samples: 29
+    [14/30] ✓  518.566 J | 53.0 tok/s | VRAM: 23516 MB | samples: 32
+    [15/30] ✓  780.340 J | 53.7 tok/s | VRAM: 23516 MB | samples: 40
+    [16/30] ✓  545.788 J | 53.3 tok/s | VRAM: 23516 MB | samples: 32
+    [17/30] ✓  493.992 J | 53.1 tok/s | VRAM: 23516 MB | samples: 31
+    [18/30] ✓  816.109 J | 54.4 tok/s | VRAM: 23516 MB | samples: 41
+    [19/30] ✓  812.113 J | 54.2 tok/s | VRAM: 23516 MB | samples: 41
+    [20/30] ✓  790.643 J | 54.4 tok/s | VRAM: 23516 MB | samples: 41
+    [21/30] ✓  642.147 J | 53.9 tok/s | VRAM: 23516 MB | samples: 36
+    [22/30] ✓  501.783 J | 53.3 tok/s | VRAM: 23516 MB | samples: 30
+    [23/30] ✓  1296.825 J | 54.9 tok/s | VRAM: 23516 MB | samples: 57
+    [24/30] ✓  1258.912 J | 55.2 tok/s | VRAM: 23516 MB | samples: 57
+    [25/30] ✓  1219.998 J | 55.1 tok/s | VRAM: 23516 MB | samples: 54
+    [26/30] ✓  1297.602 J | 55.1 tok/s | VRAM: 23516 MB | samples: 57
+    [27/30] ✓  1199.401 J | 55.0 tok/s | VRAM: 23516 MB | samples: 55
+    [28/30] ✓  1115.013 J | 54.8 tok/s | VRAM: 23516 MB | samples: 52
+    [29/30] ✓  1301.730 J | 55.2 tok/s | VRAM: 23516 MB | samples: 57
+    [30/30] ✓  604.304 J | 53.9 tok/s | VRAM: 23516 MB | samples: 35
+
+=================================================================
+  Config×rep completed:  81/81
+  Batch calls — success: 1134  oom: 0  error: 0
+  Results: results/fp16_20260601_175220
+=================================================================
+
