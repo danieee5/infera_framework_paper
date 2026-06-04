@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "description": "Conversación empresarial multi-turno para experimento de energía en inferencia LLM",
+    "scenario": "Asistente interno RAG - empresa de seguridad privada (MOSS)",
+    "turns": 7,
+    "max_tokens_per_turn": 256,
+    "temperature": 0.0,
+    "context_design": "Documentos base (~1500 tokens) + historia conversacional acumulada (~1700 tokens turn7) = rango Case_B a Case_C del factorial estático",
+    "version": "1.0"
+  },
+  "system_prompt": "Eres el asistente interno de MOSS Operaciones, empresa de seguridad privada. Tienes acceso a los documentos operativos internos que se te proporcionan. Responde de forma clara, concisa y profesional. Cíñete estrictamente a la información de los documentos.",
+
+  "documents": {
+    "combined_content": "=== MANUAL OPERATIVO DE GUARDIAS — RESUMEN EJECUTIVO ===\n\nVigencia: 2025. Aprobado por: Gerencia de Operaciones MOSS.\n\nARTÍCULO 1 — OBLIGACIONES DEL GUARDIA DE TURNO\nEl guardia en funciones debe: (a) Presentarse con 15 minutos de anticipación al inicio del turno para recibir el relevo verbal. (b) Revisar el libro de novedades del turno anterior antes de iniciar labores. (c) Registrar su ingreso y salida en el sistema biométrico del cliente. (d) Mantener el puesto asignado durante toda la jornada, excepto en pausas autorizadas de 15 minutos cada 4 horas. (e) Portar en todo momento la credencial MOSS visible y el equipo asignado (radio, linterna, formulario de novedades). (f) Reportar cualquier novedad al supervisor de zona dentro de los primeros 10 minutos de ocurrida.\n\nARTÍCULO 2 — PROCEDIMIENTO DE REPORTE DE NOVEDADES\nSe considera novedad todo hecho inusual observado durante el turno. El proceso de reporte es: (1) IDENTIFICACIÓN: El guardia identifica el hecho (accidente, intrusión, mal comportamiento, avería, etc.). (2) COMUNICACIÓN INMEDIATA: Contacta al supervisor de zona vía radio en canal asignado. Si no hay respuesta en 3 minutos, reenvía mensaje y escala al coordinador regional. (3) DOCUMENTACIÓN: Completa el Formulario F-01 de Novedades con: hora exacta, lugar, descripción detallada, personas involucradas, acciones tomadas. (4) ENTREGA: Envía el F-01 digital al supervisor al finalizar el turno, con copia a novedades@moss.ec. (5) SEGUIMIENTO: Si la novedad requiere acción correctiva, el supervisor debe confirmar recepción y plan de acción en un plazo máximo de 2 horas hábiles.\n\nARTÍCULO 3 — PROTOCOLO DE EMERGENCIAS\nSe clasifica como emergencia: incendio, robo en curso, agresión física, accidente con heridos, amenaza de bomba. Ante una emergencia el guardia debe: (E1) Activar la alarma del puesto si está disponible. (E2) Llamar inmediatamente al número de emergencias del cliente y al 911. (E3) Notificar al supervisor de zona vía radio; si no responde, llamar directamente al Coordinador de Emergencias MOSS al número designado en la tarjeta de contingencia de cada puesto. (E4) No abandonar el perímetro asignado salvo que exista riesgo inminente para la vida. (E5) Completar el Formulario F-02 de Emergencias dentro de las 4 horas siguientes al incidente. (E6) Preservar la escena si se produjo un incidente de seguridad hasta que lleguen autoridades.\n\nARTÍCULO 4 — ESCALAMIENTO A SUPERVISOR Y COORDINADOR\nExisten dos niveles de escalamiento: NIVEL 1 (Supervisor de Zona): Novedades operativas rutinarias, ausencias, comportamiento irregular de visitantes, averías menores. Tiempo de respuesta esperado: 30 minutos. NIVEL 2 (Coordinador Regional): Situaciones que el supervisor no resolvió en el tiempo esperado, emergencias clasificadas, quejas del cliente sobre el servicio, incidentes con implicaciones legales. Tiempo de respuesta esperado: 15 minutos. NIVEL 3 (Gerencia de Operaciones): Solo cuando Nivel 2 no resuelve en 60 minutos o en casos de alta gravedad (lesiones graves, pérdidas mayores a USD 10.000, cobertura mediática). Las comunicaciones de escalamiento deben quedar registradas en el sistema CRM de MOSS dentro de las 24 horas siguientes.\n\nARTÍCULO 5 — POLÍTICA DE TURNOS Y RECURSOS HUMANOS\nTurnos estándar: diurno (06:00–18:00), nocturno (18:00–06:00). El guardia tiene derecho a una hora de alimentación en turno de 12 horas, coordinada con el supervisor para garantizar cobertura. Las horas extras deben ser autorizadas previamente por el supervisor de zona. El incumplimiento de procedimientos puede derivar en: (1) llamado de atención escrito para primera falta, (2) suspensión de 1 a 3 días para segunda falta, (3) terminación del contrato para tercera falta o falta grave. El guardia puede presentar descargo formal ante RRHH dentro de las 48 horas siguientes a cualquier sanción. Los accidentes laborales deben reportarse a RRHH antes de 24 horas para activar el seguro de accidentes."
+  },
+
+  "turns": [
+    {
+      "turn_number": 1,
+      "role": "user",
+      "content": "Resume el procedimiento para reportar una novedad según los documentos.",
+      "expected_input_tokens_approx": 1600,
+      "rationale": "Turno base: el modelo solo tiene el contexto de los documentos. Input ~ Case_B del factorial estático."
+    },
+    {
+      "turn_number": 2,
+      "role": "user",
+      "content": "¿Qué pasos debe seguir el guardia si el supervisor no responde al reporte inicial?",
+      "expected_input_tokens_approx": 1870,
+      "rationale": "Pregunta de seguimiento. Context += T1_response (~256 tokens). Representa la acumulación natural de KV-cache."
+    },
+    {
+      "turn_number": 3,
+      "role": "user",
+      "content": "Compara los criterios de escalamiento del protocolo de emergencias con los del reporte de novedades. ¿Cuáles son las diferencias clave?",
+      "expected_input_tokens_approx": 2140,
+      "rationale": "Tarea comparativa. Requiere que el modelo sintetice información de dos secciones distintas del documento."
+    },
+    {
+      "turn_number": 4,
+      "role": "user",
+      "content": "Crea una tabla de responsabilidades con tres columnas: qué hace el guardia, qué hace el supervisor y qué hace el coordinador en el proceso de reporte y escalamiento.",
+      "expected_input_tokens_approx": 2420,
+      "rationale": "Tarea de síntesis estructurada. El modelo debe organizar información dispersa en el documento."
+    },
+    {
+      "turn_number": 5,
+      "role": "user",
+      "content": "Escribe una capacitación breve en formato de puntos clave para un guardia nuevo, cubriendo los pasos más importantes del reporte de novedades y cuándo escalar.",
+      "expected_input_tokens_approx": 2700,
+      "rationale": "Tarea generativa más larga. El contenido del contexto comienza a dominar la longitud del prefill."
+    },
+    {
+      "turn_number": 6,
+      "role": "user",
+      "content": "Redacta un correo formal para el área de Recursos Humanos reportando que un guardia del turno nocturno no completó el Formulario F-01 tras una novedad ocurrida anoche.",
+      "expected_input_tokens_approx": 2980,
+      "rationale": "Tarea generativa con formato específico. Contexto acumulado se acerca a Case_C del factorial estático."
+    },
+    {
+      "turn_number": 7,
+      "role": "user",
+      "content": "Resume toda la conversación en 5 acciones concretas que un guardia debe recordar siempre al enfrentar una novedad o emergencia.",
+      "expected_input_tokens_approx": 3250,
+      "rationale": "Meta-turno: el modelo debe sintetizar la conversación completa. Máximo contexto acumulado del experimento."
+    }
+  ],
+
+  "design_notes": {
+    "context_growth_range": "~1600 tokens (T1) a ~3250 tokens (T7)",
+    "static_factorial_bridge": "T1 ≈ Case_B (~1024t), T5-T7 ≈ Case_C (~4096t). El multi-turn extiende el factorial a la dimensión temporal.",
+    "batch4_hypothesis": "Si INT8 batch=4 muestra mayor J/token que INT8 batch=1 (anomalía estática), ¿se amplifica en T5-T7 donde el prefill domina?",
+    "awq_hypothesis": "Si AWQ pierde ventaja con contexto largo (+122% vs +59% FP16), ¿su J/token converge con FP16 en T6-T7?",
+    "fixed_history_rationale": "Con temperature=0, todos los esquemas generan respuestas idénticas. Pre-generar con FP16 hace el diseño auditable."
+  }
+}
