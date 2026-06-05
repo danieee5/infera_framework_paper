@@ -1,44 +1,54 @@
 """
-multiturn_runner.py  — Phase 2 of INFERA Experiment 2.
+multiturn_runner.py
+Phase 2 of the multi-turn experiment — Experimento 2 of INFERA.
 
-Measures GPU energy consumption per conversational turn across quantization
-schemes and batch sizes, using the fixed conversation history from Phase 1.
+Measures energy consumption per conversational turn across quantization
+schemes (FP16, INT8 W8A16, INT4 AWQ) and batch sizes (1, 4).
 
 DESIGN:
-  - 7-turn enterprise conversation (MOSS security company internal RAG assistant)
-  - Fixed history pre-generated in Phase 1 (FP16, temperature=0, batch=1)
-  - Each turn measured independently: MELODI 500ms buffer + 120s cooling
-  - Context grows organically: ~1600 tokens (T1) → ~3250 tokens (T7)
-  - Bridges to EXP1: T1 ≈ Case_B, T5-T7 ≈ Case_C
+  - 7-turn enterprise conversation (MOSS security company internal assistant)
+  - Fixed conversation history pre-generated in Phase 1 (temperature=0)
+  - Each turn measured independently with MELODI 500ms buffer protocol
+  - 120s cooling between turns to ensure thermal stability
+  - Context grows organically: ~1.9k tokens (T1) → ~3.7k tokens (T7)
+    (puente Case_B → Case_C del factorial estatico)
+
+MEASUREMENT SCOPE (declaracion explicita — defendible ante jurado):
+  - EXP2 mide ENERGIA TOTAL por turno: prefill + decode en UNA sola ventana NVML.
+    No se segmenta energia prefill vs decode.
+  - TTFT (time-to-first-token) se reporta como PROXY TEMPORAL del prefill.
+    TPOT (time-per-output-token) se reporta como PROXY TEMPORAL del decode.
+  - Regimen medido: RE-PREFILL COMPLETO por turno. Los servidores vLLM se
+    levantan SIN --enable-prefix-caching, por lo que cada turno reprocesa todo
+    el contexto acumulado desde cero. Este es el regimen intencional: aisla el
+    costo energetico del contexto creciente.
+  - Prefix caching (la optimizacion que usaria produccion real) queda FUERA DE
+    ALCANCE y se declara como amenaza a la validez externa / trabajo futuro.
+  - max_tokens=256 fijo: control para mantener el decode ~constante, de modo que
+    el crecimiento de energia por turno sea atribuible al prefill creciente.
 
 EXPERIMENTAL MATRIX:
-  VI1 (quantization): fp16 | int8_w8a16 | int4_awq
-  VI2 (batch_size):   1 | 4
+  VI1 (quantization): fp16, int8_w8a16, int4_awq
+  VI2 (batch_size):   1, 4
   Turn:               1–7
   Repetitions:        3
-  Total/scheme:       2 × 7 × 3 = 42 measurements
-  Grand total:        3 schemes × 42 = 126 measurements
+  Total measurements: 3 × 2 × 7 × 3 = 126 turn-level records
 
-HYPOTHESES:
-  H1: J/output_token increases monotonically with turn (KV-cache + prefill cost)
-  H2: INT8 batch=4 anomaly (+18% J/tok vs batch=1, found in EXP1) persists/amplifies
-  H3: AWQ advantage over FP16 erodes as context grows (vs +122%/+59% in EXP1)
-  H4: VRAM_delta grows monotonically with turn (KV-cache accumulation proxy)
-
-KEY METRIC NOTES:
-  energy_j            — NVML trapezoidal integration (always accurate)
-  j_per_output_token  — energy_j / completion_tokens (main efficiency metric)
-  token_count_source  — "api" if vLLM returned exact counts; "estimated" otherwise
-  tpot_ms             — wall_time / ct_total (server throughput, consistent with EXP1)
-  tpot_ms_per_request — wall_time / ct_per_request (per-user latency, correct for batch>1)
-  total_context_tokens — prompt tokens per request (input context per user)
+HYPOTHESES UNDER TEST:
+  H1: J/output_token increases monotonically with turn number (KV-cache pressure)
+  H2: INT8 batch=4 anomaly (J/tok_batch4 > J/tok_batch1) amplifies in later turns
+  H3: AWQ energy advantage over FP16 erodes as context grows (consistent with
+      +122% vs +59% asymmetry found in static factorial, Hallazgo 3)
+  H4: VRAM peak grows monotonically with turn, confirming KV-cache accumulation
 
 USAGE:
-  # Start appropriate vLLM first, then:
-  python scripts/multiturn_runner.py --quantization fp16 --batch-sizes 1 --pilot  # 7 turns, 1 rep
-  python scripts/multiturn_runner.py --quantization fp16                           # full run
-  python scripts/multiturn_runner.py --quantization int8_w8a16
-  python scripts/multiturn_runner.py --quantization int4_awq
+  # vLLM must be running with appropriate quantization:
+  #   bash scripts/start_vllm_fp16.sh     → then run with --quantization fp16
+  #   bash scripts/start_vllm_int8.sh     → then run with --quantization int8_w8a16
+  #   bash scripts/start_vllm_awq.sh      → then run with --quantization int4_awq
+  python scripts/multiturn_runner.py --quantization fp16
+  python scripts/multiturn_runner.py --quantization fp16 --batch-sizes 1      # single batch
+  python scripts/multiturn_runner.py --quantization fp16 --pilot               # rep=1 only
 """
 
 import argparse
@@ -55,72 +65,66 @@ try:
 except ImportError:
     sys.exit("FATAL: httpx not installed. Run: pip install httpx")
 
+# Import existing MELODI-validated monitor
 sys.path.insert(0, str(Path(__file__).parent))
 from gpu_power_monitor import GPUPowerMonitor
 
 # ── CONFIG ────────────────────────────────────────────────────────────────────
-VLLM_URL    = "http://localhost:8000/v1/chat/completions"
-MODEL_NAME  = "meta-llama/Meta-Llama-3.1-8B-Instruct"
-MAX_TOKENS  = 256          # fixed across all turns — consistent with EXP1 VI3=256
+VLLM_URL   = "http://localhost:8000/v1/chat/completions"
+MODEL_NAME = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+MAX_TOKENS  = 256
 TEMPERATURE = 0.0
 TIMEOUT_S   = 300
 
-BATCH_SIZES  = [1, 4]
+BATCH_SIZES  = [1, 4]   # Reduced from static experiment's [1,4,8]
 REPETITIONS  = 3
 N_TURNS      = 7
-COOLING_S    = 120         # between turns — same as EXP1
-IDLE_WAIT_S  = 5           # pre-measurement idle — same as EXP1
-WARMUP_TURNS = 2           # warmup calls before first measured rep (Turn 1 context)
+COOLING_S    = 120       # Between turns — same as static factorial
+IDLE_WAIT_S  = 5         # Pre-measurement idle (same as static)
+WARMUP_TURNS = 2         # Warmup turns before first measured session
 
-HISTORY_PATH = Path("data/multiturn/conversation_history.json")
-RESULTS_DIR  = Path("results/multiturn")
+HISTORY_PATH  = Path("data/multiturn/conversation_history.json")
+RESULTS_DIR   = Path("results/multiturn")
 
 
 # ── MESSAGE BUILDER ───────────────────────────────────────────────────────────
 
 def build_messages_for_turn(history: dict, turn_number: int) -> list[dict]:
     """
-    Reconstruct the vLLM message array for a given turn number.
+    Build the vLLM messages array for a given turn.
+    Includes system prompt + all prior turns + current user message.
 
-    Structure for Turn N:
-      [system] [user_1] [asst_1] [user_2] [asst_2] ... [user_{N-1}] [asst_{N-1}] [user_N]
-
-    The last message is always the user's question for this turn — no assistant
-    response is appended because that is what the model must generate now.
-
-    All user_content and assistant_content come from the fixed pre-generated
-    history, ensuring all quantization schemes face identical context.
+    The conversation history is fixed (pre-generated with FP16 temp=0),
+    so the same context is presented to all quantization schemes.
+    This ensures energy differences are attributable to the scheme,
+    not to different response content.
     """
-    messages = [{"role": "system", "content": history["system_prompt"]}]
-    turns    = history["turns"]
+    messages = [
+        {"role": "system", "content": history["system_prompt"]}
+    ]
+
+    turns = history["turns"]
 
     for i, turn in enumerate(turns[:turn_number]):
         messages.append({"role": "user",      "content": turn["user_content"]})
+        # For turns before the current one: add the pre-generated response
         if i < turn_number - 1:
             messages.append({"role": "assistant", "content": turn["assistant_content"]})
+        # For the current turn (i == turn_number - 1): do NOT add the response
+        # — this is what we're asking the model to generate now
 
     return messages
 
 
-def messages_token_approx(messages: list[dict]) -> int:
-    """
-    Rough token count for the message array: total characters / 4.
-    Used as fallback display value only; does not affect energy calculations.
-    For Spanish technical text, actual ratio is ~3.5-4.5 chars/token (±10-15%).
-    """
-    return sum(len(m["content"]) for m in messages) // 4
-
-
-# ── STREAMING REQUEST (TTFT + token counts) ───────────────────────────────────
+# ── STREAMING REQUEST (with TTFT) ─────────────────────────────────────────────
 
 async def single_request_streaming(
-    client:   httpx.AsyncClient,
+    client: httpx.AsyncClient,
     messages: list[dict],
 ) -> dict:
     """
-    Single request with stream=True.
-    Measures TTFT and attempts exact token counts via stream_options.
-    Falls back to word-based estimate (capped at MAX_TOKENS) if usage unavailable.
+    Send one request with stream=True to capture TTFT precisely.
+    Returns: status, prompt_tokens, completion_tokens, ttft_ms, total_time_s, text
     """
     payload = {
         "model":       MODEL_NAME,
@@ -128,20 +132,19 @@ async def single_request_streaming(
         "max_tokens":  MAX_TOKENS,
         "temperature": TEMPERATURE,
         "stream":      True,
-        "stream_options": {"include_usage": True},
+        "stream_options": {"include_usage": True},  # vLLM 0.5.3+ returns usage in last chunk
     }
 
-    t_start = time.perf_counter()
-    ttft_ms = None
-    chunks  = []
-    pt, ct  = 0, 0
+    t_start   = time.perf_counter()
+    ttft_ms   = None
+    chunks    = []
+    pt, ct    = 0, 0
 
     try:
         async with client.stream("POST", VLLM_URL, json=payload) as resp:
             if resp.status_code != 200:
                 body = await resp.aread()
-                return {"status": "error",
-                        "error": f"HTTP {resp.status_code}: {body[:200]}"}
+                return {"status": "error", "error": f"HTTP {resp.status_code}: {body[:200]}"}
 
             async for line in resp.aiter_lines():
                 if not line.startswith("data: "):
@@ -163,7 +166,8 @@ async def single_request_streaming(
                 if content:
                     chunks.append(content)
 
-                if chunk.get("usage"):
+                # Usage is in the final chunk (stream_options)
+                if "usage" in chunk and chunk["usage"]:
                     pt = chunk["usage"].get("prompt_tokens", 0)
                     ct = chunk["usage"].get("completion_tokens", 0)
 
@@ -172,38 +176,30 @@ async def single_request_streaming(
     except Exception as e:
         return {"status": "error", "error": str(e)[:200]}
 
-    t_end        = time.perf_counter()
+    t_end = time.perf_counter()
     full_text    = "".join(chunks)
     total_time_s = t_end - t_start
-
-    token_count_from_api = ct > 0
-    if not token_count_from_api:
-        # Fallback: word count estimate capped at MAX_TOKENS
-        # Capping is justified: temperature=0 typically generates ≤MAX_TOKENS tokens
-        ct = min(MAX_TOKENS, max(1, len(full_text.split()) * 4 // 3))
-        # pt remains 0 — caller handles via messages_token_approx
+    ct_actual    = ct if ct > 0 else max(1, len(full_text.split()) * 4 // 3)
 
     return {
-        "status":               "success",
-        "prompt_tokens":        pt,
-        "completion_tokens":    ct,
-        "token_count_from_api": token_count_from_api,
-        "ttft_ms":              round(ttft_ms, 2) if ttft_ms else None,
-        "total_time_s":         round(total_time_s, 4),
+        "status":         "success",
+        "prompt_tokens":  pt,
+        "completion_tokens": ct_actual,
+        "ttft_ms":        round(ttft_ms, 2) if ttft_ms else None,
+        "total_time_s":   round(total_time_s, 4),
+        "text":           full_text,
     }
 
 
-# ── CONCURRENT BATCH ─────────────────────────────────────────────────────────
+# ── CONCURRENT BATCH CALL (batch_size requests in parallel) ──────────────────
 
-def call_concurrent(messages_list: list[list[dict]]) -> dict:
+def call_concurrent(
+    messages_list: list[list[dict]],
+) -> dict:
     """
-    Send batch_size identical requests simultaneously via asyncio.gather().
-    Each request carries the same conversation context (same turn, same history).
-    Models 'batch_size enterprise users at the same stage of their conversation'.
-
-    total_time_s = max across all requests (wall clock for the full batch).
-    prompt_tokens / completion_tokens = sum across all requests.
-    ttft_ms_mean = mean TTFT across successful requests.
+    Launch batch_size identical requests simultaneously via asyncio.gather().
+    All requests receive the SAME messages (same conversation state at this turn).
+    Returns aggregated results.
     """
     async def _run():
         async with httpx.AsyncClient(timeout=TIMEOUT_S) as client:
@@ -213,9 +209,9 @@ def call_concurrent(messages_list: list[list[dict]]) -> dict:
             ]
             return await asyncio.gather(*tasks)
 
-    results   = asyncio.run(_run())
-    successes = [r for r in results if r["status"] == "success"]
+    results = asyncio.run(_run())
 
+    successes = [r for r in results if r["status"] == "success"]
     if not successes:
         return {
             "status": results[0].get("status", "error"),
@@ -223,18 +219,17 @@ def call_concurrent(messages_list: list[list[dict]]) -> dict:
         }
 
     n = len(successes)
-    any_from_api = any(r["token_count_from_api"] for r in successes)
-
     return {
-        "status":               "success",
-        "prompt_tokens":        sum(r["prompt_tokens"]    for r in successes),
-        "completion_tokens":    sum(r["completion_tokens"] for r in successes),
-        "token_count_from_api": any_from_api,
-        "ttft_ms_mean":         sum(r["ttft_ms"] or 0     for r in successes) / n,
-        # Wall clock = time until ALL concurrent requests finish (NVML window stays open)
-        "total_time_s":         max(r["total_time_s"]     for r in successes),
-        "n_success":            n,
-        "n_batch":              len(results),
+        "status":            "success",
+        "prompt_tokens":     sum(r["prompt_tokens"]      for r in successes),
+        "completion_tokens": sum(r["completion_tokens"]  for r in successes),
+        "ttft_ms_mean":      sum(r["ttft_ms"] or 0       for r in successes) / n,
+        "total_time_s":      max(r["total_time_s"]       for r in successes),
+        "n_success":         n,
+        "n_batch":           len(results),
+        # Texto representativo (primera respuesta exitosa). Todas las peticiones
+        # del batch reciben el MISMO contexto, asi que basta una para inspeccion.
+        "text":              successes[0].get("text", ""),
     }
 
 
@@ -242,14 +237,12 @@ def call_concurrent(messages_list: list[list[dict]]) -> dict:
 
 def run_warmup(history: dict, batch_size: int):
     """
-    WARMUP_TURNS un-measured inference calls before the first measured rep.
-    Uses Turn 1 context (shortest). Note: does NOT warm up the memory allocation
-    pattern for later turns (T5-T7). This may cause slightly higher latency on
-    first rep of long turns — documented as a known limitation.
+    Run WARMUP_TURNS turns without NVML monitoring to warm up GPU and KV-cache.
+    Uses turn 1 messages repeated.
     """
     msgs  = build_messages_for_turn(history, 1)
     batch = [msgs] * batch_size
-    print(f"    [Warmup {WARMUP_TURNS}×]", end=" ", flush=True)
+    print(f"    [Warmup: {WARMUP_TURNS} turns]", end=" ", flush=True)
     for _ in range(WARMUP_TURNS):
         call_concurrent(batch)
         print(".", end="", flush=True)
@@ -259,136 +252,127 @@ def run_warmup(history: dict, batch_size: int):
 # ── SINGLE TURN MEASUREMENT ───────────────────────────────────────────────────
 
 def measure_turn(
-    history:     dict,
+    history:    dict,
     turn_number: int,
-    batch_size:  int,
-    monitor:     GPUPowerMonitor,
-    messages_approx_tokens: int,
+    batch_size: int,
+    monitor:    GPUPowerMonitor,
 ) -> dict:
     """
-    MELODI protocol for one turn:
-      idle 5s → start_monitoring (500ms pre-buffer) → inference → stop_monitoring (500ms post-buffer)
+    Measure energy for a single turn with MELODI 500ms buffer protocol.
+    Returns the full result dict for this turn measurement.
     """
     messages      = build_messages_for_turn(history, turn_number)
-    messages_list = [messages] * batch_size
+    messages_list = [messages] * batch_size  # identical for all concurrent requests
 
     time.sleep(IDLE_WAIT_S)
 
-    monitor.start_monitoring()               # 500ms pre-buffer
+    # MELODI PROTOCOL: 500ms pre-buffer → inference → 500ms post-buffer
+    monitor.start_monitoring()
     vllm_result = call_concurrent(messages_list)
-    energy      = monitor.stop_monitoring()  # 500ms post-buffer
+    energy = monitor.stop_monitoring()
 
     return {
-        "vllm_result":           vllm_result,
-        "energy":                energy,
-        "input_tokens_approx":   messages_approx_tokens,
+        "vllm_result": vllm_result,
+        "energy":      energy,
+        "input_tokens_per_request": messages_len_approx(messages),
     }
 
 
-# ── RESULT RECORD ─────────────────────────────────────────────────────────────
+def messages_len_approx(messages: list[dict]) -> int:
+    """Rough token count: total chars / 4."""
+    total_chars = sum(len(m["content"]) for m in messages)
+    return total_chars // 4
+
+
+# ── RESULT BUILDER ────────────────────────────────────────────────────────────
 
 def build_result_record(
     quantization: str,
     batch_size:   int,
     repetition:   int,
     turn_number:  int,
+    history:      dict,
     meas:         dict,
 ) -> dict:
+    """Construct the standardized result record for this turn measurement."""
+
     vr  = meas["vllm_result"]
     en  = meas["energy"]
-
     run_id = (
         f"mt_{quantization}_b{batch_size}_t{turn_number}"
         f"_rep{repetition}_{int(time.time())}"
     )
 
     record = {
-        "run_id":           run_id,
-        "experiment":       "multiturn",
-        "timestamp":        datetime.now(timezone.utc).isoformat(),
-        # ── Independent variables ─────────────────────────────────────────────
+        "run_id":         run_id,
+        "experiment":     "multiturn",
+        "timestamp":      datetime.now(timezone.utc).isoformat(),
+
+        # Independent variables
         "vi1_quantization": quantization,
         "vi2_batch_size":   batch_size,
         "turn_number":      turn_number,
         "repetition":       repetition,
-        # ── Context metadata ──────────────────────────────────────────────────
-        "input_tokens_approx":           meas["input_tokens_approx"],
-        "cumulative_turns_in_context":   turn_number - 1,
-        # ── Status ────────────────────────────────────────────────────────────
-        "status":           vr.get("status", "unknown"),
-        "error":            vr.get("error"),
-        # ── Token count reliability ───────────────────────────────────────────
-        # "api"       — vLLM returned exact counts via stream_options
-        # "estimated" — fallback: min(MAX_TOKENS, word_count * 4/3)
-        "token_count_source": None,
-        # ── Energy (NVML MELODI protocol) ─────────────────────────────────────
-        "energy_j":         None,
-        "duration_s":       None,
-        "avg_power_w":      None,
-        "peak_power_w":     None,
-        "vram_peak_mb":     None,
-        "vram_start_mb":    None,
-        "vram_delta_mb":    None,    # peak − start: KV-cache footprint proxy
-        "nvml_samples":     en.sample_count,
-        "nvml_available":   en.nvml_available,
-        # ── Throughput & latency ──────────────────────────────────────────────
-        "prompt_tokens":                 None,   # aggregate (all concurrent requests)
-        "completion_tokens":             None,   # aggregate
-        "prompt_tokens_per_request":     None,   # per user (= total_context_tokens)
-        "completion_tokens_per_request": None,
-        "total_context_tokens":          None,   # input context per user — key for KV analysis
-        "ttft_ms":                       None,   # mean across concurrent requests
-        # tpot_ms:            wall_time / ct_total  — server throughput (consistent with EXP1)
-        # tpot_ms_per_request:wall_time / ct_per_req — per-user latency (correct for batch>1)
-        "tpot_ms":                       None,
-        "tpot_ms_per_request":           None,
-        "throughput_tok_s":              None,
-        "j_per_output_token":            None,
-        # ── Batch metadata ────────────────────────────────────────────────────
-        "n_batch_success":  vr.get("n_success"),
-        "n_batch_total":    vr.get("n_batch"),
+
+        # Context metadata
+        "input_tokens_approx":      meas["input_tokens_per_request"],
+        "cumulative_turns_in_context": turn_number - 1,
+
+        # Status
+        "status": vr.get("status", "unknown"),
+        "error":  vr.get("error"),
+
+        # Energy (NVML MELODI protocol)
+        "energy_j":           None,
+        "duration_s":         None,
+        "avg_power_w":        None,
+        "peak_power_w":       None,
+        "vram_peak_mb":       None,
+        "vram_start_mb":      None,
+        "nvml_samples":       en.sample_count,
+        "nvml_available":     en.nvml_available,
+
+        # Throughput & latency
+        "prompt_tokens":      None,
+        "completion_tokens":  None,
+        "ttft_ms":            None,
+        "tpot_ms":            None,
+        "throughput_tok_s":   None,
+        "j_per_output_token": None,
+
+        # Batch metadata
+        "n_batch_success":    vr.get("n_success"),
+        "n_batch_total":      vr.get("n_batch"),
+
+        # Generated text (representative; for qualitative inspection only — no
+        # formal quality scoring is performed in EXP2).
+        "generated_text":     None,
     }
 
     if vr.get("status") == "success":
-        ct_total = vr.get("completion_tokens", 0)
-        pt_total = vr.get("prompt_tokens",     0)
-        dur      = vr.get("total_time_s",      0)
-        ttft     = vr.get("ttft_ms_mean")
-        n_req    = max(1, vr.get("n_success", batch_size))
-        from_api = vr.get("token_count_from_api", False)
+        ct  = vr.get("completion_tokens", 0)
+        pt  = vr.get("prompt_tokens", 0)
+        dur = vr.get("total_time_s", 0)
+        ttft = vr.get("ttft_ms_mean")
 
-        ct_per_req = max(1, ct_total // n_req)
-        pt_per_req = (
-            max(1, pt_total // n_req)
-            if pt_total > 0
-            else meas["input_tokens_approx"]   # fallback to char-based estimate
-        )
-
-        tput         = ct_total / dur if dur > 0 else 0.0
-        jpt          = en.energy_j / ct_total if ct_total > 0 else 0.0
-        tpot_server  = dur / ct_total * 1000   if ct_total > 0 else None
-        tpot_per_req = dur / ct_per_req * 1000 if ct_per_req > 0 else None
-        vram_delta   = round(en.vram_used_mb_peak - en.vram_used_mb_start, 1)
+        tput = ct / dur if dur > 0 else 0.0
+        jpt  = en.energy_j / ct if ct > 0 else 0.0
+        tpot = (dur / ct * 1000) if ct > 0 else None
 
         record.update({
-            "token_count_source":            "api" if from_api else "estimated",
-            "energy_j":                      round(en.energy_j, 6),
-            "duration_s":                    round(dur, 4),
-            "avg_power_w":                   round(en.avg_power_w, 2),
-            "peak_power_w":                  round(en.peak_power_w, 2),
-            "vram_peak_mb":                  round(en.vram_used_mb_peak, 1),
-            "vram_start_mb":                 round(en.vram_used_mb_start, 1),
-            "vram_delta_mb":                 vram_delta,
-            "prompt_tokens":                 pt_total,
-            "completion_tokens":             ct_total,
-            "prompt_tokens_per_request":     pt_per_req,
-            "completion_tokens_per_request": ct_per_req,
-            "total_context_tokens":          pt_per_req,
-            "ttft_ms":                       round(ttft, 2) if ttft else None,
-            "tpot_ms":                       round(tpot_server,  2) if tpot_server  else None,
-            "tpot_ms_per_request":           round(tpot_per_req, 2) if tpot_per_req else None,
-            "throughput_tok_s":              round(tput, 4),
-            "j_per_output_token":            round(jpt, 6),
+            "energy_j":           round(en.energy_j, 6),
+            "duration_s":         round(dur, 4),
+            "avg_power_w":        round(en.avg_power_w, 2),
+            "peak_power_w":       round(en.peak_power_w, 2),
+            "vram_peak_mb":       round(en.vram_used_mb_peak, 1),
+            "vram_start_mb":      round(en.vram_used_mb_start, 1),
+            "prompt_tokens":      pt,
+            "completion_tokens":  ct,
+            "ttft_ms":            round(ttft, 2) if ttft else None,
+            "tpot_ms":            round(tpot, 2) if tpot else None,
+            "throughput_tok_s":   round(tput, 4),
+            "j_per_output_token": round(jpt, 6),
+            "generated_text":     vr.get("text", ""),
         })
 
     return record
@@ -404,113 +388,87 @@ def run_multiturn(
 ):
     if not HISTORY_PATH.exists():
         sys.exit(
-            f"\nFATAL: Conversation history not found at {HISTORY_PATH.resolve()}\n"
-            f"Run Phase 1 first:\n"
-            f"  bash scripts/start_vllm_fp16.sh\n"
-            f"  python scripts/build_multiturn_conversation.py\n"
+            f"\nFATAL: Conversation history not found: {HISTORY_PATH}\n"
+            f"Run Phase 1 first: python scripts/build_multiturn_conversation.py\n"
         )
 
     history = json.loads(HISTORY_PATH.read_text(encoding="utf-8"))
-
-    # Warn if history was built with estimated token counts
-    if not history.get("token_counts_from_api", True):
-        print("\n  ⚠  NOTICE: conversation_history.json was built with estimated token counts.")
-        print("     j_per_output_token will use word-based estimates (±10-15%).")
-        print("     Energy (Joules) is unaffected. Comparisons between schemes remain valid.\n")
-
-    turns = list(range(1, N_TURNS + 1))
-    reps  = [1] if pilot else list(range(1, REPETITIONS + 1))
+    turns   = list(range(1, N_TURNS + 1))
+    reps    = [1] if pilot else list(range(1, REPETITIONS + 1))
 
     ts      = datetime.now().strftime("%Y%m%d_%H%M%S")
     out_dir = Path(results_dir or f"{RESULTS_DIR}/{quantization}_{ts}")
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    total = len(batch_sizes) * len(turns) * len(reps)
+    total_measurements = len(batch_sizes) * len(turns) * len(reps)
 
     print(f"\n{'='*65}")
     print(f"  MULTI-TURN BENCHMARK  |  quantization={quantization}")
     print(f"  Batch sizes: {batch_sizes}  |  Turns: {N_TURNS}  |  Reps: {reps}")
-    print(f"  Total measurements this run: {total}")
-    if pilot:
-        print("  MODE: PILOT (rep=1 only)")
+    print(f"  Total turn-measurements: {total_measurements}")
     print(f"  Output: {out_dir}")
     print(f"{'='*65}\n")
 
-    monitor      = GPUPowerMonitor(device_index=0)
-    all_results  = []
-    idx          = 0
-    # Track token count source across run for final warning
-    estimated_count_warned = False
+    monitor = GPUPowerMonitor(device_index=0)
+    all_results = []
+    measurement_idx = 0
 
     try:
         for batch_size in batch_sizes:
 
             print(f"\n{'─'*55}")
             print(f"  Batch size = {batch_size}")
+
+            # Warmup: run 2 turns without measurement to stabilize GPU
+            print(f"  Warming up...")
             run_warmup(history, batch_size)
 
             for rep in reps:
                 print(f"\n  Rep {rep}/{len(reps)}:")
 
                 for turn_number in turns:
-                    idx += 1
-                    msgs_approx = messages_token_approx(
-                        build_messages_for_turn(history, turn_number)
-                    )
+                    measurement_idx += 1
+                    progress = f"[{measurement_idx:>3}/{total_measurements}]"
 
-                    print(f"\n    [{idx:>3}/{total}]  "
-                          f"T{turn_number}/7  batch={batch_size}  rep={rep}  "
-                          f"~{msgs_approx}tok_ctx", end="  ")
+                    print(f"\n    {progress}  Turn {turn_number}/7"
+                          f"  (batch={batch_size}, rep={rep})", end="  ")
 
-                    meas   = measure_turn(history, turn_number, batch_size,
-                                         monitor, msgs_approx)
+                    meas   = measure_turn(history, turn_number, batch_size, monitor)
                     record = build_result_record(
-                        quantization, batch_size, rep, turn_number, meas
+                        quantization, batch_size, rep, turn_number, history, meas
                     )
                     all_results.append(record)
 
-                    # ── Immediate save for crash resilience ──────────────────
-                    (out_dir / f"{record['run_id']}.json").write_text(
-                        json.dumps(record, indent=2, ensure_ascii=False)
-                    )
+                    # Save each result immediately (crash resilience)
+                    rec_path = out_dir / f"{record['run_id']}.json"
+                    rec_path.write_text(json.dumps(record, indent=2, ensure_ascii=False))
 
-                    # ── Console summary ──────────────────────────────────────
+                    # Console summary
                     if record["status"] == "success":
-                        src = "A" if record["token_count_source"] == "api" else "E"
-                        print(
-                            f"✓  {record['energy_j']:.1f}J | "
-                            f"{record['j_per_output_token']:.4f}J/tok({src}) | "
-                            f"TTFT:{record.get('ttft_ms') or 0:.0f}ms | "
-                            f"VRAM:{record['vram_peak_mb']:.0f}MB "
-                            f"(Δ{record['vram_delta_mb']:.0f}) | "
-                            f"ctx:{record['total_context_tokens']}tok"
-                        )
-                        # ── First-measurement token count verification ───────
-                        if idx == 1:
-                            print(f"\n    ── TOKEN COUNT VERIFICATION ──")
-                            print(f"    prompt_tokens:     {record['prompt_tokens']}")
-                            print(f"    completion_tokens: {record['completion_tokens']}")
-                            print(f"    source:            {record['token_count_source']}")
-                            if record["token_count_source"] == "estimated":
-                                print(f"    ⚠  stream_options not supported — "
-                                      f"using word-count fallback")
-                            else:
-                                print(f"    ✓  API token counts confirmed")
-                            print()
-
+                        j   = record["energy_j"]
+                        jpt = record["j_per_output_token"]
+                        tt  = record.get("ttft_ms") or 0
+                        vr  = record["vram_peak_mb"]
+                        pt  = record["prompt_tokens"]
+                        print(f"✓  {j:.1f}J | {jpt:.4f}J/tok | "
+                              f"TTFT:{tt:.0f}ms | VRAM:{vr:.0f}MB | "
+                              f"ctx:{pt}tok")
                     else:
                         print(f"✗  {record['status']}  {record.get('error','')[:60]}")
 
+                    # Cooling between turns
                     if turn_number < N_TURNS:
-                        print(f"    [Cooling {COOLING_S}s]")
+                        print(f"    [Cooling {COOLING_S}s...]")
                         time.sleep(COOLING_S)
 
+                # Extra cooling between repetitions
                 if rep < len(reps):
-                    print(f"\n    [Rep-change cooling {COOLING_S}s]")
+                    print(f"\n    [Rep-change cooling {COOLING_S}s...]")
                     time.sleep(COOLING_S)
 
+            # Extra cooling between batch sizes
             if batch_sizes.index(batch_size) < len(batch_sizes) - 1:
-                print(f"\n  [Batch-change cooling {COOLING_S * 2}s]")
+                print(f"\n  [Batch-change cooling {COOLING_S * 2}s...]")
                 time.sleep(COOLING_S * 2)
 
     except KeyboardInterrupt:
@@ -518,41 +476,43 @@ def run_multiturn(
     finally:
         monitor.cleanup()
 
+        # Write consolidated JSONL
         jsonl_path = out_dir / "multiturn_results.jsonl"
         with jsonl_path.open("w", encoding="utf-8") as f:
             for r in all_results:
                 f.write(json.dumps(r, ensure_ascii=False) + "\n")
 
-        n_ok  = sum(1 for r in all_results if r["status"] == "success")
-        n_est = sum(1 for r in all_results
-                    if r.get("token_count_source") == "estimated")
-
         print(f"\n{'='*65}")
-        print(f"  Completed: {len(all_results)}/{total}")
-        print(f"  Success: {n_ok}  |  Errors: {len(all_results) - n_ok}")
-        if n_est > 0:
-            print(f"  ⚠  {n_est} records used estimated token counts")
+        print(f"  Completed: {len(all_results)}/{total_measurements} measurements")
+        n_ok  = sum(1 for r in all_results if r["status"] == "success")
+        n_err = len(all_results) - n_ok
+        print(f"  Success: {n_ok}  |  Error/OOM: {n_err}")
         print(f"  JSONL: {jsonl_path}")
         print(f"{'='*65}\n")
-
-        if pilot and n_ok == N_TURNS:
-            print("  PILOT: All 7 turns succeeded.")
-            print("  Verify energy and VRAM grow from T1 to T7 before full run.")
-            print("  If token_count_source == 'estimated', decide on fallback strategy.\n")
 
 
 # ── ENTRY POINT ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="INFERA Exp.2 — Multi-turn LLM energy benchmark"
+        description="Multi-turn LLM energy benchmark (INFERA Exp. 2)"
     )
-    parser.add_argument("--quantization", required=True,
-                        choices=["fp16", "int8_w8a16", "int4_awq"])
-    parser.add_argument("--batch-sizes", nargs="+", type=int, default=BATCH_SIZES)
-    parser.add_argument("--pilot", action="store_true",
-                        help="rep=1 only — fast validation before full run")
-    parser.add_argument("--results-dir", default=None)
+    parser.add_argument(
+        "--quantization", required=True,
+        choices=["fp16", "int8_w8a16", "int4_awq"],
+    )
+    parser.add_argument(
+        "--batch-sizes", nargs="+", type=int, default=BATCH_SIZES,
+        help=f"Batch sizes to test (default: {BATCH_SIZES})"
+    )
+    parser.add_argument(
+        "--pilot", action="store_true",
+        help="Only rep=1 — quick sanity check before full run"
+    )
+    parser.add_argument(
+        "--results-dir", default=None,
+        help="Override default results directory"
+    )
     args = parser.parse_args()
 
     run_multiturn(

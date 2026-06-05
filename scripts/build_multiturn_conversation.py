@@ -1,238 +1,216 @@
 """
-build_multiturn_conversation.py  — Phase 1 of INFERA Experiment 2.
+build_multiturn_conversation.py  —  INFERA Experimento 2, Fase 1.
 
-Generates the FIXED conversation history used by Phase 2 (multiturn_runner.py).
-Runs 7 turns against vLLM (FP16, batch=1, temperature=0) and saves the full
-conversation to data/multiturn/conversation_history.json.
+Genera la HISTORIA CONVERSACIONAL FIJA (pinned) que usaran los tres esquemas
+(FP16 / INT8 / AWQ) en multiturn_runner.py, y valida los tokens reales contra
+el tokenizer del propio modelo via el `usage` de vLLM.
 
-WHY FIXED HISTORY:
-  With temperature=0, all quantization schemes generate identical responses for
-  the same input. Pre-generating once and fixing the history makes the design
-  auditable: all schemes receive exactly the same sequence of user_content and
-  assistant_content strings, ensuring energy differences are attributable only
-  to the quantization scheme, not to content variation.
+POR QUE FASE 1 SEPARADA:
+  Con temperature=0 (greedy decoding) la conversacion se pre-genera UNA sola vez
+  con FP16 y se congela. Asi el contexto presentado en cada turno es IDENTICO
+  para los tres esquemas, y las diferencias de energia en la Fase 2 son
+  atribuibles al esquema de cuantizacion, no a respuestas divergentes.
 
-USAGE:
-  # vLLM FP16 must be running:
-  #   bash scripts/start_vllm_fp16.sh
+  >>> Esta historia debe generarse UNA vez y copiarse IDENTICA a todos los pods. <<<
+
+QUE PRODUCE:
+  - data/multiturn/conversation_history.json   (lo que consume multiturn_runner.py)
+  - actualiza data/multiturn/conversation_flow.json con measured_input_tokens reales
+  - reporte de validacion: T1 en [1500,2000], T7 en [3500,4500], max+256 < max-model-len
+
+COMPOSICION DEL CONTEXTO:
+  system enviado al modelo = system_prompt + "\\n\\n=== DOCUMENTOS ===\\n" + combined_content
+  Se reenvia COMPLETO cada turno (prefix caching OFF => re-prefill completo).
+
+USO (con el servidor vLLM FP16 corriendo en otra terminal):
+  bash scripts/start_vllm_fp16.sh          # en otra terminal
   python scripts/build_multiturn_conversation.py
-  # Output: data/multiturn/conversation_history.json
+  python scripts/build_multiturn_conversation.py --dry-run   # solo medir, sin regenerar
 """
 
-import asyncio
+import argparse
 import json
 import sys
-import time
-from datetime import datetime, timezone
 from pathlib import Path
 
 try:
     import httpx
 except ImportError:
-    sys.exit("FATAL: httpx not installed. Run: pip install httpx")
+    sys.exit("FATAL: httpx no instalado. Ejecuta: pip install httpx")
 
-# ── CONFIG ────────────────────────────────────────────────────────────────────
 VLLM_URL    = "http://localhost:8000/v1/chat/completions"
 MODEL_NAME  = "meta-llama/Meta-Llama-3.1-8B-Instruct"
 MAX_TOKENS  = 256
 TEMPERATURE = 0.0
 TIMEOUT_S   = 300
+MAX_MODEL_LEN = 8192
 
-FLOW_PATH   = Path("data/multiturn/conversation_flow.json")
-OUTPUT_PATH = Path("data/multiturn/conversation_history.json")
+FLOW_PATH    = Path("data/multiturn/conversation_flow.json")
+HISTORY_PATH = Path("data/multiturn/conversation_history.json")
+
+# Bandas objetivo (tokens REALES de entrada por turno)
+T1_BAND = (1500, 2000)
+T7_BAND = (3500, 4500)
 
 
-# ── SINGLE TURN (streaming for TTFT + usage) ─────────────────────────────────
+def compose_system(flow: dict) -> str:
+    """system efectivo = system_prompt + bloque de documentos."""
+    base = flow["system_prompt"].strip()
+    docs = flow["documents"]["combined_content"].strip()
+    return f"{base}\n\n=== DOCUMENTOS INTERNOS MOSS ===\n{docs}"
 
-async def send_turn_streaming(messages: list[dict]) -> dict:
+
+def build_messages(system: str, prior_turns: list[dict], user_content: str) -> list[dict]:
+    """system + pares (user, assistant) previos + user actual (sin respuesta)."""
+    msgs = [{"role": "system", "content": system}]
+    for t in prior_turns:
+        msgs.append({"role": "user",      "content": t["user_content"]})
+        msgs.append({"role": "assistant", "content": t["assistant_content"]})
+    msgs.append({"role": "user", "content": user_content})
+    return msgs
+
+
+def call_vllm(client: httpx.Client, messages: list[dict], generate: bool) -> dict:
     """
-    Send one turn with stream=True.
-    Measures TTFT (time to first content chunk).
-    Attempts to get exact token counts via stream_options.include_usage.
-    If vLLM does not support stream_options, token counts fall back to estimation.
+    Una peticion no-streaming. Si generate=False, pide max_tokens=1 solo para
+    leer usage.prompt_tokens (medir contexto sin gastar generacion).
     """
     payload = {
         "model":       MODEL_NAME,
         "messages":    messages,
-        "max_tokens":  MAX_TOKENS,
+        "max_tokens":  MAX_TOKENS if generate else 1,
         "temperature": TEMPERATURE,
-        "stream":      True,
-        "stream_options": {"include_usage": True},  # vLLM ≥0.4.x; silently ignored if unsupported
+        "stream":      False,
     }
-
-    t_start = time.perf_counter()
-    ttft_ms = None
-    chunks  = []
-    pt, ct  = 0, 0           # filled from usage chunk if vLLM supports stream_options
-
-    try:
-        async with httpx.AsyncClient(timeout=TIMEOUT_S) as client:
-            async with client.stream("POST", VLLM_URL, json=payload) as resp:
-                if resp.status_code != 200:
-                    return {"status": "error",
-                            "error": f"HTTP {resp.status_code}: {(await resp.aread())[:200]}"}
-
-                async for line in resp.aiter_lines():
-                    if not line.startswith("data: "):
-                        continue
-                    data_str = line[6:].strip()
-                    if data_str == "[DONE]":
-                        break
-                    try:
-                        chunk = json.loads(data_str)
-                    except json.JSONDecodeError:
-                        continue
-
-                    delta   = chunk.get("choices", [{}])[0].get("delta", {})
-                    content = delta.get("content", "")
-
-                    if content and ttft_ms is None:
-                        ttft_ms = (time.perf_counter() - t_start) * 1000
-
-                    if content:
-                        chunks.append(content)
-
-                    # stream_options: usage arrives in the final data chunk
-                    if chunk.get("usage"):
-                        pt = chunk["usage"].get("prompt_tokens", 0)
-                        ct = chunk["usage"].get("completion_tokens", 0)
-
-    except Exception as e:
-        return {"status": "error", "error": str(e)[:200]}
-
-    t_end        = time.perf_counter()
-    full_text    = "".join(chunks)
-    total_time_s = t_end - t_start
-
-    # Fallback token count: word-based estimate, capped at MAX_TOKENS
-    # Used only if vLLM did not return usage (stream_options not supported)
-    token_count_from_api = ct > 0
-    if not token_count_from_api:
-        ct = min(MAX_TOKENS, max(1, len(full_text.split()) * 4 // 3))
-
+    r = client.post(VLLM_URL, json=payload, timeout=TIMEOUT_S)
+    r.raise_for_status()
+    data = r.json()
+    usage = data.get("usage", {})
+    text  = data["choices"][0]["message"]["content"] if generate else ""
     return {
-        "status":              "success",
-        "full_text":           full_text,
-        "prompt_tokens":       pt,
-        "completion_tokens":   ct,
-        "token_count_from_api": token_count_from_api,
-        "ttft_ms":             round(ttft_ms, 2) if ttft_ms else None,
-        "total_time_s":        round(total_time_s, 4),
+        "text":              text.strip(),
+        "prompt_tokens":     usage.get("prompt_tokens"),
+        "completion_tokens": usage.get("completion_tokens"),
     }
 
 
-# ── MAIN ─────────────────────────────────────────────────────────────────────
+def main():
+    ap = argparse.ArgumentParser(description="INFERA Exp.2 Fase 1 — build + validate")
+    ap.add_argument("--flow",    default=str(FLOW_PATH))
+    ap.add_argument("--history", default=str(HISTORY_PATH))
+    ap.add_argument("--dry-run", action="store_true",
+                    help="Solo medir tokens (usa historia existente si la hay; no regenera).")
+    args = ap.parse_args()
 
-async def build_conversation():
-    if not FLOW_PATH.exists():
-        sys.exit(f"FATAL: conversation_flow.json not found at {FLOW_PATH}\n"
-                 f"Expected at: {FLOW_PATH.resolve()}")
+    flow_path    = Path(args.flow)
+    history_path = Path(args.history)
+    if not flow_path.exists():
+        sys.exit(f"FATAL: no existe {flow_path}")
 
-    flow          = json.loads(FLOW_PATH.read_text(encoding="utf-8"))
-    system_prompt = flow["system_prompt"]
-    doc_content   = flow["documents"]["combined_content"]
-    turns_def     = flow["turns"]
+    flow   = json.loads(flow_path.read_text(encoding="utf-8"))
+    system = compose_system(flow)
+    user_turns = [t["content"] for t in flow["turns"]]
 
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    # En dry-run con historia previa, reusar respuestas fijas para medir contexto exacto.
+    existing = None
+    if args.dry_run and history_path.exists():
+        existing = json.loads(history_path.read_text(encoding="utf-8"))
 
-    print("\n" + "="*65)
-    print("  BUILD MULTITURN CONVERSATION — FP16 baseline pre-generation")
-    print("="*65)
-    print(f"  Model:      {MODEL_NAME}")
-    print(f"  Turns:      {len(turns_def)}  |  max_tokens: {MAX_TOKENS}  |  temp: {TEMPERATURE}")
-    print(f"  Output:     {OUTPUT_PATH}")
-    print("="*65)
+    print("\n" + "=" * 66)
+    print("  INFERA Exp.2 — Fase 1: construccion + validacion de contexto")
+    print(f"  Modo: {'DRY-RUN (solo medir)' if args.dry_run else 'GENERAR historia con FP16'}")
+    print("=" * 66 + "\n")
 
-    vllm_messages      = [{"role": "system", "content": system_prompt}]
-    generated_turns    = []
-    token_counts_ok    = True   # tracks whether vLLM returned API token counts
+    history_turns = []
+    measured = {}
 
-    for turn_def in turns_def:
-        t_num    = turn_def["turn_number"]
-        user_msg = turn_def["content"]
+    with httpx.Client() as client:
+        # sanity
+        try:
+            client.get("http://localhost:8000/v1/models", timeout=10).raise_for_status()
+        except Exception as e:
+            sys.exit(f"FATAL: vLLM no responde en localhost:8000 ({e}). "
+                     f"Levanta start_vllm_fp16.sh primero.")
 
-        # Turn 1: embed documents in the first user message (RAG pattern)
-        user_content = (
-            f"Documentos de referencia:\n\n{doc_content}\n\n---\n\n{user_msg}"
-            if t_num == 1 else user_msg
-        )
+        prior = []
+        for i, uc in enumerate(user_turns, 1):
+            msgs = build_messages(system, prior, uc)
 
-        vllm_messages.append({"role": "user", "content": user_content})
+            if args.dry_run and existing:
+                # medir contexto real sin generar; respuesta fija de la historia
+                res = call_vllm(client, msgs, generate=False)
+                assistant = existing["turns"][i - 1]["assistant_content"]
+            else:
+                res = call_vllm(client, msgs, generate=True)
+                assistant = res["text"]
 
-        print(f"\n  Turno {t_num}/7  ({len(vllm_messages)} msgs in context)")
-        print(f"  Q: {user_msg[:80]}...", flush=True)
+            pt = res["prompt_tokens"]
+            measured[i] = pt
+            print(f"  T{i}: input_real = {pt:>5} tok"
+                  + (f" | output = {res['completion_tokens']} tok" if not args.dry_run else ""))
 
-        result = await send_turn_streaming(vllm_messages)
+            history_turns.append({
+                "turn_number": i,
+                "user_content": uc,
+                "assistant_content": assistant,
+                "measured_input_tokens": pt,
+                "measured_output_tokens": res["completion_tokens"] if not args.dry_run else None,
+            })
+            prior.append({"user_content": uc, "assistant_content": assistant})
 
-        if result["status"] != "success":
-            sys.exit(f"\nFATAL at Turn {t_num}: {result.get('error')}")
+    # ── Escribir historia (solo si generamos) ──────────────────────────────
+    if not args.dry_run:
+        history = {
+            "system_prompt": system,          # incluye documentos -> re-prefill completo cada turno
+            "generated_with": "fp16 temperature=0 greedy (pinned)",
+            "turns": history_turns,
+        }
+        history_path.parent.mkdir(parents=True, exist_ok=True)
+        history_path.write_text(json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"\n  -> historia fija escrita: {history_path}")
 
-        response_text       = result["full_text"].strip()
-        token_count_from_api = result["token_count_from_api"]
-        if not token_count_from_api:
-            token_counts_ok = False
+    # actualizar flow con tokens reales
+    for t in flow["turns"]:
+        t["measured_input_tokens"] = measured.get(t["turn_number"])
+    flow_path.write_text(json.dumps(flow, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"  -> conversation_flow.json actualizado con tokens reales")
 
-        print(f"  A: {response_text[:100].replace(chr(10), ' ')}...")
-        print(f"  TTFT: {result['ttft_ms'] or 'N/A'}ms  |  "
-              f"{result['total_time_s']:.1f}s  |  "
-              f"ct={result['completion_tokens']} "
-              f"({'API' if token_count_from_api else 'estimated'})")
+    # ── Reporte de validacion ──────────────────────────────────────────────
+    t1, t7 = measured.get(1), measured.get(7)
+    max_ctx = max(measured.values())
+    print("\n" + "-" * 66)
+    print("  VALIDACION DE LA ENVOLVENTE DE TOKENS")
+    print("-" * 66)
 
-        # Append assistant response to grow the context for the next turn
-        vllm_messages.append({"role": "assistant", "content": response_text})
+    def check(label, val, lo, hi):
+        ok = lo <= val <= hi
+        flag = "OK " if ok else "FUERA"
+        print(f"  {label}: {val:>5} tok  (banda {lo}-{hi})  [{flag}]")
+        return ok
 
-        generated_turns.append({
-            "turn_number":          t_num,
-            "user_content":         user_content,
-            "assistant_content":    response_text,
-            "prompt_tokens":        result["prompt_tokens"],
-            "completion_tokens":    result["completion_tokens"],
-            "token_count_from_api": token_count_from_api,
-            "ttft_ms":              result["ttft_ms"],
-            "total_time_s":         result["total_time_s"],
-        })
+    ok1 = check("T1 (~Case_B)", t1, *T1_BAND)
+    ok7 = check("T7 (~Case_C)", t7, *T7_BAND)
+    okm = (max_ctx + MAX_TOKENS) < MAX_MODEL_LEN
+    print(f"  Max contexto T7 + {MAX_TOKENS} salida = {max_ctx + MAX_TOKENS} tok  "
+          f"(limite max-model-len {MAX_MODEL_LEN})  [{'OK' if okm else 'EXCEDE'}]")
 
-        if t_num < len(turns_def):
-            time.sleep(2)   # brief pause between turns during pre-generation
-
-    # ── WARNINGS ─────────────────────────────────────────────────────────────
-    if not token_counts_ok:
-        print("\n  ⚠  WARNING: stream_options.include_usage not supported by this vLLM.")
-        print("     Token counts in this file are word-based estimates (±10-15%).")
-        print("     The same limitation will apply in Phase 2 (multiturn_runner.py).")
-        print("     Energy (Joules) is unaffected. j_per_output_token will use estimates.")
-
-    # ── SAVE ─────────────────────────────────────────────────────────────────
-    output = {
-        "generated_at":          datetime.now(timezone.utc).isoformat(),
-        "model":                 MODEL_NAME,
-        "quantization":          "fp16",
-        "temperature":           TEMPERATURE,
-        "max_tokens":            MAX_TOKENS,
-        "token_counts_from_api": token_counts_ok,
-        "system_prompt":         system_prompt,
-        "document_content":      doc_content,
-        "turns":                 generated_turns,
-        # Full message array stored for audit: verify against build_messages_for_turn output
-        "vllm_messages_final":   vllm_messages,
-        "note": (
-            "Fixed history used by Phase 2. "
-            "All quantization schemes receive identical user_content and assistant_content. "
-            "Energy differences in Phase 2 are attributable only to the quantization scheme."
-        ),
-    }
-
-    OUTPUT_PATH.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
-
-    print(f"\n{'='*65}")
-    print(f"  ✓ Saved: {OUTPUT_PATH}")
-    print(f"  Turns: {len(generated_turns)}  |  "
-          f"Token counts: {'API (exact)' if token_counts_ok else 'estimated'}")
-    print(f"  Context at T7: ~{sum(len(t['user_content']) + len(t['assistant_content']) for t in generated_turns) // 4} tokens (rough)")
-    print(f"{'='*65}\n")
-    print("  Next step:")
-    print("    python scripts/multiturn_runner.py --quantization fp16 --batch-sizes 1 --pilot")
+    if not (ok1 and ok7 and okm):
+        print("\n  >>> AJUSTE SUGERIDO <<<")
+        if not ok1:
+            d = (sum(T1_BAND)//2) - t1
+            print(f"    T1 fuera de banda: {'agrega' if d>0 else 'quita'} ~{abs(d)} tokens "
+                  f"al bloque documents.combined_content (afecta la BASE de todos los turnos).")
+        if not ok7 and ok1:
+            print(f"    Solo T7 fuera: el largo de las respuestas A1..A6 quedo "
+                  f"{'corto' if t7<T7_BAND[0] else 'largo'}. Ajusta max_tokens_per_turn o el "
+                  f"detalle pedido en los turnos generativos (T2,T3,T6).")
+        if not okm:
+            print(f"    Reduce el corpus o sube --max-model-len en los start_vllm_*.sh.")
+        print("    Re-ejecuta esta Fase 1 tras ajustar.")
+    else:
+        print("\n  Envolvente VALIDADA: puente Case_B -> Case_C correcto. Lista para Fase 2.")
+    print("-" * 66 + "\n")
 
 
 if __name__ == "__main__":
-    asyncio.run(build_conversation())
+    main()
