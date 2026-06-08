@@ -5,13 +5,13 @@ source /workspace/venv/bin/activate
 # enabling Case C (4096 tokens) + batch=8 configurations.
 
 echo "Starting vLLM server: INT4 AWQ"
-echo "Model: /models/llama3.1-8b-instruct-awq"
+echo "Model: /workspace/models/llama3.1-8b-instruct-awq"
 echo "Expected VRAM usage: ~4-5 GB (model weights)"
 echo "KV-cache budget: ~19 GB — enables Case C + batch=8"
 echo ""
 
 python -m vllm.entrypoints.openai.api_server \
-    --model /models/llama3.1-8b-instruct-awq \
+    --model /workspace/models/llama3.1-8b-instruct-awq \
     --served-model-name "meta-llama/Meta-Llama-3.1-8B-Instruct" \
     --quantization awq \
     --dtype float16 \

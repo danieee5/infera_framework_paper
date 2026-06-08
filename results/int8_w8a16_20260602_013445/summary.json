@@ -1,0 +1,14 @@
+{
+  "start": "2026-06-02T01:34:45.276360+00:00",
+  "quantization": "int8_w8a16",
+  "pilot": false,
+  "config_rep_total": 81,
+  "config_rep_completed": 81,
+  "batch_calls_success": 1134,
+  "batch_calls_oom": 0,
+  "batch_calls_error": 0,
+  "batch_calls_timeout": 0,
+  "warmup_calls_per_group": 5,
+  "concurrency_model": "asyncio.gather \u2014 all batch_size requests launched simultaneously",
+  "end": "2026-06-02T08:39:54.745525+00:00"
+}

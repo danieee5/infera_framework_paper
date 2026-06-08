@@ -5,12 +5,12 @@ source /workspace/venv/bin/activate
 # Keep this terminal open during the entire fp16 benchmark run.
 
 echo "Starting vLLM server: FP16 (baseline)"
-echo "Model: /models/llama3.1-8b-instruct"
+echo "Model: /workspace/models/llama3.1-8b-instruct"
 echo "Expected VRAM usage: ~16 GB (model weights)"
 echo ""
 
 python -m vllm.entrypoints.openai.api_server \
-    --model /models/llama3.1-8b-instruct \
+    --model /workspace/models/llama3.1-8b-instruct \
     --served-model-name "meta-llama/Meta-Llama-3.1-8B-Instruct" \
     --dtype float16 \
     --max-model-len 8192 \
