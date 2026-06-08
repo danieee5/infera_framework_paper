@@ -37,6 +37,41 @@ pip install requests pandas matplotlib
 # autoawq solo si se va a servir el modelo AWQ
 pip install autoawq==0.2.5 || echo "WARNING: autoawq no instalado (omitir si no usas AWQ)"
 
+# ---------------------------------------------------------------------------
+# Fix pyairports (lección documentada en EXP1, scripts/setup_runpod.sh):
+# outlines 0.0.46 (dependencia de vLLM 0.5.3) importa AIRPORT_LIST de pyairports.
+# El repo original fue eliminado de GitHub; el paquete de PyPI viene vacío
+# (solo dist-info, sin .py). vLLM no usa gramaticas de aeropuertos -> stub vacio.
+# ---------------------------------------------------------------------------
+echo "Aplicando fix de pyairports..."
+pip install "pyairports==0.0.1" -q 2>/dev/null || true
+SITE=$(python3 -c "import site; print(site.getsitepackages()[0])")
+mkdir -p "$SITE/pyairports"
+
+cat > "$SITE/pyairports/__init__.py" << 'PYEOF'
+"""pyairports stub para outlines 0.0.46. Repo original eliminado de GitHub."""
+from pyairports.airports import Airports, AirportNotFoundException
+PYEOF
+
+cat > "$SITE/pyairports/airports.py" << 'PYEOF'
+AIRPORT_LIST = []
+
+class AirportNotFoundException(Exception):
+    pass
+
+class Airport:
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items(): setattr(self, k, v)
+
+class Airports:
+    def __init__(self): self.airports = {}
+    def airport_iata(self, iata): raise AirportNotFoundException(iata)
+    def other_iata(self, iata): raise AirportNotFoundException(iata)
+    def lookup(self, iata): raise AirportNotFoundException(iata)
+    def airport_city(self, city, country=None): return []
+PYEOF
+echo "[OK] stub de pyairports en $SITE/pyairports"
+
 echo
 echo "[OK] Entorno listo en $VENV"
 echo "[OK] HF cache en $HF_HOME"
