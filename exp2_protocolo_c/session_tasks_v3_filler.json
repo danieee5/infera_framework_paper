@@ -1,0 +1,181 @@
+{
+  "session_id": "vigia_rrhh_ops_v3_filler",
+  "description": "Sesion de CONTROL CAUSAL — misma estructura que v3 y mismo KB (sistema), pero todas las tareas intermedias son neutrales (sin contenido VIGIA). Los SONDA son identicos a v3. Hipotesis a probar: si AWQ falla las sondas con historia de relleno neutral al mismo ctx que con historia real, el mecanismo es longitud de KV cache (context-rot puro), no interferencia semantica de la historia de sesion. Solo correr brazo naive (no tiene sentido compactar relleno). THRESH: n/a.",
+  "decoding": {"temperature": 0.0, "max_tokens": 512, "seed": 42},
+  "tasks": [
+    {
+      "id": "FILL_01", "type": "FACT",
+      "prompt": "¿Cuantas horas tiene una semana? Muestra el calculo: dias por horas/dia.",
+      "depends_on": [],
+      "verify": {"contains_all": ["168"], "contains_any": [["hora", "semana"]]}
+    },
+    {
+      "id": "FILL_02", "type": "FACT",
+      "prompt": "¿Cual es la capital de Japon y en que isla principal se encuentra?",
+      "depends_on": [],
+      "verify": {"contains_all": ["Tokio"], "contains_any": [["Honshu", "Honshu", "isla"]]}
+    },
+    {
+      "id": "SONDA_A", "type": "SONDA",
+      "prompt": "¿Quien ocupa el cargo de Jefe de Operaciones de campo (no el Jefe nacional) en VIGIA Seguridad S.A.? Responde solo con el nombre.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Carlos Tobar"], "forbidden": ["Diego Salas", "Carlos Ortega"]}
+    },
+    {
+      "id": "FILL_03", "type": "CLASSIFY",
+      "prompt": "Clasifica los numeros del 1 al 20 como primo o compuesto. Para cada numero escribe 'N: primo' o 'N: compuesto', uno por linea. El 1 es ni primo ni compuesto: escribe '1: ninguno'.",
+      "depends_on": [],
+      "verify": {"contains_all": ["2: primo", "4: compuesto", "17: primo"]}
+    },
+    {
+      "id": "FILL_04", "type": "CONSTRAINT",
+      "prompt": "Crea una lista de exactamente 20 ciudades del mundo (una de cada continente habitado, distribuidas equitativamente). Para cada ciudad escribe un objeto JSON: {\"id\":N,\"ciudad\":\"nombre\",\"pais\":\"pais\",\"continente\":\"continente\"}. Responde UNICAMENTE con el array JSON.",
+      "depends_on": [],
+      "verify": {"contains_any": [["\"ciudad\"", "ciudad"], ["\"pais\"", "pais"], ["\"id\""]]}
+    },
+    {
+      "id": "FILL_05", "type": "DRAFT",
+      "prompt": "Escribe los presidentes de Argentina desde 1983 hasta 2023, con sus periodos de gobierno, en formato: 'Nombre: AAAA-AAAA', uno por linea. Incluye todos los presidentes en ese rango (incluyendo presidentes interinos relevantes).",
+      "depends_on": [],
+      "verify": {"contains_any": [["Alfonsin", "Alfonsín"], ["Menem"], ["Kirchner"]]}
+    },
+    {
+      "id": "FILL_06", "type": "FACT",
+      "prompt": "¿Cuales son los tres paises mas grandes de America del Sur por superficie terrestre? Lista nombre y area aproximada en km².",
+      "depends_on": [],
+      "verify": {"contains_all": ["Brasil"], "contains_any": [["Argentina", "Peru", "Perú"]]}
+    },
+    {
+      "id": "SONDA_B", "type": "SONDA",
+      "prompt": "¿Quien es el Gerente General de VIGIA Seguridad S.A.? Responde solo con el nombre.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Roberto Salas"], "forbidden": ["Laura Salas", "Diego Salas"]}
+    },
+    {
+      "id": "FILL_07", "type": "SUMMARIZE",
+      "prompt": "Escribe un parrafo de 4-5 oraciones sobre el ciclo hidrologico del agua, incluyendo los procesos de evaporacion, condensacion, precipitacion y escorrentia superficial.",
+      "depends_on": [],
+      "verify": {"contains_any": [["evaporacion", "evaporación", "condensacion", "condensación", "precipitacion", "precipitación"]]}
+    },
+    {
+      "id": "SONDA_D", "type": "SONDA",
+      "prompt": "¿Cuantos puestos de custodia tiene BANCA UNION (agencia centro) y en que modalidad de turno opera? Responde con el numero de puestos y la modalidad.",
+      "depends_on": [],
+      "verify": {"contains_all": ["2"], "contains_any": [["Diurno", "diurno", "turno"]]}
+    },
+    {
+      "id": "FILL_M1", "type": "FACT",
+      "prompt": "¿Cual es la formula quimica del agua y la del dioxido de carbono? Responde con las dos formulas.",
+      "depends_on": [],
+      "verify": {"contains_all": ["H2O"], "contains_any": [["CO2", "CO₂"]]}
+    },
+    {
+      "id": "SONDA_E", "type": "SONDA",
+      "prompt": "¿En que modalidad de turno opera el cliente AGRO COSTA CIA. LTDA. segun el proyecto? Responde en una o dos palabras.",
+      "depends_on": [],
+      "verify": {"contains_any": [["Nocturno", "nocturno", "noche"]]}
+    },
+    {
+      "id": "FILL_M2", "type": "FACT",
+      "prompt": "¿Cuantos huesos tiene aproximadamente el cuerpo humano adulto? Responde con el numero.",
+      "depends_on": [],
+      "verify": {"contains_any": [["206", "206 huesos"]]}
+    },
+    {
+      "id": "SONDA_F", "type": "SONDA",
+      "prompt": "¿Quien ocupa el cargo de Gerente Administrativa en VIGIA Seguridad S.A.? Responde solo con el nombre.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Laura Salas"], "forbidden": ["Roberto Salas", "Rosa Ramos"]}
+    },
+    {
+      "id": "FILL_08", "type": "FACT",
+      "prompt": "Lista los 10 paises mas poblados del mundo en 2023, en orden de mayor a menor, con su poblacion aproximada en millones de habitantes. Un pais por linea.",
+      "depends_on": [],
+      "verify": {"contains_all": ["China", "India"], "contains_any": [["Estados Unidos", "USA", "EE.UU"]]}
+    },
+    {
+      "id": "SONDA_G", "type": "SONDA",
+      "prompt": "¿Cuantos empleados aproximados tiene VIGIA Seguridad S.A. en total (incluyendo Manta y Quito)? Responde con el numero.",
+      "depends_on": [],
+      "verify": {"contains_any": [["200", "doscientos"]]}
+    },
+    {
+      "id": "FILL_M3", "type": "FACT",
+      "prompt": "¿Cual es la velocidad de la luz en el vacio, en km/s? Responde con el numero aproximado.",
+      "depends_on": [],
+      "verify": {"contains_any": [["300.000", "300,000", "299.792", "299792"]]}
+    },
+    {
+      "id": "SONDA_H", "type": "SONDA",
+      "prompt": "¿Quien es el Analista de procesos en VIGIA Seguridad S.A.? Responde solo con el nombre completo.",
+      "depends_on": [],
+      "verify": {"contains_any": [["Raul Espinoza", "Raúl Espinoza", "Espinoza"]]}
+    },
+    {
+      "id": "FILL_09", "type": "CONSTRAINT",
+      "prompt": "Escribe los primeros 20 multiplos de 7 (del 7 al 140), uno por linea. Formato: 'N. M' (numero de posicion y multiplo). Ejemplo: '1. 7'.",
+      "depends_on": [],
+      "verify": {"contains_all": ["1. 7", "20. 140"]}
+    },
+    {
+      "id": "SONDA_I", "type": "SONDA",
+      "prompt": "¿Quien es el Jefe de Operaciones nacional (no el de campo) de VIGIA Seguridad S.A.? Responde solo con el nombre.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Diego Salas"], "forbidden": ["Carlos Tobar", "Roberto Salas"]}
+    },
+    {
+      "id": "FILL_10", "type": "DRAFT",
+      "prompt": "Escribe una receta paso a paso para preparar arroz con leche estilo ecuatoriano. Incluye: lista de ingredientes con cantidades, y al menos 7 pasos numerados de preparacion.",
+      "depends_on": [],
+      "verify": {"contains_any": [["arroz", "leche", "azucar", "canela"]]}
+    },
+    {
+      "id": "FILL_11", "type": "FACT",
+      "prompt": "¿Cuales son los tres oceanos mas grandes del mundo? Listalos en orden de mayor a menor, con su area aproximada en millones de km².",
+      "depends_on": [],
+      "verify": {"contains_all": ["Pacifico", "Atlántico"], "contains_any": [["Pacifico", "Pacifico", "Indico", "Índico"]]}
+    },
+    {
+      "id": "SONDA_J", "type": "SONDA",
+      "prompt": "¿Que zona operativa cubre el Supervisor de guardias Richard Ortega en VIGIA Seguridad S.A.? Responde solo con el nombre de la zona.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Sierra 2"], "forbidden": ["Sierra 1"]}
+    },
+    {
+      "id": "SONDA_C", "type": "SONDA",
+      "prompt": "Segun el registro de permisos medicos del proyecto, ¿cual es el diagnostico registrado para el permiso de VERA SANTOS DIEGO ARMANDO?",
+      "depends_on": [],
+      "verify": {"contains_any": [["Migrana", "Migraña", "migrana", "migraña"]]}
+    },
+    {
+      "id": "FILL_12", "type": "FACT",
+      "prompt": "¿Que es la fotosintesis? Explica en dos oraciones.",
+      "depends_on": [],
+      "verify": {"contains_any": [["luz solar", "luz", "dioxido", "CO2", "glucosa", "energia"]]}
+    },
+    {
+      "id": "FILL_13", "type": "SUMMARIZE",
+      "prompt": "Escribe exactamente 2 frases resumiendo las principales causas y consecuencias del calentamiento global.",
+      "depends_on": [],
+      "verify": {"contains_any": [["temperatura", "emisiones", "gases", "CO2", "efecto invernadero", "glaciares"]]}
+    },
+    {
+      "id": "FILL_14", "type": "FACT",
+      "prompt": "Lista los siete continentes del mundo con su superficie aproximada en km², de mayor a menor. Un continente por linea.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Asia", "Africa"], "contains_any": [["km", "km²"]]}
+    },
+    {
+      "id": "T15", "type": "SONDA",
+      "prompt": "Para un guardia que empezo a trabajar el lunes, indica que dias de la semana puede trabajar como maximo antes de su dia de descanso obligatorio, segun la regla de dias consecutivos del proyecto. Responde con la lista de dias laborables y el dia de descanso.",
+      "depends_on": [],
+      "verify": {"contains_all": ["6"], "contains_any": [["domingo", "septimo", "7"]]}
+    },
+    {
+      "id": "FILL_16", "type": "FACT",
+      "prompt": "¿Cuales son las tres piramides principales del complejo de Guiza (Egipto) y cual es la mas grande? Responde con sus nombres y el faraon al que pertenecen.",
+      "depends_on": [],
+      "verify": {"contains_any": [["Keops", "Khufu", "Kefrén", "Kefrn"], ["Micerinos", "Menkaure"]]}
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "session_id": "vigia_rrhh_ops_v3",
+  "description": "Sesion incremental v3 — Fase 2a: sondas densas en zona 4500-5600 para localizar el codo del context-rot AWQ con precision. Inserta 6 SONDAS nuevas (D-I) y 3 FACT_M entre SONDA_B y T11, manteniendo el schema de tareas sustantivas de v2 para compatibilidad. Aprovecha los incrementos reales de v2 para estimar posiciones: SONDA_D~4746, SONDA_E~4831, SONDA_F~4916, SONDA_G~5181, SONDA_H~5266, SONDA_I~5491 (zona critica). THRESH sugerido: 4500.",
+  "decoding": {"temperature": 0.0, "max_tokens": 512, "seed": 42},
+  "tasks": [
+    {
+      "id": "T01", "type": "FACT",
+      "prompt": "Segun el conocimiento del proyecto, ¿quien emite (firma) los memorandos disciplinarios de RR-HH? Responde solo con el nombre y el cargo.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Elena Castro"], "forbidden": ["Carla Medina", "Mateo Solis"]}
+    },
+    {
+      "id": "T02", "type": "FACT",
+      "prompt": "¿Cual es el descanso minimo obligatorio entre turnos para un guardia? Responde con el numero de horas.",
+      "depends_on": [],
+      "verify": {"contains_all": ["12"], "contains_any": [["hora"]]}
+    },
+    {
+      "id": "SONDA_A", "type": "SONDA",
+      "prompt": "¿Quien ocupa el cargo de Jefe de Operaciones de campo (no el Jefe nacional) en VIGIA Seguridad S.A.? Responde solo con el nombre.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Carlos Tobar"], "forbidden": ["Diego Salas", "Carlos Ortega"]}
+    },
+    {
+      "id": "T03", "type": "CLASSIFY",
+      "prompt": "Un guardia fue encontrado dormido en su puesto y ademas no portaba el chaleco de proteccion reglamentario. Clasifica la falta: indica los articulos del Reglamento Interno que aplican y el porcentaje maximo de sancion economica.",
+      "depends_on": [],
+      "verify": {"contains_all": ["10%"], "contains_any": [["55"], ["65"], ["57"]]}
+    },
+    {
+      "id": "T04", "type": "CONSTRAINT",
+      "prompt": "Arma el rol de turnos de 2 dias (dia 1 y dia 2) para CLIENTE INDUSTRIAL S.A., que tiene 4 puestos en modalidad 24h con dos turnos: DIURNO y NOCTURNO. Cada turno de cada dia necesita exactamente 1 guardia por puesto (4 puestos = 4 guardias por turno). Guardias disponibles: G1 PEREZ, G2 LOPEZ, G3 CHAVEZ, G4 VERA, G5 MOREIRA, G6 QUIROZ, G7 CEDENO, G8 ZAMBRANO. Restricciones: (a) cobertura total de cada puesto en cada turno; (b) un guardia NO puede trabajar DIURNO y NOCTURNO el mismo dia; (c) un guardia que trabaja NOCTURNO el dia 1 NO puede trabajar DIURNO el dia 2 (descanso 12h). Responde UNICAMENTE con un bloque JSON: una lista de objetos {\"guardia\":\"G1\",\"dia\":1,\"turno\":\"DIURNO\",\"puesto\":1}.",
+      "depends_on": [],
+      "verify": {"rota": {"posts": 4, "days": 2, "shifts": ["DIURNO", "NOCTURNO"], "guards": ["G1","G2","G3","G4","G5","G6","G7","G8"]}}
+    },
+    {
+      "id": "T05", "type": "DRAFT",
+      "prompt": "Redacta el memorando disciplinario formal para el guardia PEREZ GOMEZ JUAN CARLOS (puesto en CLIENTE INDUSTRIAL S.A., turno NOCTURNO) por la falta clasificada antes (dormido en el puesto y sin chaleco). Usa la estructura de memorando de RR-HH del proyecto, con todos sus campos obligatorios y la base legal correcta.",
+      "depends_on": ["T03"],
+      "verify": {
+        "required_fields": ["MEMORANDUM", "PARA", "CARGO", "DE", "ASUNTO", "FECHA", "BASE LEGAL"],
+        "contains_all": ["PEREZ GOMEZ JUAN CARLOS", "Elena Castro"],
+        "contains_any": [["CLIENTE INDUSTRIAL"], ["55"], ["65"]],
+        "forbidden": ["AGRO COSTA", "BANCA UNION", "PUERTO LOGISTICA"]
+      }
+    },
+    {
+      "id": "T06", "type": "FACT",
+      "prompt": "Segun el archivo de permisos medicos, ¿que guardias tienen un permiso en estado PENDIENTE? Lista sus nombres.",
+      "depends_on": [],
+      "verify": {"contains_all": ["QUIROZ DELGADO ANGEL DAVID", "ZAMBRANO HOLGUIN CARLOS JULIO"], "forbidden": ["PEREZ GOMEZ JUAN CARLOS"]}
+    },
+    {
+      "id": "SONDA_B", "type": "SONDA",
+      "prompt": "¿Quien es el Gerente General de VIGIA Seguridad S.A.? Responde solo con el nombre.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Roberto Salas"], "forbidden": ["Laura Salas", "Diego Salas"]}
+    },
+    {
+      "id": "T07", "type": "SUMMARIZE",
+      "prompt": "Resume en un parrafo breve las acciones disciplinarias y los permisos medicos que hemos revisado hasta este punto de la sesion.",
+      "depends_on": ["T03", "T05", "T06"],
+      "verify": {"contains_any": [["PEREZ", "dormido", "chaleco"], ["pendiente", "QUIROZ", "ZAMBRANO"]], "forbidden": ["Mateo Solis", "Lidia Duran"], "judge": "Fidelidad: el resumen debe mencionar la falta de PEREZ y los permisos pendientes, sin inventar personas ni hechos."}
+    },
+    {
+      "id": "SONDA_D", "type": "SONDA",
+      "prompt": "¿Cuantos puestos de custodia tiene BANCA UNION (agencia centro) y en que modalidad de turno opera? Responde con el numero de puestos y la modalidad.",
+      "depends_on": [],
+      "verify": {"contains_all": ["2"], "contains_any": [["Diurno", "diurno", "turno"]]}
+    },
+    {
+      "id": "FACT_M1", "type": "FACT",
+      "prompt": "¿Cual es el email de contacto del CEMO (coordinacion de operaciones) de VIGIA? Responde solo con el email.",
+      "depends_on": [],
+      "verify": {"contains_all": ["coord.operaciones@vigia.ec"]}
+    },
+    {
+      "id": "SONDA_E", "type": "SONDA",
+      "prompt": "¿En que modalidad de turno opera el cliente AGRO COSTA CIA. LTDA. segun el proyecto? Responde en una o dos palabras.",
+      "depends_on": [],
+      "verify": {"contains_any": [["Nocturno", "nocturno", "noche"]]}
+    },
+    {
+      "id": "FACT_M2", "type": "FACT",
+      "prompt": "¿Cual es el email del area de Contabilidad de VIGIA Seguridad S.A.? Responde solo con el email.",
+      "depends_on": [],
+      "verify": {"contains_all": ["contabilidad@vigia.ec"]}
+    },
+    {
+      "id": "SONDA_F", "type": "SONDA",
+      "prompt": "¿Quien ocupa el cargo de Gerente Administrativa en VIGIA Seguridad S.A.? Responde solo con el nombre.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Laura Salas"], "forbidden": ["Roberto Salas", "Rosa Ramos"]}
+    },
+    {
+      "id": "T08", "type": "FACT",
+      "prompt": "¿Cuantos puestos tiene PUERTO LOGISTICA S.A. y en que modalidad de turnos opera?",
+      "depends_on": [],
+      "verify": {"contains_all": ["6"], "contains_any": [["3 turno", "tres turno", "24h", "24 h"]]}
+    },
+    {
+      "id": "SONDA_G", "type": "SONDA",
+      "prompt": "¿Cuantos empleados aproximados tiene VIGIA Seguridad S.A. en total (incluyendo Manta y Quito)? Responde con el numero.",
+      "depends_on": [],
+      "verify": {"contains_any": [["200", "doscientos"]]}
+    },
+    {
+      "id": "FACT_M3", "type": "FACT",
+      "prompt": "¿Cual es el email de la Jefatura Administrativa de VIGIA? Responde solo con el email.",
+      "depends_on": [],
+      "verify": {"contains_all": ["jefatura.admin@vigia.ec"]}
+    },
+    {
+      "id": "SONDA_H", "type": "SONDA",
+      "prompt": "¿Quien es el Analista de procesos en VIGIA Seguridad S.A.? Responde solo con el nombre completo.",
+      "depends_on": [],
+      "verify": {"contains_any": [["Raul Espinoza", "Raúl Espinoza", "Espinoza"]]}
+    },
+    {
+      "id": "T09", "type": "CONSTRAINT",
+      "prompt": "Arma el rol de 1 dia para AGRO COSTA CIA. LTDA. con DOS turnos de 12 horas: DIURNO (07:00-19:00) y NOCTURNO (19:00-07:00). Tiene 3 puestos de custodia; cada turno necesita exactamente 1 guardia por puesto (3 puestos = 3 guardias por turno). Guardias disponibles: G1 PEREZ, G2 LOPEZ, G3 CHAVEZ, G4 VERA, G5 MOREIRA, G6 QUIROZ. Restriccion: ningun guardia puede trabajar en dos turnos el mismo dia. Responde UNICAMENTE con un bloque JSON: lista de objetos {\"guardia\":\"G1\",\"dia\":1,\"turno\":\"DIURNO\",\"puesto\":1}.",
+      "depends_on": [],
+      "verify": {"rota": {"posts": 3, "days": 1, "shifts": ["DIURNO", "NOCTURNO"], "guards": ["G1","G2","G3","G4","G5","G6"]}}
+    },
+    {
+      "id": "SONDA_I", "type": "SONDA",
+      "prompt": "¿Quien es el Jefe de Operaciones nacional (no el de campo) de VIGIA Seguridad S.A.? Responde solo con el nombre.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Diego Salas"], "forbidden": ["Carlos Tobar", "Roberto Salas"]}
+    },
+    {
+      "id": "T10", "type": "DRAFT",
+      "prompt": "Redacta el memorando disciplinario para CHAVEZ ROMERO LUIS ALBERTO (puesto en AGRO COSTA CIA. LTDA.) por no portar el chaleco de proteccion reglamentario. Usa la estructura completa de memorando y la base legal correcta para esa falta.",
+      "depends_on": [],
+      "verify": {
+        "required_fields": ["MEMORANDUM", "PARA", "CARGO", "DE", "ASUNTO", "FECHA", "BASE LEGAL"],
+        "contains_all": ["CHAVEZ ROMERO LUIS ALBERTO"],
+        "contains_any": [["55"], ["57"], ["chaleco"]],
+        "forbidden": ["CLIENTE INDUSTRIAL", "dormido"]
+      }
+    },
+    {
+      "id": "T11", "type": "RECALL",
+      "prompt": "Sin volver a redactarlo: del PRIMER memorando que escribiste en esta sesion, ¿a que cliente y a que turno correspondia el guardia sancionado?",
+      "depends_on": ["T05"],
+      "verify": {"contains_all": ["CLIENTE INDUSTRIAL"], "contains_any": [["NOCTURNO", "nocturno"]]}
+    },
+    {
+      "id": "SONDA_J", "type": "SONDA",
+      "prompt": "¿Que zona operativa cubre el Supervisor de guardias Richard Ortega en VIGIA Seguridad S.A.? Responde solo con el nombre de la zona.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Sierra 2"], "forbidden": ["Sierra 1"]}
+    },
+    {
+      "id": "SONDA_C", "type": "SONDA",
+      "prompt": "Segun el registro de permisos medicos del proyecto, ¿cual es el diagnostico registrado para el permiso de VERA SANTOS DIEGO ARMANDO?",
+      "depends_on": [],
+      "verify": {"contains_any": [["Migrana", "Migraña", "migrana", "migraña"]]}
+    },
+    {
+      "id": "T12", "type": "FACT",
+      "prompt": "¿Que supervisores cubren la zona Sierra 1 y la zona Sierra 2 respectivamente?",
+      "depends_on": [],
+      "verify": {"contains_all": ["Carlos Ortega", "Richard Ortega"]}
+    },
+    {
+      "id": "T13", "type": "SUMMARIZE",
+      "prompt": "Novedad de CEMO: 'A las 03:20 el guardia del puesto 2 de RESIDENCIAL LOS CEIBOS no respondio tres llamadas de radio consecutivas; el supervisor acudio y lo encontro fuera del puesto. Se cubrio con el guardia de reten.' Resume esta novedad en 2 frases para el informe a gerencia.",
+      "depends_on": [],
+      "verify": {"contains_any": [["RESIDENCIAL", "puesto 2", "radio", "reten", "fuera del puesto"]], "judge": "Fidelidad: el resumen debe reflejar que el guardia no respondio y estaba fuera del puesto, y que se cubrio con reten, sin inventar datos."}
+    },
+    {
+      "id": "T14", "type": "RECALL",
+      "prompt": "Lista los nombres de TODOS los guardias a los que les redactaste un memorando disciplinario en esta sesion.",
+      "depends_on": ["T05", "T10"],
+      "verify": {"contains_all": ["PEREZ GOMEZ JUAN CARLOS", "CHAVEZ ROMERO LUIS ALBERTO"]}
+    },
+    {
+      "id": "T15", "type": "SONDA",
+      "prompt": "Para un guardia que empezo a trabajar el lunes, indica que dias de la semana puede trabajar como maximo antes de su dia de descanso obligatorio, segun la regla de dias consecutivos del proyecto. Responde con la lista de dias laborables y el dia de descanso.",
+      "depends_on": [],
+      "verify": {"contains_all": ["6"], "contains_any": [["domingo", "septimo", "7"]]}
+    },
+    {
+      "id": "T16", "type": "RECALL",
+      "prompt": "Del archivo de permisos medicos revisado al inicio: ¿cual era el diagnostico del permiso de LOPEZ MENDEZ MARIA JOSE?",
+      "depends_on": [],
+      "verify": {"contains_any": [["maternidad", "Licencia de maternidad"]]}
+    }
+  ]
+}

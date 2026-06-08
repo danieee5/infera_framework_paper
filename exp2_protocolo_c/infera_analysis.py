@@ -1,5 +1,5 @@
 """
-infera_analysis.py
+infera_analysis.py  (v3 — Fase 2a)
 Analisis del Protocolo C: sobre conjunto energia x calidad + recuperacion por compactacion.
 
 Lee todos los .jsonl de results/ y produce:
@@ -7,20 +7,29 @@ Lee todos los .jsonl de results/ y produce:
   2. Deteccion del CODO usando tareas SONDA (faciles por diseno, lookup de KB puro):
      si la calidad de una SONDA cae < 0.5 es context-rot real, no dificultad intrinseca.
      Fallback al detector clasico si no hay sondas en los datos.
-  3. Figura insignia: doble eje (J/tarea y calidad) sobre contexto acumulado.
-  4. Recuperacion: naive vs compaction (energia acumulada, calidad post-handoff,
-     impuesto de compactacion, break-even).
-  5. [NUEVO v2] Desglose de calidad por task_id x quant x arm — revela la curva
-     dosis-respuesta de las sondas y el hallazgo de AWQ.
-  6. [NUEVO v2] Regresion OLS energy_j ~ alpha*ctx_tokens + beta*completion_tokens:
-     separa el coste marginal de prefill (alpha) del de decode (beta).
+  3. [v3 NUEVO] threshold_bracket: localiza el bracket exacto [lo, hi] entre dos SONDAS
+     consecutivas donde quality transiciona de >=0.5 a <0.5 en el brazo naive.
+     Cuantifica el ancho de la ventana en tokens.
+  4. Figura insignia: doble eje (J/tarea y calidad) sobre contexto acumulado.
+  5. [v3 NUEVO] Curva dosis-respuesta: calidad de SONDA vs contexto acumulado.
+     Una linea por quant x arm (x session si hay varias). Esta es la figura central
+     del hallazgo de context-rot dependiente de cuantizacion.
+  6. Recuperacion: naive vs compaction (energia acumulada, calidad, impuesto, break-even).
+  7. Desglose de calidad por task_id x quant x arm.
+  8. Regresion OLS energy_j ~ alpha*ctx_tokens + beta*completion_tokens.
+
+Compatibilidad: los archivos de salida de v2 (knees.json, energy_regression.json,
+recovery_naive_vs_compaction.csv, quality_by_task.csv, sonda_recall_summary.csv)
+se generan igual. Las nuevas salidas son adicionales.
 
 Uso:
   python infera_analysis.py --results results --out results/analysis
+  python infera_analysis.py --results results --out results/analysis --session v3
 """
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 import numpy as np
@@ -31,15 +40,29 @@ import matplotlib.pyplot as plt
 
 
 # ---------------------------------------------------------------------------
-# Carga
+# Carga — con soporte multi-sesion
 # ---------------------------------------------------------------------------
 
 def load_runs(results_dir: str) -> pd.DataFrame:
+    """
+    Lee todos los .jsonl de results_dir.
+    Extrae session_tag del nombre del archivo:
+      run_v3_AWQ_naive_rep1.jsonl       -> session_tag = "v3"
+      run_v3_filler_AWQ_naive_rep1.jsonl -> session_tag = "v3_filler"
+      run_AWQ_naive_rep1.jsonl           -> session_tag = "v2"  (compat hacia atras)
+    """
     rows = []
     for fp in Path(results_dir).glob("*.jsonl"):
+        # Extraer session_tag entre "run_" y "_(AWQ|FP16|INT8)"
+        m = re.match(r"run_(.+?)_(AWQ|FP16|INT8)", fp.stem)
+        session_tag = m.group(1) if m else "v2"
+
         for line in fp.read_text(encoding="utf-8").splitlines():
             if line.strip():
-                rows.append(json.loads(line))
+                row = json.loads(line)
+                row["session_tag"] = session_tag
+                rows.append(row)
+
     if not rows:
         raise SystemExit(f"No se encontraron .jsonl en {results_dir}")
     df = pd.DataFrame(rows)
@@ -47,16 +70,10 @@ def load_runs(results_dir: str) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
-# Deteccion del CODO
+# Deteccion del CODO — igual que v2
 # ---------------------------------------------------------------------------
 
 def detect_knee_sonda(df: pd.DataFrame, quant: str):
-    """
-    Detector primario: usa EXCLUSIVAMENTE tareas tipo SONDA.
-    Estas tareas son faciles por diseno (lookup de KB puro, sin historial de sesion) —
-    un fallo (quality < 0.5) es siempre context-rot real, no dificultad intrinseca.
-    Devuelve dict o None.
-    """
     sub = df[
         (df["quant"] == quant) &
         (df["arm"] == "naive") &
@@ -67,10 +84,8 @@ def detect_knee_sonda(df: pd.DataFrame, quant: str):
     if sub.empty:
         return None
     agg = (sub.groupby("task_id")
-           .agg(
-               ctx=("accumulated_prompt_tokens", "mean"),
-               quality=("quality", "mean"),
-           )
+           .agg(ctx=("accumulated_prompt_tokens", "mean"),
+                quality=("quality", "mean"))
            .reset_index()
            .sort_values("ctx"))
     for _, row in agg.iterrows():
@@ -86,10 +101,6 @@ def detect_knee_sonda(df: pd.DataFrame, quant: str):
 
 
 def detect_knee_classic(curve: pd.DataFrame, quality_drop_frac: float = 0.85):
-    """
-    Detector de respaldo (sin sondas): heuristica sobre el brazo naive.
-    Excluye CONSTRAINT del calculo de la base para no sesgar por dificultad intrinseca.
-    """
     c = curve[curve["task_type"] != "CONSTRAINT"].sort_values("accumulated_prompt_tokens")
     c = c[c["quality"].notna()]
     if len(c) < 3:
@@ -112,9 +123,6 @@ def detect_knee_classic(curve: pd.DataFrame, quality_drop_frac: float = 0.85):
 
 
 def detect_knee(df: pd.DataFrame, quant: str):
-    """
-    Intenta primero con sondas; si no hay, usa el detector clasico.
-    """
     knee = detect_knee_sonda(df, quant)
     if knee is not None:
         return knee
@@ -131,11 +139,174 @@ def detect_knee(df: pd.DataFrame, quant: str):
 
 
 # ---------------------------------------------------------------------------
-# Figura insignia: doble eje energia x calidad
+# [v3 NUEVO] Bracket del umbral: ventana exacta entre dos SONDAS consecutivas
+# ---------------------------------------------------------------------------
+
+def threshold_bracket(df: pd.DataFrame) -> dict:
+    """
+    Para cada cuantizacion, encuentra el par [lo, hi] de sondas consecutivas
+    (brazo naive) donde quality transiciona de >=0.5 a <0.5.
+
+    Devuelve:
+      {quant: {"lo": {"task_id", "ctx", "quality"},
+               "hi": {"task_id", "ctx", "quality"},
+               "window_tokens": hi.ctx - lo.ctx,
+               "note": str} or None si no hay transicion}
+
+    Con las sondas densas de v3, la ventana deberia ser ~200-400 tokens
+    vs ~1036 tokens en v2 (solo SONDA_B/SONDA_C). Eso es el objetivo.
+    """
+    results = {}
+    for quant in sorted(df["quant"].unique()):
+        sub = df[
+            (df["quant"] == quant) &
+            (df["arm"] == "naive") &
+            (~df["is_compaction"]) &
+            (df["task_type"] == "SONDA") &
+            df["quality"].notna()
+        ]
+        if sub.empty:
+            results[quant] = None
+            continue
+
+        agg = (sub.groupby("task_id")
+               .agg(ctx=("accumulated_prompt_tokens", "mean"),
+                    quality=("quality", "mean"))
+               .reset_index()
+               .sort_values("ctx"))
+
+        lo = None
+        hi = None
+        for _, row in agg.iterrows():
+            if row["quality"] >= 0.5:
+                lo = {
+                    "task_id": str(row["task_id"]),
+                    "ctx": int(round(row["ctx"])),
+                    "quality": round(float(row["quality"]), 4),
+                }
+            else:
+                hi = {
+                    "task_id": str(row["task_id"]),
+                    "ctx": int(round(row["ctx"])),
+                    "quality": round(float(row["quality"]), 4),
+                }
+                break  # primer fallo encontrado
+
+        if lo and hi:
+            window = hi["ctx"] - lo["ctx"]
+            results[quant] = {
+                "lo": lo,
+                "hi": hi,
+                "window_tokens": window,
+                "note": (
+                    f"Umbral acotado: ({lo['ctx']}, {hi['ctx']}) tokens "
+                    f"(ventana de {window} tokens). "
+                    f"Lo={lo['task_id']} Q={lo['quality']}, "
+                    f"Hi={hi['task_id']} Q={hi['quality']}."
+                ),
+            }
+        elif hi and not lo:
+            results[quant] = {
+                "lo": None, "hi": hi,
+                "window_tokens": None,
+                "note": "Todas las sondas fallan — no hay sondas pasantes para acotar el lado inferior.",
+            }
+        else:
+            results[quant] = None  # no hay fallo, no hay codo en este rango
+    return results
+
+
+# ---------------------------------------------------------------------------
+# [v3 NUEVO] Curva dosis-respuesta de SONDAS
+# ---------------------------------------------------------------------------
+
+def dose_response_plot(df: pd.DataFrame, out_path: Path):
+    """
+    Figura central del paper: calidad de SONDA vs contexto acumulado.
+    Una curva por quant x arm. Si hay multiples session_tags, diferencia
+    con marcador de forma.
+
+    Esta figura muestra visualmente:
+    - El codo de AWQ (naive) entre dos sondas consecutivas.
+    - Que FP16 no cae en el mismo rango.
+    - Que compaction mantiene quality=1.0 para AWQ (al reiniciar ctx < umbral).
+    """
+    sub = df[(df["task_type"] == "SONDA") & (~df["is_compaction"])].copy()
+    if sub.empty:
+        return
+
+    sessions = sorted(sub["session_tag"].unique()) if "session_tag" in sub.columns else ["default"]
+    quants   = sorted(sub["quant"].unique())
+    arms     = sorted(sub["arm"].unique())
+
+    # Paleta reproducible
+    quant_colors = {"AWQ": "tab:orange", "FP16": "tab:blue", "INT8": "tab:green"}
+    arm_styles   = {"naive": "-",        "compaction": "--"}
+    session_markers = {s: m for s, m in zip(sessions, ["o", "s", "^", "D"])}
+
+    fig, ax = plt.subplots(figsize=(11, 6))
+
+    for session in sessions:
+        for quant in quants:
+            for arm in arms:
+                mask = (
+                    (sub["quant"] == quant) &
+                    (sub["arm"] == arm)
+                )
+                if "session_tag" in sub.columns:
+                    mask &= (sub["session_tag"] == session)
+                s = sub[mask]
+                if s.empty:
+                    continue
+
+                agg = (s.groupby("task_id")
+                       .agg(ctx=("accumulated_prompt_tokens", "mean"),
+                            quality=("quality", "mean"))
+                       .reset_index()
+                       .sort_values("ctx"))
+                if agg.empty:
+                    continue
+
+                # Etiqueta de leyenda: omite session si solo hay una
+                label = f"{quant} {arm}"
+                if len(sessions) > 1:
+                    label += f" [{session}]"
+
+                ax.plot(
+                    agg["ctx"], agg["quality"],
+                    linestyle=arm_styles.get(arm, "-"),
+                    color=quant_colors.get(quant, "gray"),
+                    marker=session_markers.get(session, "o"),
+                    markersize=6,
+                    linewidth=2,
+                    label=label,
+                )
+
+    # Linea de umbral de context-rot
+    ax.axhline(0.5, color="red", linestyle=":", linewidth=1.5,
+               label="Umbral context-rot (quality=0.5)")
+
+    ax.set_xlabel("Contexto acumulado (tokens de prompt)", fontsize=12)
+    ax.set_ylabel("Calidad en SONDA (0=fallo / 1=correcto)", fontsize=12)
+    ax.set_ylim(-0.1, 1.15)
+    ax.legend(loc="lower left", fontsize=9, framealpha=0.8)
+    ax.set_title(
+        "Curva dosis-respuesta de context-rot: calidad de SONDA vs contexto acumulado",
+        fontsize=11,
+    )
+    ax.grid(True, alpha=0.25)
+
+    fig.tight_layout()
+    fig.savefig(out_path, dpi=150)
+    plt.close(fig)
+    print(f"  [OK] Curva dosis-respuesta -> {out_path}")
+
+
+# ---------------------------------------------------------------------------
+# Figura insignia: doble eje energia x calidad — igual que v2
 # ---------------------------------------------------------------------------
 
 def plot_envelope(df: pd.DataFrame, quant: str, out_path: Path, knee=None):
-    """Figura insignia: doble eje J/tarea y calidad vs contexto acumulado (brazo naive)."""
     sub = df[(df["quant"] == quant) & (df["arm"] == "naive") & (~df["is_compaction"])]
     if sub.empty:
         return
@@ -152,7 +323,6 @@ def plot_envelope(df: pd.DataFrame, quant: str, out_path: Path, knee=None):
     ax1.plot(agg["ctx"], agg["energy"], "o-", color="tab:red", label="Energia/tarea (J)")
     ax1.tick_params(axis="y", labelcolor="tab:red")
 
-    # marcar sondas con triangulo
     sondas = agg[agg["task_type"] == "SONDA"]
     if not sondas.empty:
         ax1.scatter(sondas["ctx"], sondas["energy"], marker="^", s=100,
@@ -183,15 +353,10 @@ def plot_envelope(df: pd.DataFrame, quant: str, out_path: Path, knee=None):
 
 
 # ---------------------------------------------------------------------------
-# Desglose de calidad por tarea (hallazgo central)
+# Desglose de calidad por tarea — igual que v2
 # ---------------------------------------------------------------------------
 
 def quality_breakdown(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Calidad media por task_id x task_type x quant x arm.
-    Esta tabla revela la curva dosis-respuesta de las sondas:
-    AWQ falla sondas a contexto alto; FP16 no. Compaction degrada RECALL en AWQ pero no FP16.
-    """
     tasks = df[~df["is_compaction"]].copy()
     tbl = (tasks.groupby(["task_id", "task_type", "quant", "arm"])
            .agg(
@@ -207,10 +372,6 @@ def quality_breakdown(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def sonda_recall_summary(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Vista enfocada: tareas SONDA y RECALL, comparacion naive vs compaction x quant.
-    Tabla principal del hallazgo de context-rot dependiente de cuantizacion.
-    """
     sub = df[df["task_type"].isin(["SONDA", "RECALL"]) & ~df["is_compaction"]].copy()
     if sub.empty:
         return pd.DataFrame()
@@ -227,7 +388,7 @@ def sonda_recall_summary(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
-# Regresion OLS: descomposicion prefill vs decode
+# Regresion OLS: descomposicion prefill vs decode — igual que v2
 # ---------------------------------------------------------------------------
 
 def energy_regression(df: pd.DataFrame) -> dict:
@@ -241,11 +402,6 @@ def energy_regression(df: pd.DataFrame) -> dict:
 
     Solo corridas naive (sin compactacion) para no confundir con reinicios de contexto.
     Reporta coeficientes, R2 y n por cuantizacion y global.
-
-    Interpretacion tipica:
-      - beta >> alpha: la energia esta dominada por el largo de la respuesta (decode).
-      - alpha significativo: hay un coste de prefill detectable — el contexto importa.
-      - R2 cercano a 1: el modelo lineal explica bien la varianza de energia.
     """
     results = {}
     base = df[~df["is_compaction"] & df["completion_tokens"].notna()].copy()
@@ -283,7 +439,7 @@ def energy_regression(df: pd.DataFrame) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Tabla de recuperacion naive vs compaction
+# Tabla de recuperacion naive vs compaction — igual que v2
 # ---------------------------------------------------------------------------
 
 def recovery_table(df: pd.DataFrame) -> pd.DataFrame:
@@ -294,8 +450,8 @@ def recovery_table(df: pd.DataFrame) -> pd.DataFrame:
             if sub.empty:
                 continue
             tasks = sub[~sub["is_compaction"]]
-            comp = sub[sub["is_compaction"]]
-            per_rep = sub.groupby("rep")["energy_j"].sum()
+            comp  = sub[sub["is_compaction"]]
+            per_rep     = sub.groupby("rep")["energy_j"].sum()
             tax_per_rep = comp.groupby("rep")["energy_j"].sum() if not comp.empty else None
             rows.append({
                 "quant": quant,
@@ -316,17 +472,33 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", default="results")
     ap.add_argument("--out", default="results/analysis")
+    ap.add_argument("--session", default=None,
+                    help="Filtrar por session_tag (ej: v3, v3_filler). Default: todos.")
     args = ap.parse_args()
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
 
     df = load_runs(args.results)
+
+    # Mostrar que sesiones se encontraron
+    sessions_found = sorted(df["session_tag"].unique()) if "session_tag" in df.columns else []
+    print(f"[OK] {len(df)} registros de {df['run_id'].nunique() if 'run_id' in df.columns else '?'} corridas.")
+    if sessions_found:
+        print(f"     Sesiones encontradas: {sessions_found}")
+
+    # Filtrar por sesion si se especifica
+    if args.session:
+        df = df[df["session_tag"] == args.session]
+        if df.empty:
+            raise SystemExit(f"No hay datos para session_tag='{args.session}'. "
+                             f"Sesiones disponibles: {sessions_found}")
+        print(f"     Filtrando a session_tag='{args.session}': {len(df)} registros.")
+
     df.to_csv(out / "all_runs_long.csv", index=False)
-    print(f"[OK] {len(df)} registros cargados de {df['run_id'].nunique()} corridas.")
 
     # ------------------------------------------------------------------
-    # 1. Curvas y codo por cuantizacion
+    # 1. Deteccion del CODO (igual que v2)
     # ------------------------------------------------------------------
     print("\n=== Deteccion del CODO (context-rot) ===")
     knees = {}
@@ -335,17 +507,40 @@ def main():
         knees[quant] = knee
         if knee:
             print(f"  [{knee['detector'].upper()}] {quant}: ~{knee['accumulated_tokens']} tokens "
-                  f"| task={knee.get('task_id','?')} | quality={knee['quality']:.4f} "
-                  f"| {knee.get('note','')}")
+                  f"| task={knee.get('task_id','?')} | quality={knee['quality']:.4f}")
         else:
-            print(f"  {quant}: codo no detectado en el rango actual de contexto.")
+            print(f"  {quant}: codo no detectado en el rango actual.")
         plot_envelope(df, quant, out / f"envelope_{quant}.png", knee)
 
     with open(out / "knees.json", "w", encoding="utf-8") as f:
         json.dump(knees, f, indent=2, ensure_ascii=False)
 
     # ------------------------------------------------------------------
-    # 2. Desglose de calidad por tarea (hallazgo central)
+    # 2. [v3 NUEVO] Bracket del umbral — ventana exacta
+    # ------------------------------------------------------------------
+    print("\n=== Bracket del umbral de context-rot (sondas densas) ===")
+    brackets = threshold_bracket(df)
+    for quant, br in brackets.items():
+        if br is None:
+            print(f"  {quant}: sin transicion detectada (todas las sondas pasan o todas fallan).")
+        elif br.get("lo") is None:
+            print(f"  {quant}: {br['note']}")
+        else:
+            print(f"  {quant}: [{br['lo']['task_id']} ctx={br['lo']['ctx']} Q={br['lo']['quality']:.2f}]"
+                  f" --> [{br['hi']['task_id']} ctx={br['hi']['ctx']} Q={br['hi']['quality']:.2f}]"
+                  f"  ventana={br['window_tokens']} tokens")
+
+    with open(out / "threshold_brackets.json", "w", encoding="utf-8") as f:
+        json.dump(brackets, f, indent=2, ensure_ascii=False)
+
+    # ------------------------------------------------------------------
+    # 3. [v3 NUEVO] Curva dosis-respuesta de SONDAS
+    # ------------------------------------------------------------------
+    print("\n=== Curva dosis-respuesta de SONDAS ===")
+    dose_response_plot(df, out / "dose_response_sondas.png")
+
+    # ------------------------------------------------------------------
+    # 4. Desglose de calidad por tarea (igual que v2)
     # ------------------------------------------------------------------
     print("\n=== Desglose calidad: SONDA + RECALL x quant x arm ===")
     qb = quality_breakdown(df)
@@ -356,10 +551,10 @@ def main():
         ss.to_csv(out / "sonda_recall_summary.csv", index=False)
         print(ss.to_string(index=False))
     else:
-        print("  (sin tareas SONDA ni RECALL en los datos — revisa el tipo de tarea en session_tasks.json)")
+        print("  (sin tareas SONDA ni RECALL en los datos)")
 
     # ------------------------------------------------------------------
-    # 3. Regresion prefill vs decode
+    # 5. Regresion OLS prefill vs decode (igual que v2)
     # ------------------------------------------------------------------
     print("\n=== Regresion OLS: energy_j ~ alpha*ctx + beta*completion ===")
     reg = energy_regression(df)
@@ -371,7 +566,7 @@ def main():
               f"  R2={r['r2']:.4f}  n={r['n']}")
 
     # ------------------------------------------------------------------
-    # 4. Tabla de recuperacion naive vs compaction
+    # 6. Tabla de recuperacion naive vs compaction (igual que v2)
     # ------------------------------------------------------------------
     rec = recovery_table(df)
     rec.to_csv(out / "recovery_naive_vs_compaction.csv", index=False)
@@ -380,8 +575,8 @@ def main():
 
     print(f"\n[OK] Figuras y tablas en {out}/")
     print("  Archivos generados:")
-    for f in sorted(out.iterdir()):
-        print(f"    {f.name}")
+    for f_path in sorted(out.iterdir()):
+        print(f"    {f_path.name}")
 
 
 if __name__ == "__main__":
