@@ -1,6 +1,6 @@
 {
-  "session_id": "vigia_rrhh_ops_v1",
-  "description": "Sesion incremental de proyecto: tareas heterogeneas reales de RR-HH/Operaciones de VIGIA. El contexto crece turno a turno. Las tareas de RECALL (depends_on) prueban context rot: miden si el modelo conserva informacion temprana bajo carga creciente.",
+  "session_id": "vigia_rrhh_ops_v2",
+  "description": "Sesion incremental v2 — Fase 1 calibrada. Incorpora 3 tareas SONDA (lookups faciles de KB puro, sin historial) distribuidas a ~3300, ~4650 y ~5950 tokens para construir una curva dosis-respuesta del context-rot dependiente de cuantizacion. T09 simplificado (3 puestos x 2 turnos, 6 celdas) para eliminar el efecto piso que no discrimina. THRESH sugerido: 4500.",
   "decoding": {"temperature": 0.0, "max_tokens": 512, "seed": 42},
   "tasks": [
     {
@@ -14,6 +14,12 @@
       "prompt": "¿Cual es el descanso minimo obligatorio entre turnos para un guardia? Responde con el numero de horas.",
       "depends_on": [],
       "verify": {"contains_all": ["12"], "contains_any": [["hora"]]}
+    },
+    {
+      "id": "SONDA_A", "type": "SONDA",
+      "prompt": "¿Quien ocupa el cargo de Jefe de Operaciones de campo (no el Jefe nacional) en VIGIA Seguridad S.A.? Responde solo con el nombre.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Carlos Tobar"], "forbidden": ["Diego Salas", "Carlos Ortega"]}
     },
     {
       "id": "T03", "type": "CLASSIFY",
@@ -45,6 +51,12 @@
       "verify": {"contains_all": ["QUIROZ DELGADO ANGEL DAVID", "ZAMBRANO HOLGUIN CARLOS JULIO"], "forbidden": ["PEREZ GOMEZ JUAN CARLOS"]}
     },
     {
+      "id": "SONDA_B", "type": "SONDA",
+      "prompt": "¿Quien es el Gerente General de VIGIA Seguridad S.A.? Responde solo con el nombre.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Roberto Salas"], "forbidden": ["Laura Salas", "Diego Salas"]}
+    },
+    {
       "id": "T07", "type": "SUMMARIZE",
       "prompt": "Resume en un parrafo breve las acciones disciplinarias y los permisos medicos que hemos revisado hasta este punto de la sesion.",
       "depends_on": ["T03", "T05", "T06"],
@@ -58,9 +70,9 @@
     },
     {
       "id": "T09", "type": "CONSTRAINT",
-      "prompt": "Arma el rol de 1 dia para PUERTO LOGISTICA S.A.: 6 puestos en modalidad 24h con TRES turnos de 8h: MANANA, TARDE, NOCHE. Cada turno necesita 1 guardia por puesto. Guardias disponibles: G1..G8 mas G9 y G10 (refuerzos). Restricciones: cobertura total; ningun guardia en dos turnos el mismo dia. Responde UNICAMENTE con un bloque JSON de objetos {\"guardia\":\"G1\",\"dia\":1,\"turno\":\"MANANA\",\"puesto\":1}.",
+      "prompt": "Arma el rol de 1 dia para AGRO COSTA CIA. LTDA. con DOS turnos de 12 horas: DIURNO (07:00-19:00) y NOCTURNO (19:00-07:00). Tiene 3 puestos de custodia; cada turno necesita exactamente 1 guardia por puesto (3 puestos = 3 guardias por turno). Guardias disponibles: G1 PEREZ, G2 LOPEZ, G3 CHAVEZ, G4 VERA, G5 MOREIRA, G6 QUIROZ. Restriccion: ningun guardia puede trabajar en dos turnos el mismo dia. Responde UNICAMENTE con un bloque JSON: lista de objetos {\"guardia\":\"G1\",\"dia\":1,\"turno\":\"DIURNO\",\"puesto\":1}.",
       "depends_on": [],
-      "verify": {"rota": {"posts": 6, "days": 1, "shifts": ["MANANA", "TARDE", "NOCHE"], "guards": ["G1","G2","G3","G4","G5","G6","G7","G8","G9","G10"]}}
+      "verify": {"rota": {"posts": 3, "days": 1, "shifts": ["DIURNO", "NOCTURNO"], "guards": ["G1","G2","G3","G4","G5","G6"]}}
     },
     {
       "id": "T10", "type": "DRAFT",
@@ -78,6 +90,12 @@
       "prompt": "Sin volver a redactarlo: del PRIMER memorando que escribiste en esta sesion, ¿a que cliente y a que turno correspondia el guardia sancionado?",
       "depends_on": ["T05"],
       "verify": {"contains_all": ["CLIENTE INDUSTRIAL"], "contains_any": [["NOCTURNO", "nocturno"]]}
+    },
+    {
+      "id": "SONDA_C", "type": "SONDA",
+      "prompt": "Segun el registro de permisos medicos del proyecto, ¿cual es el diagnostico registrado para el permiso de VERA SANTOS DIEGO ARMANDO?",
+      "depends_on": [],
+      "verify": {"contains_any": [["Migrana", "Migraña", "migrana", "migraña"]]}
     },
     {
       "id": "T12", "type": "FACT",
@@ -98,7 +116,7 @@
       "verify": {"contains_all": ["PEREZ GOMEZ JUAN CARLOS", "CHAVEZ ROMERO LUIS ALBERTO"]}
     },
     {
-      "id": "T15", "type": "CONSTRAINT",
+      "id": "T15", "type": "SONDA",
       "prompt": "Para un guardia que empezo a trabajar el lunes, indica que dias de la semana puede trabajar como maximo antes de su dia de descanso obligatorio, segun la regla de dias consecutivos del proyecto. Responde con la lista de dias laborables y el dia de descanso.",
       "depends_on": [],
       "verify": {"contains_all": ["6"], "contains_any": [["domingo", "septimo", "7"]]}

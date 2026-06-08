@@ -9,7 +9,7 @@ set -euo pipefail
 QUANT="${1:?Falta QUANT (FP16/INT8/AWQ)}"
 MODEL="${2:?Falta MODEL_PATH}"
 REPS="${3:-3}"
-THRESH="${4:-4000}"
+THRESH="${4:-4500}"
 URL="${VLLM_URL:-http://localhost:8000/v1/chat/completions}"
 COOL="${COOL_SECONDS:-120}"
 

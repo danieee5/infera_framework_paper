@@ -8,7 +8,7 @@
 set -uo pipefail   # SIN -e a proposito: queremos continuar pese a fallos puntuales
 
 REPS="${REPS:-3}"
-THRESH="${THRESH:-5000}"     # PROVISIONAL. Calibrar con el codo del brazo naive FP16.
+THRESH="${THRESH:-4500}"     # Adelantado del piloto (era 5000). Dispara ~T07-T08 del nuevo corpus v2.
 PORT="${PORT:-8000}"
 COOL="${COOL:-120}"          # enfriamiento entre corridas (s)
 URL="http://localhost:${PORT}/v1/chat/completions"
