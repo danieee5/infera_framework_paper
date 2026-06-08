@@ -16,9 +16,9 @@ LOG="overnight_$(date +%Y%m%d_%H%M%S).log"
 
 # Configuraciones: "QUANT|MODEL|FLAGS_VLLM". Descomenta INT8 si lo quieres.
 CONFIGS=(
-  "FP16|/models/llama3.1-8b-instruct|--dtype float16"
-  "AWQ|/models/llama3.1-8b-instruct-awq|--quantization awq --dtype float16"
-  # "INT8|/models/llama3.1-8b-instruct|--quantization bitsandbytes --load-format bitsandbytes"
+  "FP16|/workspace/models/llama3.1-8b-instruct|--dtype float16"
+  "AWQ|/workspace/models/llama3.1-8b-instruct-awq|--quantization awq --dtype float16"
+  # "INT8|/workspace/models/llama3.1-8b-instruct|--quantization bitsandbytes --load-format bitsandbytes"
 )
 
 wait_for_vllm() {
