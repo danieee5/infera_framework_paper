@@ -34,8 +34,11 @@ pip install "transformers>=4.43,<4.46"   # compatible con plantilla chat LLaMA 3
 pip install nvidia-ml-py==12.560.30       # provee 'pynvml' (NVML)
 pip install requests pandas matplotlib
 
-# autoawq solo si se va a servir el modelo AWQ
-pip install autoawq==0.2.5 || echo "WARNING: autoawq no instalado (omitir si no usas AWQ)"
+# NOTA: NO instalamos el paquete `autoawq`. Solo se necesita para CUANTIZAR
+# modelos uno mismo; para SERVIR un modelo AWQ ya cuantizado, vLLM trae soporte
+# nativo (--quantization awq). Ademas autoawq==0.2.5 arrastra un resolver que
+# intenta subir a torch 2.12 + CUDA 13 (varios GB extra), lo cual revienta la
+# cuota del volumen de red sin aportar nada que necesitemos. Se omite a proposito.
 
 # ---------------------------------------------------------------------------
 # Fix pyairports (lección documentada en EXP1, scripts/setup_runpod.sh):
