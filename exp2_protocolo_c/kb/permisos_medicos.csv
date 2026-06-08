@@ -1,0 +1,9 @@
+cedula,nombre,cargo,cliente,tipo_permiso,fecha_inicio,fecha_fin,dias,diagnostico,estado
+0900000001,PEREZ GOMEZ JUAN CARLOS,Guardia,CLIENTE INDUSTRIAL S.A.,Enfermedad comun,2026-05-04,2026-05-06,3,Faringitis aguda,Aprobado
+0900000002,LOPEZ MENDEZ MARIA JOSE,Guardia,PUERTO LOGISTICA S.A.,Maternidad,2026-04-15,2026-07-14,90,Licencia de maternidad,Aprobado
+0900000003,CHAVEZ ROMERO LUIS ALBERTO,Guardia,AGRO COSTA CIA. LTDA.,Accidente laboral,2026-05-10,2026-05-20,11,Esguince de tobillo,Aprobado
+0900000004,VERA SANTOS DIEGO ARMANDO,Guardia,RESIDENCIAL LOS CEIBOS,Enfermedad comun,2026-05-18,2026-05-19,2,Migrana,Aprobado
+0900000005,MOREIRA PINTO JORGE LUIS,Guardia,BANCA UNION,Calamidad domestica,2026-05-22,2026-05-23,2,Fallecimiento familiar,Aprobado
+0900000006,QUIROZ DELGADO ANGEL DAVID,Guardia,CLIENTE INDUSTRIAL S.A.,Enfermedad comun,2026-05-25,2026-05-27,3,Gastroenteritis,Pendiente
+0900000007,CEDENO BRAVO KEVIN STEVEN,Guardia,PUERTO LOGISTICA S.A.,Permiso medico,2026-05-28,2026-05-28,1,Control medico IESS,Aprobado
+0900000008,ZAMBRANO HOLGUIN CARLOS JULIO,Guardia,AGRO COSTA CIA. LTDA.,Enfermedad comun,2026-05-30,2026-06-02,4,Lumbalgia,Pendiente
