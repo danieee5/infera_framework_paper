@@ -1,0 +1,113 @@
+{
+  "session_id": "vigia_rrhh_ops_v1",
+  "description": "Sesion incremental de proyecto: tareas heterogeneas reales de RR-HH/Operaciones de VIGIA. El contexto crece turno a turno. Las tareas de RECALL (depends_on) prueban context rot: miden si el modelo conserva informacion temprana bajo carga creciente.",
+  "decoding": {"temperature": 0.0, "max_tokens": 512, "seed": 42},
+  "tasks": [
+    {
+      "id": "T01", "type": "FACT",
+      "prompt": "Segun el conocimiento del proyecto, ¿quien emite (firma) los memorandos disciplinarios de RR-HH? Responde solo con el nombre y el cargo.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Elena Castro"], "forbidden": ["Carla Medina", "Mateo Solis"]}
+    },
+    {
+      "id": "T02", "type": "FACT",
+      "prompt": "¿Cual es el descanso minimo obligatorio entre turnos para un guardia? Responde con el numero de horas.",
+      "depends_on": [],
+      "verify": {"contains_all": ["12"], "contains_any": [["hora"]]}
+    },
+    {
+      "id": "T03", "type": "CLASSIFY",
+      "prompt": "Un guardia fue encontrado dormido en su puesto y ademas no portaba el chaleco de proteccion reglamentario. Clasifica la falta: indica los articulos del Reglamento Interno que aplican y el porcentaje maximo de sancion economica.",
+      "depends_on": [],
+      "verify": {"contains_all": ["10%"], "contains_any": [["55"], ["65"], ["57"]]}
+    },
+    {
+      "id": "T04", "type": "CONSTRAINT",
+      "prompt": "Arma el rol de turnos de 2 dias (dia 1 y dia 2) para CLIENTE INDUSTRIAL S.A., que tiene 4 puestos en modalidad 24h con dos turnos: DIURNO y NOCTURNO. Cada turno de cada dia necesita exactamente 1 guardia por puesto (4 puestos = 4 guardias por turno). Guardias disponibles: G1 PEREZ, G2 LOPEZ, G3 CHAVEZ, G4 VERA, G5 MOREIRA, G6 QUIROZ, G7 CEDENO, G8 ZAMBRANO. Restricciones: (a) cobertura total de cada puesto en cada turno; (b) un guardia NO puede trabajar DIURNO y NOCTURNO el mismo dia; (c) un guardia que trabaja NOCTURNO el dia 1 NO puede trabajar DIURNO el dia 2 (descanso 12h). Responde UNICAMENTE con un bloque JSON: una lista de objetos {\"guardia\":\"G1\",\"dia\":1,\"turno\":\"DIURNO\",\"puesto\":1}.",
+      "depends_on": [],
+      "verify": {"rota": {"posts": 4, "days": 2, "shifts": ["DIURNO", "NOCTURNO"], "guards": ["G1","G2","G3","G4","G5","G6","G7","G8"]}}
+    },
+    {
+      "id": "T05", "type": "DRAFT",
+      "prompt": "Redacta el memorando disciplinario formal para el guardia PEREZ GOMEZ JUAN CARLOS (puesto en CLIENTE INDUSTRIAL S.A., turno NOCTURNO) por la falta clasificada antes (dormido en el puesto y sin chaleco). Usa la estructura de memorando de RR-HH del proyecto, con todos sus campos obligatorios y la base legal correcta.",
+      "depends_on": ["T03"],
+      "verify": {
+        "required_fields": ["MEMORANDUM", "PARA", "CARGO", "DE", "ASUNTO", "FECHA", "BASE LEGAL"],
+        "contains_all": ["PEREZ GOMEZ JUAN CARLOS", "Elena Castro"],
+        "contains_any": [["CLIENTE INDUSTRIAL"], ["55"], ["65"]],
+        "forbidden": ["AGRO COSTA", "BANCA UNION", "PUERTO LOGISTICA"]
+      }
+    },
+    {
+      "id": "T06", "type": "FACT",
+      "prompt": "Segun el archivo de permisos medicos, ¿que guardias tienen un permiso en estado PENDIENTE? Lista sus nombres.",
+      "depends_on": [],
+      "verify": {"contains_all": ["QUIROZ DELGADO ANGEL DAVID", "ZAMBRANO HOLGUIN CARLOS JULIO"], "forbidden": ["PEREZ GOMEZ JUAN CARLOS"]}
+    },
+    {
+      "id": "T07", "type": "SUMMARIZE",
+      "prompt": "Resume en un parrafo breve las acciones disciplinarias y los permisos medicos que hemos revisado hasta este punto de la sesion.",
+      "depends_on": ["T03", "T05", "T06"],
+      "verify": {"contains_any": [["PEREZ", "dormido", "chaleco"], ["pendiente", "QUIROZ", "ZAMBRANO"]], "forbidden": ["Mateo Solis", "Lidia Duran"], "judge": "Fidelidad: el resumen debe mencionar la falta de PEREZ y los permisos pendientes, sin inventar personas ni hechos."}
+    },
+    {
+      "id": "T08", "type": "FACT",
+      "prompt": "¿Cuantos puestos tiene PUERTO LOGISTICA S.A. y en que modalidad de turnos opera?",
+      "depends_on": [],
+      "verify": {"contains_all": ["6"], "contains_any": [["3 turno", "tres turno", "24h", "24 h"]]}
+    },
+    {
+      "id": "T09", "type": "CONSTRAINT",
+      "prompt": "Arma el rol de 1 dia para PUERTO LOGISTICA S.A.: 6 puestos en modalidad 24h con TRES turnos de 8h: MANANA, TARDE, NOCHE. Cada turno necesita 1 guardia por puesto. Guardias disponibles: G1..G8 mas G9 y G10 (refuerzos). Restricciones: cobertura total; ningun guardia en dos turnos el mismo dia. Responde UNICAMENTE con un bloque JSON de objetos {\"guardia\":\"G1\",\"dia\":1,\"turno\":\"MANANA\",\"puesto\":1}.",
+      "depends_on": [],
+      "verify": {"rota": {"posts": 6, "days": 1, "shifts": ["MANANA", "TARDE", "NOCHE"], "guards": ["G1","G2","G3","G4","G5","G6","G7","G8","G9","G10"]}}
+    },
+    {
+      "id": "T10", "type": "DRAFT",
+      "prompt": "Redacta el memorando disciplinario para CHAVEZ ROMERO LUIS ALBERTO (puesto en AGRO COSTA CIA. LTDA.) por no portar el chaleco de proteccion reglamentario. Usa la estructura completa de memorando y la base legal correcta para esa falta.",
+      "depends_on": [],
+      "verify": {
+        "required_fields": ["MEMORANDUM", "PARA", "CARGO", "DE", "ASUNTO", "FECHA", "BASE LEGAL"],
+        "contains_all": ["CHAVEZ ROMERO LUIS ALBERTO"],
+        "contains_any": [["55"], ["57"], ["chaleco"]],
+        "forbidden": ["CLIENTE INDUSTRIAL", "dormido"]
+      }
+    },
+    {
+      "id": "T11", "type": "RECALL",
+      "prompt": "Sin volver a redactarlo: del PRIMER memorando que escribiste en esta sesion, ¿a que cliente y a que turno correspondia el guardia sancionado?",
+      "depends_on": ["T05"],
+      "verify": {"contains_all": ["CLIENTE INDUSTRIAL"], "contains_any": [["NOCTURNO", "nocturno"]]}
+    },
+    {
+      "id": "T12", "type": "FACT",
+      "prompt": "¿Que supervisores cubren la zona Sierra 1 y la zona Sierra 2 respectivamente?",
+      "depends_on": [],
+      "verify": {"contains_all": ["Carlos Ortega", "Richard Ortega"]}
+    },
+    {
+      "id": "T13", "type": "SUMMARIZE",
+      "prompt": "Novedad de CEMO: 'A las 03:20 el guardia del puesto 2 de RESIDENCIAL LOS CEIBOS no respondio tres llamadas de radio consecutivas; el supervisor acudio y lo encontro fuera del puesto. Se cubrio con el guardia de reten.' Resume esta novedad en 2 frases para el informe a gerencia.",
+      "depends_on": [],
+      "verify": {"contains_any": [["RESIDENCIAL", "puesto 2", "radio", "reten", "fuera del puesto"]], "judge": "Fidelidad: el resumen debe reflejar que el guardia no respondio y estaba fuera del puesto, y que se cubrio con reten, sin inventar datos."}
+    },
+    {
+      "id": "T14", "type": "RECALL",
+      "prompt": "Lista los nombres de TODOS los guardias a los que les redactaste un memorando disciplinario en esta sesion.",
+      "depends_on": ["T05", "T10"],
+      "verify": {"contains_all": ["PEREZ GOMEZ JUAN CARLOS", "CHAVEZ ROMERO LUIS ALBERTO"]}
+    },
+    {
+      "id": "T15", "type": "CONSTRAINT",
+      "prompt": "Para un guardia que empezo a trabajar el lunes, indica que dias de la semana puede trabajar como maximo antes de su dia de descanso obligatorio, segun la regla de dias consecutivos del proyecto. Responde con la lista de dias laborables y el dia de descanso.",
+      "depends_on": [],
+      "verify": {"contains_all": ["6"], "contains_any": [["domingo", "septimo", "7"]]}
+    },
+    {
+      "id": "T16", "type": "RECALL",
+      "prompt": "Del archivo de permisos medicos revisado al inicio: ¿cual era el diagnostico del permiso de LOPEZ MENDEZ MARIA JOSE?",
+      "depends_on": [],
+      "verify": {"contains_any": [["maternidad", "Licencia de maternidad"]]}
+    }
+  ]
+}
