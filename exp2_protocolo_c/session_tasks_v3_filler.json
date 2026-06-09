@@ -61,7 +61,7 @@
       "id": "SONDA_D", "type": "SONDA",
       "prompt": "¿Cuantos puestos de custodia tiene BANCA UNION (agencia centro) y en que modalidad de turno opera? Responde con el numero de puestos y la modalidad.",
       "depends_on": [],
-      "verify": {"contains_all": ["2"], "contains_any": [["Diurno", "diurno", "turno"]]}
+      "verify": {"contains_all": ["2"], "contains_any": [["Diurno", "diurno", "turno", "diurna", "Diurna"]]}
     },
     {
       "id": "FILL_M1", "type": "FACT",
