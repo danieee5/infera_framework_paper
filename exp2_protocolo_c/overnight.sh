@@ -21,6 +21,10 @@
 # Uso con sesion personalizada:
 #   SESSION=session_tasks_v3_filler.json REPS=1 bash overnight.sh
 
+# Siempre correr desde el directorio del propio script,
+# sin importar desde donde se invoque (fix: 'python infera_session_runner.py not found').
+cd "$(dirname "$0")"
+
 set -uo pipefail   # SIN -e a proposito: queremos continuar pese a fallos puntuales
 
 SESSION="${SESSION:-session_tasks_v3.json}"
