@@ -35,3 +35,4 @@ logs/
 *.token
 # EXP2 generated files (Phase 1 output — do not commit)
 data/multiturn/conversation_history.json
+*.pid

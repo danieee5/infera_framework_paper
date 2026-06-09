@@ -1,0 +1,26 @@
+{
+  "AWQ": {
+    "alpha_j_per_ctx_token": 0.03741,
+    "beta_j_per_completion_token": 2.33681,
+    "intercept_j": 79.65,
+    "r2": 0.984,
+    "n": 174,
+    "nota": "alpha=J/token-de-contexto (prefill). beta=J/token-generado (decode). R2 mide cuanto de la varianza de energy_j explica el modelo lineal."
+  },
+  "FP16": {
+    "alpha_j_per_ctx_token": 0.03774,
+    "beta_j_per_completion_token": 5.1058,
+    "intercept_j": 52.66,
+    "r2": 0.9971,
+    "n": 174,
+    "nota": "alpha=J/token-de-contexto (prefill). beta=J/token-generado (decode). R2 mide cuanto de la varianza de energy_j explica el modelo lineal."
+  },
+  "GLOBAL": {
+    "alpha_j_per_ctx_token": 0.03856,
+    "beta_j_per_completion_token": 3.69698,
+    "intercept_j": 64.31,
+    "r2": 0.8436,
+    "n": 348,
+    "nota": "alpha=J/token-de-contexto (prefill). beta=J/token-generado (decode). R2 mide cuanto de la varianza de energy_j explica el modelo lineal."
+  }
+}

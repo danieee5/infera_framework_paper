@@ -1,0 +1,10 @@
+{
+  "AWQ": null,
+  "FP16": {
+    "task_id": "T15",
+    "accumulated_tokens": 6459,
+    "quality": 0.0,
+    "detector": "SONDA",
+    "note": "Tarea facil (KB lookup puro) que falla: signal limpia de context-rot."
+  }
+}

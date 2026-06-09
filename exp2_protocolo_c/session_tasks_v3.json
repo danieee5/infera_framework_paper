@@ -1,6 +1,6 @@
 {
-  "session_id": "vigia_rrhh_ops_v2",
-  "description": "Sesion incremental v2 — Fase 1 calibrada. Incorpora 3 tareas SONDA (lookups faciles de KB puro, sin historial) distribuidas a ~3300, ~4650 y ~5950 tokens para construir una curva dosis-respuesta del context-rot dependiente de cuantizacion. T09 simplificado (3 puestos x 2 turnos, 6 celdas) para eliminar el efecto piso que no discrimina. THRESH sugerido: 4500.",
+  "session_id": "vigia_rrhh_ops_v3",
+  "description": "Sesion incremental v3 — Fase 2a: sondas densas en zona 4500-5600 para localizar el codo del context-rot AWQ con precision. Inserta 6 SONDAS nuevas (D-I) y 3 FACT_M entre SONDA_B y T11, manteniendo el schema de tareas sustantivas de v2 para compatibilidad. Aprovecha los incrementos reales de v2 para estimar posiciones: SONDA_D~4746, SONDA_E~4831, SONDA_F~4916, SONDA_G~5181, SONDA_H~5266, SONDA_I~5491 (zona critica). THRESH sugerido: 4500.",
   "decoding": {"temperature": 0.0, "max_tokens": 512, "seed": 42},
   "tasks": [
     {
@@ -63,16 +63,70 @@
       "verify": {"contains_any": [["PEREZ", "dormido", "chaleco"], ["pendiente", "QUIROZ", "ZAMBRANO"]], "forbidden": ["Mateo Solis", "Lidia Duran"], "judge": "Fidelidad: el resumen debe mencionar la falta de PEREZ y los permisos pendientes, sin inventar personas ni hechos."}
     },
     {
+      "id": "SONDA_D", "type": "SONDA",
+      "prompt": "¿Cuantos puestos de custodia tiene BANCA UNION (agencia centro) y en que modalidad de turno opera? Responde con el numero de puestos y la modalidad.",
+      "depends_on": [],
+      "verify": {"contains_all": ["2"], "contains_any": [["Diurno", "diurno", "turno", "diurna", "Diurna"]]}
+    },
+    {
+      "id": "FACT_M1", "type": "FACT",
+      "prompt": "¿Cual es el email de contacto del CEMO (coordinacion de operaciones) de VIGIA? Responde solo con el email.",
+      "depends_on": [],
+      "verify": {"contains_all": ["coord.operaciones@vigia.ec"]}
+    },
+    {
+      "id": "SONDA_E", "type": "SONDA",
+      "prompt": "¿En que modalidad de turno opera el cliente AGRO COSTA CIA. LTDA. segun el proyecto? Responde en una o dos palabras.",
+      "depends_on": [],
+      "verify": {"contains_any": [["Nocturno", "nocturno", "noche"]]}
+    },
+    {
+      "id": "FACT_M2", "type": "FACT",
+      "prompt": "¿Cual es el email del area de Contabilidad de VIGIA Seguridad S.A.? Responde solo con el email.",
+      "depends_on": [],
+      "verify": {"contains_all": ["contabilidad@vigia.ec"]}
+    },
+    {
+      "id": "SONDA_F", "type": "SONDA",
+      "prompt": "¿Quien ocupa el cargo de Gerente Administrativa en VIGIA Seguridad S.A.? Responde solo con el nombre.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Laura Salas"], "forbidden": ["Roberto Salas", "Rosa Ramos"]}
+    },
+    {
       "id": "T08", "type": "FACT",
       "prompt": "¿Cuantos puestos tiene PUERTO LOGISTICA S.A. y en que modalidad de turnos opera?",
       "depends_on": [],
       "verify": {"contains_all": ["6"], "contains_any": [["3 turno", "tres turno", "24h", "24 h"]]}
     },
     {
+      "id": "SONDA_G", "type": "SONDA",
+      "prompt": "¿Cuantos empleados aproximados tiene VIGIA Seguridad S.A. en total (incluyendo Manta y Quito)? Responde con el numero.",
+      "depends_on": [],
+      "verify": {"contains_any": [["200", "doscientos"]]}
+    },
+    {
+      "id": "FACT_M3", "type": "FACT",
+      "prompt": "¿Cual es el email de la Jefatura Administrativa de VIGIA? Responde solo con el email.",
+      "depends_on": [],
+      "verify": {"contains_all": ["jefatura.admin@vigia.ec"]}
+    },
+    {
+      "id": "SONDA_H", "type": "SONDA",
+      "prompt": "¿Quien es el Analista de procesos en VIGIA Seguridad S.A.? Responde solo con el nombre completo.",
+      "depends_on": [],
+      "verify": {"contains_any": [["Raul Espinoza", "Raúl Espinoza", "Espinoza"]]}
+    },
+    {
       "id": "T09", "type": "CONSTRAINT",
       "prompt": "Arma el rol de 1 dia para AGRO COSTA CIA. LTDA. con DOS turnos de 12 horas: DIURNO (07:00-19:00) y NOCTURNO (19:00-07:00). Tiene 3 puestos de custodia; cada turno necesita exactamente 1 guardia por puesto (3 puestos = 3 guardias por turno). Guardias disponibles: G1 PEREZ, G2 LOPEZ, G3 CHAVEZ, G4 VERA, G5 MOREIRA, G6 QUIROZ. Restriccion: ningun guardia puede trabajar en dos turnos el mismo dia. Responde UNICAMENTE con un bloque JSON: lista de objetos {\"guardia\":\"G1\",\"dia\":1,\"turno\":\"DIURNO\",\"puesto\":1}.",
       "depends_on": [],
       "verify": {"rota": {"posts": 3, "days": 1, "shifts": ["DIURNO", "NOCTURNO"], "guards": ["G1","G2","G3","G4","G5","G6"]}}
+    },
+    {
+      "id": "SONDA_I", "type": "SONDA",
+      "prompt": "¿Quien es el Jefe de Operaciones nacional (no el de campo) de VIGIA Seguridad S.A.? Responde solo con el nombre.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Diego Salas"], "forbidden": ["Carlos Tobar", "Roberto Salas"]}
     },
     {
       "id": "T10", "type": "DRAFT",
@@ -90,6 +144,12 @@
       "prompt": "Sin volver a redactarlo: del PRIMER memorando que escribiste en esta sesion, ¿a que cliente y a que turno correspondia el guardia sancionado?",
       "depends_on": ["T05"],
       "verify": {"contains_all": ["CLIENTE INDUSTRIAL"], "contains_any": [["NOCTURNO", "nocturno"]]}
+    },
+    {
+      "id": "SONDA_J", "type": "SONDA",
+      "prompt": "¿Que zona operativa cubre el Supervisor de guardias Richard Ortega en VIGIA Seguridad S.A.? Responde solo con el nombre de la zona.",
+      "depends_on": [],
+      "verify": {"contains_all": ["Sierra 2"], "forbidden": ["Sierra 1"]}
     },
     {
       "id": "SONDA_C", "type": "SONDA",

@@ -1,0 +1,367 @@
+run_id,quant,arm,rep,task_index,task_id,task_type,accumulated_prompt_tokens,completion_tokens,energy_j,j_per_completion_token,duration_s,avg_power_w,peak_power_w,vram_peak_mb,quality,quality_subscores,cumulative_energy_j,is_compaction,compaction_index,status,error,nvml_samples,nvml_available,session_tag
+AWQ_compaction_rep3,AWQ,compaction,3,0.0,T01,FACT,3183,13,371.1937,28.55336,1.4025,266.62,398.79,24549.2,1.0,{'contains_all': 1.0},371.1937,False,0,ok,,15,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,1.0,T02,FACT,3233,4,189.701,47.42524,1.3025,148.26,188.79,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",560.8947,False,0,ok,,14,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,2.0,SONDA_A,SONDA,3284,5,195.0779,39.01557,1.3024,151.73,178.46,24549.2,1.0,{'contains_all': 1.0},755.9725,False,0,ok,,14,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,3.0,T03,CLASSIFY,3357,76,391.4711,5.15094,2.0045,195.07,298.64,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",1147.4436,False,0,ok,,21,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,4.0,T04,CONSTRAINT,3687,395,1128.685,2.85743,4.7069,238.6,329.36,24549.2,0.9167,{'rota': 0.9166666666666666},2276.1286,False,0,ok,,48,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,5.0,T05,DRAFT,4182,230,760.8427,3.30801,3.4054,222.23,329.35,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",3036.9713,False,0,ok,,35,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,6.0,T06,FACT,4450,25,274.0694,10.96277,1.6029,173.28,256.36,24549.2,1.0,{'contains_all': 1.0},3311.0406,False,0,ok,,17,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,7.0,SONDA_B,SONDA,4508,6,256.4325,42.73874,1.5037,173.96,226.38,24549.2,1.0,{'contains_all': 1.0},3567.4731,False,0,ok,,16,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,7.5,COMPACT_1,COMPACTION,4662,400,1227.7617,,4.9064,249.39,342.78,24549.2,,{},4795.2348,True,1,ok,,50,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,8.0,T07,SUMMARIZE,3608,139,525.5781,3.78114,2.5037,208.64,327.76,24549.2,1.0,{'contains_any': 1.0},5320.8129,False,1,ok,,26,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,9.0,SONDA_D,SONDA,3797,9,212.7159,23.6351,1.4023,154.2,217.24,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",5533.5287,False,1,ok,,15,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,10.0,FACT_M1,FACT,3847,8,219.9551,27.49439,1.4027,159.59,208.79,24549.2,1.0,{'contains_all': 1.0},5753.4838,False,1,ok,,15,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,11.0,SONDA_E,SONDA,3896,6,224.7136,37.45227,1.4026,162.73,203.8,24549.2,1.0,{'contains_any': 1.0},5978.1975,False,1,ok,,15,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,12.0,FACT_M2,FACT,3938,7,229.2081,32.74401,1.4027,166.18,206.63,24549.2,1.0,{'contains_all': 1.0},6207.4056,False,1,ok,,15,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,13.0,SONDA_F,SONDA,3982,4,230.1889,57.54721,1.4027,166.82,216.27,24549.2,1.0,{'contains_all': 1.0},6437.5944,False,1,ok,,15,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,14.0,T08,FACT,4021,13,255.9006,19.68466,1.5031,172.8,233.49,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",6693.495,False,1,ok,,16,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,15.0,SONDA_G,SONDA,4078,2,223.5821,111.79106,1.4029,162.76,219.14,24549.2,1.0,{'contains_any': 1.0},6917.0771,False,1,ok,,15,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,16.0,FACT_M3,FACT,4114,9,257.3559,28.5951,1.5032,173.61,218.04,24549.2,1.0,{'contains_all': 1.0},7174.4331,False,1,ok,,16,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,17.0,SONDA_H,SONDA,4159,7,250.1108,35.73012,1.503,169.81,226.94,24549.2,1.0,{'contains_any': 1.0},7424.5439,False,1,ok,,16,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,18.0,T09,CONSTRAINT,4353,150,609.5092,4.06339,2.7043,224.96,339.9,24549.2,1.0,{'rota': 1.0},8034.0531,False,1,ok,,28,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,19.0,SONDA_I,SONDA,4545,5,239.9063,47.98125,1.5023,162.43,240.71,24549.2,1.0,{'contains_all': 1.0},8273.9594,False,1,ok,,16,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,19.5,COMPACT_2,COMPACTION,4698,448,1348.2632,,5.3075,253.29,349.04,24549.2,,{},9622.2225,True,2,ok,,54,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,20.0,T10,DRAFT,3692,512,1397.1251,2.72876,5.6064,248.29,327.19,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",11019.3476,False,2,ok,,57,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,21.0,T11,RECALL,4253,46,337.6706,7.34066,1.8033,189.07,285.86,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",11357.0182,False,2,ok,,19,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,22.0,SONDA_J,SONDA,4342,5,238.7024,47.74048,1.5037,162.5,220.24,24549.2,1.0,{'contains_all': 1.0},11595.7206,False,2,ok,,16,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,23.0,SONDA_C,SONDA,4393,5,247.9966,49.59932,1.5029,168.41,221.02,24549.2,0.0,{'contains_any': 0.0},11843.7172,False,2,ok,,16,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,24.0,T12,FACT,4428,18,287.866,15.99256,1.6033,182.67,245.15,24549.2,1.0,{'contains_all': 1.0},12131.5832,False,2,ok,,17,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,25.0,T13,SUMMARIZE,4539,71,416.9136,5.87202,2.0031,208.43,340.61,24549.2,1.0,{'contains_any': 1.0},12548.4967,False,2,ok,,21,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,25.5,COMPACT_3,COMPACTION,4758,468,1385.6966,,5.5078,250.48,339.86,24549.2,,{},13934.1933,True,3,ok,,56,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,26.0,T14,RECALL,3673,45,306.3499,6.80778,1.7024,181.49,267.21,24549.2,1.0,{'contains_all': 1.0},14240.5432,False,3,ok,,18,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,27.0,T15,SONDA,3793,107,478.2928,4.47003,2.3036,207.18,330.98,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",14718.836,False,3,ok,,24,True,v3
+AWQ_compaction_rep3,AWQ,compaction,3,28.0,T16,RECALL,3944,42,302.6778,7.20661,1.7027,179.32,273.01,24549.2,1.0,{'contains_any': 1.0},15021.5138,False,3,ok,,18,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,0.0,T01,FACT,3183,13,363.3135,27.94719,1.4033,261.28,400.58,24549.2,1.0,{'contains_all': 1.0},363.3135,False,0,ok,,15,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,1.0,T02,FACT,3233,4,192.8443,48.21106,1.3028,150.47,188.72,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",556.1577,False,0,ok,,14,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,2.0,SONDA_A,SONDA,3284,5,196.5426,39.30851,1.3025,152.78,189.48,24549.2,1.0,{'contains_all': 1.0},752.7003,False,0,ok,,14,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,3.0,T03,CLASSIFY,3357,76,391.944,5.15716,2.0034,195.1,298.81,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",1144.6442,False,0,ok,,21,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,4.0,T04,CONSTRAINT,3687,395,1113.018,2.81777,4.6071,240.44,328.64,24549.2,0.9167,{'rota': 0.9166666666666666},2257.6622,False,0,ok,,47,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,5.0,T05,DRAFT,4182,230,781.3299,3.39709,3.4054,228.32,325.81,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",3038.9921,False,0,ok,,35,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,6.0,T06,FACT,4450,25,273.9279,10.95711,1.6031,173.48,272.67,24549.2,1.0,{'contains_all': 1.0},3312.92,False,0,ok,,17,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,7.0,SONDA_B,SONDA,4508,6,258.1318,43.02197,1.5028,175.74,245.31,24549.2,1.0,{'contains_all': 1.0},3571.0518,False,0,ok,,16,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,7.5,COMPACT_1,COMPACTION,4662,400,1225.1705,,4.9064,248.99,339.12,24549.2,,{},4796.2222,True,1,ok,,50,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,8.0,T07,SUMMARIZE,3608,139,524.5274,3.77358,2.5037,208.86,324.82,24549.2,1.0,{'contains_any': 1.0},5320.7496,False,1,ok,,26,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,9.0,SONDA_D,SONDA,3797,9,207.682,23.07577,1.4023,151.23,205.02,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",5528.4316,False,1,ok,,15,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,10.0,FACT_M1,FACT,3847,8,221.3851,27.67313,1.4025,160.56,205.08,24549.2,1.0,{'contains_all': 1.0},5749.8166,False,1,ok,,15,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,11.0,SONDA_E,SONDA,3896,6,223.8696,37.31161,1.4024,162.17,204.91,24549.2,1.0,{'contains_any': 1.0},5973.6863,False,1,ok,,15,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,12.0,FACT_M2,FACT,3938,7,227.3549,32.47927,1.4025,164.96,206.5,24549.2,1.0,{'contains_all': 1.0},6201.0411,False,1,ok,,15,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,13.0,SONDA_F,SONDA,3982,4,227.3069,56.82674,1.4031,164.84,206.55,24549.2,1.0,{'contains_all': 1.0},6428.3481,False,1,ok,,15,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,14.0,T08,FACT,4021,13,257.6556,19.81966,1.5026,173.96,219.23,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",6686.0037,False,1,ok,,16,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,15.0,SONDA_G,SONDA,4078,2,228.2362,114.11812,1.4449,162.96,219.33,24549.2,1.0,{'contains_any': 1.0},6914.2399,False,1,ok,,15,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,16.0,FACT_M3,FACT,4114,9,247.0506,27.45007,1.5024,167.31,217.86,24549.2,1.0,{'contains_all': 1.0},7161.2905,False,1,ok,,16,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,17.0,SONDA_H,SONDA,4159,7,249.3873,35.62676,1.503,169.07,217.88,24549.2,1.0,{'contains_any': 1.0},7410.6778,False,1,ok,,16,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,18.0,T09,CONSTRAINT,4353,150,610.2595,4.0684,2.7043,225.23,338.57,24549.2,1.0,{'rota': 1.0},8020.9374,False,1,ok,,28,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,19.0,SONDA_I,SONDA,4545,5,241.282,48.2564,1.5026,163.31,240.72,24549.2,1.0,{'contains_all': 1.0},8262.2194,False,1,ok,,16,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,19.5,COMPACT_2,COMPACTION,4698,448,1347.0696,,5.3082,253.04,346.0,24549.2,,{},9609.289,True,2,ok,,54,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,20.0,T10,DRAFT,3692,512,1399.7133,2.73381,5.6082,248.68,326.95,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",11009.0022,False,2,ok,,57,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,21.0,T11,RECALL,4253,46,334.8716,7.27982,1.8035,187.61,285.91,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",11343.8739,False,2,ok,,19,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,22.0,SONDA_J,SONDA,4342,5,239.7698,47.95397,1.5033,163.21,232.19,24549.2,1.0,{'contains_all': 1.0},11583.6437,False,2,ok,,16,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,23.0,SONDA_C,SONDA,4393,5,248.0873,49.61746,1.5032,168.43,220.75,24549.2,0.0,{'contains_any': 0.0},11831.731,False,2,ok,,16,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,24.0,T12,FACT,4428,18,284.4744,15.80413,1.6033,180.7,245.32,24549.2,1.0,{'contains_all': 1.0},12116.2054,False,2,ok,,17,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,25.0,T13,SUMMARIZE,4539,71,418.3576,5.89236,2.0043,209.0,339.4,24549.2,1.0,{'contains_any': 1.0},12534.5629,False,2,ok,,21,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,25.5,COMPACT_3,COMPACTION,4758,468,1382.7566,,5.5077,249.95,338.24,24549.2,,{},13917.3195,True,3,ok,,56,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,26.0,T14,RECALL,3673,45,305.9935,6.79986,1.7038,181.13,267.32,24549.2,1.0,{'contains_all': 1.0},14223.313,False,3,ok,,18,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,27.0,T15,SONDA,3793,107,478.3184,4.47027,2.3037,206.74,329.99,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",14701.6314,False,3,ok,,24,True,v3
+AWQ_compaction_rep2,AWQ,compaction,2,28.0,T16,RECALL,3944,42,302.0452,7.19155,1.7028,179.01,273.48,24549.2,1.0,{'contains_any': 1.0},15003.6766,False,3,ok,,18,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,0.0,T01,FACT,3183,13,380.0853,29.23733,1.4018,272.65,399.74,24549.2,1.0,{'contains_all': 1.0},380.0853,False,0,ok,,15,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,1.0,T02,FACT,3233,4,194.6403,48.66007,1.3166,150.46,188.88,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",574.7256,False,0,ok,,14,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,2.0,SONDA_A,SONDA,3284,5,197.7727,39.55453,1.3017,153.76,189.35,24549.2,1.0,{'contains_all': 1.0},772.4983,False,0,ok,,14,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,3.0,T03,CLASSIFY,3357,76,393.8516,5.18226,2.0029,195.91,298.86,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",1166.3498,False,0,ok,,21,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,4.0,T04,CONSTRAINT,3687,395,1111.6644,2.81434,4.6064,240.11,326.86,24549.2,0.9167,{'rota': 0.9166666666666666},2278.0142,False,0,ok,,47,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,5.0,T05,DRAFT,4182,230,783.2702,3.40552,3.4058,228.76,324.96,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",3061.2844,False,0,ok,,35,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,6.0,T06,FACT,4450,25,272.7797,10.91119,1.6035,172.89,265.17,24549.2,1.0,{'contains_all': 1.0},3334.0641,False,0,ok,,17,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,7.0,SONDA_B,SONDA,4508,6,258.0016,43.00026,1.5031,175.5,240.86,24549.2,1.0,{'contains_all': 1.0},3592.0657,False,0,ok,,16,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,7.5,COMPACT_1,COMPACTION,4662,400,1231.0191,,4.9063,250.13,346.03,24549.2,,{},4823.0848,True,1,ok,,50,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,8.0,T07,SUMMARIZE,3608,139,528.2603,3.80043,2.5037,210.18,330.1,24549.2,1.0,{'contains_any': 1.0},5351.3451,False,1,ok,,26,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,9.0,SONDA_D,SONDA,3797,9,207.9268,23.10298,1.4019,151.33,205.12,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",5559.272,False,1,ok,,15,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,10.0,FACT_M1,FACT,3847,8,219.7047,27.46308,1.4025,159.88,218.13,24549.2,1.0,{'contains_all': 1.0},5778.9766,False,1,ok,,15,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,11.0,SONDA_E,SONDA,3896,6,225.0908,37.51513,1.4029,162.93,216.37,24549.2,1.0,{'contains_any': 1.0},6004.0674,False,1,ok,,15,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,12.0,FACT_M2,FACT,3938,7,229.3828,32.76897,1.4028,166.26,219.62,24549.2,1.0,{'contains_all': 1.0},6233.4502,False,1,ok,,15,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,13.0,SONDA_F,SONDA,3982,4,230.1863,57.54657,1.4024,166.84,216.12,24549.2,1.0,{'contains_all': 1.0},6463.6365,False,1,ok,,15,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,14.0,T08,FACT,4021,13,255.9041,19.68493,1.5027,172.84,219.15,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",6719.5406,False,1,ok,,16,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,15.0,SONDA_G,SONDA,4078,2,221.5198,110.75988,1.4028,161.41,219.19,24549.2,1.0,{'contains_any': 1.0},6941.0603,False,1,ok,,15,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,16.0,FACT_M3,FACT,4114,9,252.6084,28.06759,1.5034,171.04,232.19,24549.2,1.0,{'contains_all': 1.0},7193.6687,False,1,ok,,16,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,17.0,SONDA_H,SONDA,4159,7,246.0097,35.14424,1.5028,166.98,217.87,24549.2,1.0,{'contains_any': 1.0},7439.6784,False,1,ok,,16,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,18.0,T09,CONSTRAINT,4353,150,606.6881,4.04459,2.7045,223.59,335.8,24549.2,1.0,{'rota': 1.0},8046.3665,False,1,ok,,28,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,19.0,SONDA_I,SONDA,4545,5,244.479,48.89579,1.5035,164.83,225.95,24549.2,1.0,{'contains_all': 1.0},8290.8455,False,1,ok,,16,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,19.5,COMPACT_2,COMPACTION,4698,448,1342.7332,,5.3078,252.04,344.58,24549.2,,{},9633.5787,True,2,ok,,54,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,20.0,T10,DRAFT,3692,512,1403.971,2.74213,5.6076,249.3,329.32,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",11037.5496,False,2,ok,,57,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,21.0,T11,RECALL,4253,46,343.4056,7.46534,1.8039,191.35,306.46,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",11380.9552,False,2,ok,,19,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,22.0,SONDA_J,SONDA,4342,5,241.5452,48.30903,1.5027,163.84,218.17,24549.2,1.0,{'contains_all': 1.0},11622.5004,False,2,ok,,16,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,23.0,SONDA_C,SONDA,4393,5,252.1685,50.43371,1.5029,171.25,224.99,24549.2,0.0,{'contains_any': 0.0},11874.6689,False,2,ok,,16,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,24.0,T12,FACT,4428,18,289.8622,16.10345,1.6026,184.39,260.79,24549.2,1.0,{'contains_all': 1.0},12164.5311,False,2,ok,,17,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,25.0,T13,SUMMARIZE,4539,71,417.8471,5.88517,2.003,209.54,343.97,24549.2,1.0,{'contains_any': 1.0},12582.3781,False,2,ok,,21,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,25.5,COMPACT_3,COMPACTION,4758,468,1391.4756,,5.5069,251.71,340.74,24549.2,,{},13973.8538,True,3,ok,,56,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,26.0,T14,RECALL,3673,45,297.9848,6.62188,1.7028,177.32,262.47,24549.2,1.0,{'contains_all': 1.0},14271.8385,False,3,ok,,18,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,27.0,T15,SONDA,3793,107,478.6952,4.47379,2.3043,207.77,327.77,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",14750.5337,False,3,ok,,24,True,v3
+AWQ_compaction_rep1,AWQ,compaction,1,28.0,T16,RECALL,3944,42,301.2381,7.17234,1.703,179.16,282.72,24549.2,1.0,{'contains_any': 1.0},15051.7719,False,3,ok,,18,True,v3
+AWQ_naive_rep3,AWQ,naive,3,0.0,T01,FACT,3183,13,371.6916,28.59166,1.4027,266.93,399.44,24549.2,1.0,{'contains_all': 1.0},371.6916,False,0,ok,,15,True,v3
+AWQ_naive_rep3,AWQ,naive,3,1.0,T02,FACT,3233,4,190.4894,47.62234,1.3023,148.85,188.82,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",562.181,False,0,ok,,14,True,v3
+AWQ_naive_rep3,AWQ,naive,3,2.0,SONDA_A,SONDA,3284,5,195.9854,39.19708,1.3029,152.33,178.59,24549.2,1.0,{'contains_all': 1.0},758.1664,False,0,ok,,14,True,v3
+AWQ_naive_rep3,AWQ,naive,3,3.0,T03,CLASSIFY,3357,76,392.7707,5.16804,2.0042,195.69,299.22,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",1150.9371,False,0,ok,,21,True,v3
+AWQ_naive_rep3,AWQ,naive,3,4.0,T04,CONSTRAINT,3687,395,1110.713,2.81193,4.6069,240.15,330.01,24549.2,0.9167,{'rota': 0.9166666666666666},2261.65,False,0,ok,,47,True,v3
+AWQ_naive_rep3,AWQ,naive,3,5.0,T05,DRAFT,4182,230,770.733,3.35101,3.4049,225.31,331.22,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",3032.383,False,0,ok,,35,True,v3
+AWQ_naive_rep3,AWQ,naive,3,6.0,T06,FACT,4450,25,273.2197,10.92879,1.6028,172.76,256.79,24549.2,1.0,{'contains_all': 1.0},3305.6027,False,0,ok,,17,True,v3
+AWQ_naive_rep3,AWQ,naive,3,7.0,SONDA_B,SONDA,4508,6,256.225,42.70417,1.5031,173.95,226.78,24549.2,1.0,{'contains_all': 1.0},3561.8277,False,0,ok,,16,True,v3
+AWQ_naive_rep3,AWQ,naive,3,8.0,T07,SUMMARIZE,4553,158,640.6549,4.05478,2.8038,227.79,340.1,24549.2,1.0,{'contains_any': 1.0},4202.4826,False,0,ok,,29,True,v3
+AWQ_naive_rep3,AWQ,naive,3,9.0,SONDA_D,SONDA,4761,11,276.076,25.09781,1.6026,174.43,256.13,24549.2,0.5,"{'contains_all': 1.0, 'contains_any': 0.0}",4478.5586,False,0,ok,,17,True,v3
+AWQ_naive_rep3,AWQ,naive,3,10.0,FACT_M1,FACT,4813,8,258.2511,32.28139,1.5024,175.57,240.88,24549.2,1.0,{'contains_all': 1.0},4736.8097,False,0,ok,,16,True,v3
+AWQ_naive_rep3,AWQ,naive,3,11.0,SONDA_E,SONDA,4862,6,269.9502,44.9917,1.5029,183.5,245.27,24549.2,1.0,{'contains_any': 1.0},5006.7599,False,0,ok,,16,True,v3
+AWQ_naive_rep3,AWQ,naive,3,12.0,FACT_M2,FACT,4904,7,269.3716,38.48166,1.5028,183.06,242.67,24549.2,1.0,{'contains_all': 1.0},5276.1315,False,0,ok,,16,True,v3
+AWQ_naive_rep3,AWQ,naive,3,13.0,SONDA_F,SONDA,4948,5,271.2158,54.24315,1.5032,184.23,242.67,24549.2,1.0,{'contains_all': 1.0},5547.3473,False,0,ok,,16,True,v3
+AWQ_naive_rep3,AWQ,naive,3,14.0,T08,FACT,4988,15,302.8739,20.1916,1.6029,192.5,258.38,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",5850.2212,False,0,ok,,17,True,v3
+AWQ_naive_rep3,AWQ,naive,3,15.0,SONDA_G,SONDA,5047,4,267.5116,66.87789,1.5033,181.9,256.44,24549.2,1.0,{'contains_any': 1.0},6117.7328,False,0,ok,,16,True,v3
+AWQ_naive_rep3,AWQ,naive,3,16.0,FACT_M3,FACT,5085,9,301.6029,33.51143,1.6035,191.75,251.11,24549.2,1.0,{'contains_all': 1.0},6419.3357,False,0,ok,,17,True,v3
+AWQ_naive_rep3,AWQ,naive,3,17.0,SONDA_H,SONDA,5130,8,292.6848,36.58561,1.6029,186.54,271.34,24549.2,1.0,{'contains_any': 1.0},6712.0205,False,0,ok,,17,True,v3
+AWQ_naive_rep3,AWQ,naive,3,18.0,T09,CONSTRAINT,5325,150,660.0628,4.40042,2.8049,234.87,356.8,24549.2,1.0,{'rota': 1.0},7372.0833,False,0,ok,,29,True,v3
+AWQ_naive_rep3,AWQ,naive,3,19.0,SONDA_I,SONDA,5517,6,282.4779,47.07965,1.6036,179.18,271.73,24549.2,1.0,{'contains_all': 1.0},7654.5612,False,0,ok,,17,True,v3
+AWQ_naive_rep3,AWQ,naive,3,20.0,T10,DRAFT,5598,224,860.9721,3.84363,3.506,245.09,353.69,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",8515.5334,False,0,ok,,36,True,v3
+AWQ_naive_rep3,AWQ,naive,3,21.0,T11,RECALL,5870,42,388.4008,9.24764,1.9037,205.08,340.2,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",8903.9342,False,0,ok,,20,True,v3
+AWQ_naive_rep3,AWQ,naive,3,22.0,SONDA_J,SONDA,5955,6,299.7035,49.95058,1.6028,191.17,300.8,24549.2,1.0,{'contains_all': 1.0},9203.6377,False,0,ok,,17,True,v3
+AWQ_naive_rep3,AWQ,naive,3,23.0,SONDA_C,SONDA,6007,5,316.4127,63.28254,1.6025,202.2,280.6,24549.2,1.0,{'contains_any': 1.0},9520.0504,False,0,ok,,17,True,v3
+AWQ_naive_rep3,AWQ,naive,3,24.0,T12,FACT,6042,40,426.846,10.67115,1.903,226.91,354.83,24549.2,1.0,{'contains_all': 1.0},9946.8964,False,0,ok,,20,True,v3
+AWQ_naive_rep3,AWQ,naive,3,25.0,T13,SUMMARIZE,6175,71,498.2219,7.01721,2.2042,226.71,367.02,24549.2,1.0,{'contains_any': 1.0},10445.1183,False,0,ok,,23,True,v3
+AWQ_naive_rep3,AWQ,naive,3,26.0,T14,RECALL,6282,23,361.3763,15.71201,1.8033,203.06,326.34,24549.2,1.0,{'contains_all': 1.0},10806.4946,False,0,ok,,19,True,v3
+AWQ_naive_rep3,AWQ,naive,3,27.0,T15,SONDA,6380,28,422.5236,15.09013,1.9033,223.43,337.9,24549.2,0.5,"{'contains_all': 0.0, 'contains_any': 1.0}",11229.0182,False,0,ok,,20,True,v3
+AWQ_naive_rep3,AWQ,naive,3,28.0,T16,RECALL,6452,8,332.9498,41.61872,1.703,198.05,307.32,24549.2,1.0,{'contains_any': 1.0},11561.9679,False,0,ok,,18,True,v3
+AWQ_naive_rep2,AWQ,naive,2,0.0,T01,FACT,3183,13,367.5804,28.27542,1.4025,264.2,398.55,24549.2,1.0,{'contains_all': 1.0},367.5804,False,0,ok,,15,True,v3
+AWQ_naive_rep2,AWQ,naive,2,1.0,T02,FACT,3233,4,190.0442,47.51104,1.3023,148.54,189.0,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",557.6246,False,0,ok,,14,True,v3
+AWQ_naive_rep2,AWQ,naive,2,2.0,SONDA_A,SONDA,3284,5,196.0323,39.20645,1.3023,152.43,189.35,24549.2,1.0,{'contains_all': 1.0},753.6568,False,0,ok,,14,True,v3
+AWQ_naive_rep2,AWQ,naive,2,3.0,T03,CLASSIFY,3357,76,389.6408,5.12685,2.0034,194.09,298.82,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",1143.2976,False,0,ok,,21,True,v3
+AWQ_naive_rep2,AWQ,naive,2,4.0,T04,CONSTRAINT,3687,395,1128.683,2.85743,4.7063,238.63,328.18,24549.2,0.9167,{'rota': 0.9166666666666666},2271.9807,False,0,ok,,48,True,v3
+AWQ_naive_rep2,AWQ,naive,2,5.0,T05,DRAFT,4182,230,773.6675,3.36377,3.4044,226.04,334.24,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",3045.6481,False,0,ok,,35,True,v3
+AWQ_naive_rep2,AWQ,naive,2,6.0,T06,FACT,4450,25,269.957,10.79828,1.6027,171.21,272.2,24549.2,1.0,{'contains_all': 1.0},3315.6051,False,0,ok,,17,True,v3
+AWQ_naive_rep2,AWQ,naive,2,7.0,SONDA_B,SONDA,4508,6,255.9554,42.65923,1.5027,174.47,248.47,24549.2,1.0,{'contains_all': 1.0},3571.5605,False,0,ok,,16,True,v3
+AWQ_naive_rep2,AWQ,naive,2,8.0,T07,SUMMARIZE,4553,158,636.3871,4.02777,2.8043,226.51,335.72,24549.2,1.0,{'contains_any': 1.0},4207.9476,False,0,ok,,29,True,v3
+AWQ_naive_rep2,AWQ,naive,2,9.0,SONDA_D,SONDA,4761,11,267.0131,24.27392,1.6029,169.36,244.61,24549.2,0.5,"{'contains_all': 1.0, 'contains_any': 0.0}",4474.9607,False,0,ok,,17,True,v3
+AWQ_naive_rep2,AWQ,naive,2,10.0,FACT_M1,FACT,4813,8,256.0529,32.00661,1.5027,174.85,243.5,24549.2,1.0,{'contains_all': 1.0},4731.0137,False,0,ok,,16,True,v3
+AWQ_naive_rep2,AWQ,naive,2,11.0,SONDA_E,SONDA,4862,6,267.4534,44.57556,1.5029,181.78,240.49,24549.2,1.0,{'contains_any': 1.0},4998.467,False,0,ok,,16,True,v3
+AWQ_naive_rep2,AWQ,naive,2,12.0,FACT_M2,FACT,4904,7,268.4773,38.35391,1.5028,182.51,242.74,24549.2,1.0,{'contains_all': 1.0},5266.9444,False,0,ok,,16,True,v3
+AWQ_naive_rep2,AWQ,naive,2,13.0,SONDA_F,SONDA,4948,5,272.4966,54.49931,1.5035,185.0,243.21,24549.2,1.0,{'contains_all': 1.0},5539.4409,False,0,ok,,16,True,v3
+AWQ_naive_rep2,AWQ,naive,2,14.0,T08,FACT,4988,15,306.0946,20.40631,1.6031,194.48,260.3,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",5845.5355,False,0,ok,,17,True,v3
+AWQ_naive_rep2,AWQ,naive,2,15.0,SONDA_G,SONDA,5047,4,266.4311,66.60777,1.5035,180.89,241.9,24549.2,1.0,{'contains_any': 1.0},6111.9666,False,0,ok,,16,True,v3
+AWQ_naive_rep2,AWQ,naive,2,16.0,FACT_M3,FACT,5085,9,304.6301,33.84779,1.6032,193.51,262.24,24549.2,1.0,{'contains_all': 1.0},6416.5967,False,0,ok,,17,True,v3
+AWQ_naive_rep2,AWQ,naive,2,17.0,SONDA_H,SONDA,5130,8,290.8899,36.36124,1.6037,184.92,257.95,24549.2,1.0,{'contains_any': 1.0},6707.4866,False,0,ok,,17,True,v3
+AWQ_naive_rep2,AWQ,naive,2,18.0,T09,CONSTRAINT,5325,150,659.8422,4.39895,2.8053,234.49,354.72,24549.2,1.0,{'rota': 1.0},7367.3288,False,0,ok,,29,True,v3
+AWQ_naive_rep2,AWQ,naive,2,19.0,SONDA_I,SONDA,5517,6,285.9742,47.66237,1.6029,181.16,272.34,24549.2,1.0,{'contains_all': 1.0},7653.303,False,0,ok,,17,True,v3
+AWQ_naive_rep2,AWQ,naive,2,20.0,T10,DRAFT,5598,224,860.7768,3.84275,3.5053,244.89,359.33,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",8514.0798,False,0,ok,,36,True,v3
+AWQ_naive_rep2,AWQ,naive,2,21.0,T11,RECALL,5870,42,395.5281,9.41734,1.9036,207.97,353.73,24549.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",8909.6079,False,0,ok,,20,True,v3
+AWQ_naive_rep2,AWQ,naive,2,22.0,SONDA_J,SONDA,5955,6,297.2549,49.54249,1.6034,189.36,281.42,24549.2,1.0,{'contains_all': 1.0},9206.8628,False,0,ok,,17,True,v3
+AWQ_naive_rep2,AWQ,naive,2,23.0,SONDA_C,SONDA,6007,5,319.4087,63.88174,1.603,203.63,294.09,24549.2,1.0,{'contains_any': 1.0},9526.2715,False,0,ok,,17,True,v3
+AWQ_naive_rep2,AWQ,naive,2,24.0,T12,FACT,6042,40,424.1889,10.60472,1.9032,225.08,357.0,24549.2,1.0,{'contains_all': 1.0},9950.4604,False,0,ok,,20,True,v3
+AWQ_naive_rep2,AWQ,naive,2,25.0,T13,SUMMARIZE,6175,71,501.5148,7.06359,2.2038,227.79,364.09,24549.2,1.0,{'contains_any': 1.0},10451.9752,False,0,ok,,23,True,v3
+AWQ_naive_rep2,AWQ,naive,2,26.0,T14,RECALL,6282,23,368.3032,16.01318,1.8033,206.2,349.19,24549.2,1.0,{'contains_all': 1.0},10820.2784,False,0,ok,,19,True,v3
+AWQ_naive_rep2,AWQ,naive,2,27.0,T15,SONDA,6380,28,411.4468,14.69453,1.9031,218.22,336.26,24549.2,0.5,"{'contains_all': 0.0, 'contains_any': 1.0}",11231.7252,False,0,ok,,20,True,v3
+AWQ_naive_rep2,AWQ,naive,2,28.0,T16,RECALL,6452,8,330.8471,41.35589,1.703,198.17,304.46,24549.2,1.0,{'contains_any': 1.0},11562.5724,False,0,ok,,18,True,v3
+AWQ_naive_rep1,AWQ,naive,1,0.0,T01,FACT,3183,13,359.8406,27.68005,1.4025,259.13,400.87,22171.2,1.0,{'contains_all': 1.0},359.8406,False,0,ok,,15,True,v3
+AWQ_naive_rep1,AWQ,naive,1,1.0,T02,FACT,3233,4,192.4722,48.11805,1.3023,150.26,188.93,22171.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",552.3128,False,0,ok,,14,True,v3
+AWQ_naive_rep1,AWQ,naive,1,2.0,SONDA_A,SONDA,3284,5,199.3329,39.86659,1.3022,154.8,189.84,22171.2,1.0,{'contains_all': 1.0},751.6457,False,0,ok,,14,True,v3
+AWQ_naive_rep1,AWQ,naive,1,3.0,T03,CLASSIFY,3357,76,393.1458,5.17297,2.0035,195.49,299.17,22171.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",1144.7915,False,0,ok,,21,True,v3
+AWQ_naive_rep1,AWQ,naive,1,4.0,T04,CONSTRAINT,3687,395,1131.3161,2.86409,4.7063,239.03,326.86,22171.2,0.9167,{'rota': 0.9166666666666666},2276.1076,False,0,ok,,48,True,v3
+AWQ_naive_rep1,AWQ,naive,1,5.0,T05,DRAFT,4182,230,775.8098,3.37309,3.4048,226.44,332.9,22401.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",3051.9174,False,0,ok,,35,True,v3
+AWQ_naive_rep1,AWQ,naive,1,6.0,T06,FACT,4450,25,276.9575,11.0783,1.6028,175.4,273.01,22645.2,1.0,{'contains_all': 1.0},3328.8749,False,0,ok,,17,True,v3
+AWQ_naive_rep1,AWQ,naive,1,7.0,SONDA_B,SONDA,4508,6,256.5239,42.75398,1.5028,174.47,236.61,22893.2,1.0,{'contains_all': 1.0},3585.3988,False,0,ok,,16,True,v3
+AWQ_naive_rep1,AWQ,naive,1,8.0,T07,SUMMARIZE,4553,158,644.7144,4.08047,2.8041,229.26,342.5,23143.2,1.0,{'contains_any': 1.0},4230.1132,False,0,ok,,29,True,v3
+AWQ_naive_rep1,AWQ,naive,1,9.0,SONDA_D,SONDA,4761,11,271.749,24.70446,1.6032,171.84,254.94,23405.2,0.5,"{'contains_all': 1.0, 'contains_any': 0.0}",4501.8622,False,0,ok,,17,True,v3
+AWQ_naive_rep1,AWQ,naive,1,10.0,FACT_M1,FACT,4813,8,257.3166,32.16458,1.5027,175.29,240.76,23669.2,1.0,{'contains_all': 1.0},4759.1789,False,0,ok,,16,True,v3
+AWQ_naive_rep1,AWQ,naive,1,11.0,SONDA_E,SONDA,4862,6,270.065,45.01083,1.5024,183.81,251.22,23935.2,1.0,{'contains_any': 1.0},5029.2438,False,0,ok,,16,True,v3
+AWQ_naive_rep1,AWQ,naive,1,12.0,FACT_M2,FACT,4904,7,270.2288,38.60412,1.5024,183.78,242.69,24205.2,1.0,{'contains_all': 1.0},5299.4727,False,0,ok,,16,True,v3
+AWQ_naive_rep1,AWQ,naive,1,13.0,SONDA_F,SONDA,4948,5,273.9875,54.7975,1.503,185.99,256.56,24477.2,1.0,{'contains_all': 1.0},5573.4602,False,0,ok,,16,True,v3
+AWQ_naive_rep1,AWQ,naive,1,14.0,T08,FACT,4988,15,298.9371,19.92914,1.6034,190.13,259.08,24477.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",5872.3973,False,0,ok,,17,True,v3
+AWQ_naive_rep1,AWQ,naive,1,15.0,SONDA_G,SONDA,5047,4,267.094,66.77349,1.503,181.67,242.02,22675.2,1.0,{'contains_any': 1.0},6139.4912,False,0,ok,,16,True,v3
+AWQ_naive_rep1,AWQ,naive,1,16.0,FACT_M3,FACT,5085,9,301.6119,33.51243,1.6031,191.56,268.89,22955.2,1.0,{'contains_all': 1.0},6441.1031,False,0,ok,,17,True,v3
+AWQ_naive_rep1,AWQ,naive,1,17.0,SONDA_H,SONDA,5130,8,291.2866,36.41083,1.603,186.26,271.5,23237.2,1.0,{'contains_any': 1.0},6732.3897,False,0,ok,,17,True,v3
+AWQ_naive_rep1,AWQ,naive,1,18.0,T09,CONSTRAINT,5325,150,656.9057,4.37937,2.8047,234.12,352.83,23529.2,1.0,{'rota': 1.0},7389.2954,False,0,ok,,29,True,v3
+AWQ_naive_rep1,AWQ,naive,1,19.0,SONDA_I,SONDA,5517,6,277.5904,46.26506,1.6032,176.37,265.04,23831.2,1.0,{'contains_all': 1.0},7666.8858,False,0,ok,,17,True,v3
+AWQ_naive_rep1,AWQ,naive,1,20.0,T10,DRAFT,5598,224,851.4578,3.80115,3.5054,242.46,358.0,24139.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",8518.3436,False,0,ok,,36,True,v3
+AWQ_naive_rep1,AWQ,naive,1,21.0,T11,RECALL,5870,42,393.2695,9.36356,1.9029,206.68,343.55,24461.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",8911.613,False,0,ok,,20,True,v3
+AWQ_naive_rep1,AWQ,naive,1,22.0,SONDA_J,SONDA,5955,6,327.2285,54.53809,1.7028,194.61,285.25,24461.2,1.0,{'contains_all': 1.0},9238.8416,False,0,ok,,18,True,v3
+AWQ_naive_rep1,AWQ,naive,1,23.0,SONDA_C,SONDA,6007,5,308.3867,61.67733,1.6028,196.13,284.4,22831.2,1.0,{'contains_any': 1.0},9547.2282,False,0,ok,,17,True,v3
+AWQ_naive_rep1,AWQ,naive,1,24.0,T12,FACT,6042,40,425.4673,10.63668,1.9029,225.1,351.09,23163.2,1.0,{'contains_all': 1.0},9972.6955,False,0,ok,,20,True,v3
+AWQ_naive_rep1,AWQ,naive,1,25.0,T13,SUMMARIZE,6175,71,522.0541,7.35287,2.3043,225.56,366.4,23501.2,1.0,{'contains_any': 1.0},10494.7496,False,0,ok,,24,True,v3
+AWQ_naive_rep1,AWQ,naive,1,26.0,T14,RECALL,6282,23,362.8312,15.77527,1.803,202.11,334.27,23845.2,1.0,{'contains_all': 1.0},10857.5808,False,0,ok,,19,True,v3
+AWQ_naive_rep1,AWQ,naive,1,27.0,T15,SONDA,6380,28,408.9926,14.60688,1.9032,216.38,336.6,24195.2,0.5,"{'contains_all': 0.0, 'contains_any': 1.0}",11266.5733,False,0,ok,,20,True,v3
+AWQ_naive_rep1,AWQ,naive,1,28.0,T16,RECALL,6452,8,334.9133,41.86416,1.7029,199.73,307.21,24549.2,1.0,{'contains_any': 1.0},11601.4866,False,0,ok,,18,True,v3
+FP16_compaction_rep3,FP16,compaction,3,0.0,T01,FACT,3183,13,371.7707,28.59775,1.5033,249.42,367.76,22277.2,1.0,{'contains_all': 1.0},371.7707,False,0,ok,,16,True,v3
+FP16_compaction_rep3,FP16,compaction,3,1.0,T02,FACT,3233,4,176.3099,44.07747,1.3031,138.72,194.0,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",548.0806,False,0,ok,,14,True,v3
+FP16_compaction_rep3,FP16,compaction,3,2.0,SONDA_A,SONDA,3284,5,199.4544,39.89087,1.4032,143.7,168.57,22277.2,1.0,{'contains_all': 1.0},747.535,False,0,ok,,15,True,v3
+FP16_compaction_rep3,FP16,compaction,3,3.0,T03,CLASSIFY,3357,73,539.6473,7.39243,2.6043,206.46,309.74,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",1287.1822,False,0,ok,,27,True,v3
+FP16_compaction_rep3,FP16,compaction,3,4.0,T04,CONSTRAINT,3684,398,2193.4853,5.51127,8.5119,256.9,311.81,22277.2,0.875,{'rota': 0.875},3480.6675,False,0,ok,,86,True,v3
+FP16_compaction_rep3,FP16,compaction,3,5.0,T05,DRAFT,4182,304,1756.7266,5.77871,6.9093,253.3,319.33,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",5237.3942,False,0,ok,,70,True,v3
+FP16_compaction_rep3,FP16,compaction,3,6.0,T06,FACT,4524,40,421.7714,10.54428,2.103,200.08,325.31,22277.2,1.0,{'contains_all': 1.0},5659.1655,False,0,ok,,22,True,v3
+FP16_compaction_rep3,FP16,compaction,3,6.5,COMPACT_1,COMPACTION,4712,349,2025.9462,,7.811,258.52,320.45,22277.2,,{},7685.1117,True,1,ok,,79,True,v3
+FP16_compaction_rep3,FP16,compaction,3,7.0,SONDA_B,SONDA,3551,6,198.7144,33.11906,1.4027,143.93,181.88,22277.2,1.0,{'contains_all': 1.0},7883.8261,False,1,ok,,15,True,v3
+FP16_compaction_rep3,FP16,compaction,3,8.0,T07,SUMMARIZE,3596,111,753.8141,6.79112,3.3047,227.07,314.91,22277.2,1.0,{'contains_any': 1.0},8637.6402,False,1,ok,,34,True,v3
+FP16_compaction_rep3,FP16,compaction,3,9.0,SONDA_D,SONDA,3757,9,226.2587,25.13986,1.5027,152.8,201.07,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",8863.8989,False,1,ok,,16,True,v3
+FP16_compaction_rep3,FP16,compaction,3,10.0,FACT_M1,FACT,3807,8,231.5573,28.94466,1.5027,156.86,209.49,22277.2,1.0,{'contains_all': 1.0},9095.4562,False,1,ok,,16,True,v3
+FP16_compaction_rep3,FP16,compaction,3,11.0,SONDA_E,SONDA,3856,6,208.3548,34.72579,1.4026,151.9,205.1,22277.2,1.0,{'contains_any': 1.0},9303.811,False,1,ok,,15,True,v3
+FP16_compaction_rep3,FP16,compaction,3,12.0,FACT_M2,FACT,3898,7,238.8481,34.12116,1.5039,161.05,200.41,22277.2,1.0,{'contains_all': 1.0},9542.6591,False,1,ok,,16,True,v3
+FP16_compaction_rep3,FP16,compaction,3,13.0,SONDA_F,SONDA,3942,5,207.7146,41.54293,1.4028,151.18,199.25,22277.2,1.0,{'contains_all': 1.0},9750.3737,False,1,ok,,15,True,v3
+FP16_compaction_rep3,FP16,compaction,3,14.0,T08,FACT,3982,13,269.6908,20.74544,1.6033,170.4,236.08,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",10020.0645,False,1,ok,,17,True,v3
+FP16_compaction_rep3,FP16,compaction,3,15.0,SONDA_G,SONDA,4039,2,203.1232,101.5616,1.4033,148.3,214.65,22277.2,1.0,{'contains_any': 1.0},10223.1877,False,1,ok,,15,True,v3
+FP16_compaction_rep3,FP16,compaction,3,16.0,FACT_M3,FACT,4075,9,240.3038,26.70043,1.5034,162.03,208.2,22277.2,1.0,{'contains_all': 1.0},10463.4915,False,1,ok,,16,True,v3
+FP16_compaction_rep3,FP16,compaction,3,17.0,SONDA_H,SONDA,4120,8,239.3056,29.91321,1.5027,162.72,222.4,22277.2,1.0,{'contains_any': 1.0},10702.7972,False,1,ok,,16,True,v3
+FP16_compaction_rep3,FP16,compaction,3,18.0,T09,CONSTRAINT,4315,150,985.3393,6.56893,4.1063,239.28,321.68,22277.2,1.0,{'rota': 1.0},11688.1365,False,1,ok,,42,True,v3
+FP16_compaction_rep3,FP16,compaction,3,19.0,SONDA_I,SONDA,4507,6,229.862,38.31033,1.5034,156.02,227.67,22277.2,1.0,{'contains_all': 1.0},11917.9985,False,1,ok,,16,True,v3
+FP16_compaction_rep3,FP16,compaction,3,19.5,COMPACT_2,COMPACTION,4661,417,2395.4823,,9.0123,265.18,327.23,22277.2,,{},14313.4808,True,2,ok,,91,True,v3
+FP16_compaction_rep3,FP16,compaction,3,20.0,T10,DRAFT,3661,371,2090.6888,5.63528,8.0111,260.12,311.91,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",16404.1696,False,2,ok,,81,True,v3
+FP16_compaction_rep3,FP16,compaction,3,21.0,T11,RECALL,4080,44,418.5751,9.51307,2.1027,198.76,324.52,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",16822.7447,False,2,ok,,22,True,v3
+FP16_compaction_rep3,FP16,compaction,3,22.0,SONDA_J,SONDA,4167,5,230.3943,46.07886,1.5027,155.74,212.28,22277.2,1.0,{'contains_all': 1.0},17053.139,False,2,ok,,16,True,v3
+FP16_compaction_rep3,FP16,compaction,3,23.0,SONDA_C,SONDA,4218,6,233.9381,38.98969,1.5029,158.54,204.02,22277.2,0.0,{'contains_any': 0.0},17287.0771,False,2,ok,,16,True,v3
+FP16_compaction_rep3,FP16,compaction,3,24.0,T12,FACT,4254,40,424.5823,10.61456,2.1035,201.76,324.25,22277.2,1.0,{'contains_all': 1.0},17711.6594,False,2,ok,,22,True,v3
+FP16_compaction_rep3,FP16,compaction,3,25.0,T13,SUMMARIZE,4387,82,641.3523,7.82137,2.9045,219.77,326.79,22277.2,1.0,{'contains_any': 1.0},18353.0118,False,2,ok,,30,True,v3
+FP16_compaction_rep3,FP16,compaction,3,26.0,T14,RECALL,4505,42,442.169,10.52783,2.2036,200.05,328.83,22277.2,1.0,{'contains_all': 1.0},18795.1808,False,2,ok,,23,True,v3
+FP16_compaction_rep3,FP16,compaction,3,26.5,COMPACT_3,COMPACTION,4695,443,2519.5434,,9.5123,264.13,331.15,22277.2,,{},21314.7242,True,3,ok,,96,True,v3
+FP16_compaction_rep3,FP16,compaction,3,27.0,T15,SONDA,3687,166,1033.8455,6.22798,4.3063,239.18,315.01,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",22348.5697,False,3,ok,,44,True,v3
+FP16_compaction_rep3,FP16,compaction,3,28.0,T16,RECALL,3897,38,382.9932,10.07877,2.0034,191.79,309.27,22277.2,1.0,{'contains_any': 1.0},22731.5629,False,3,ok,,21,True,v3
+FP16_compaction_rep2,FP16,compaction,2,0.0,T01,FACT,3183,13,360.7581,27.75062,1.5027,242.6,366.68,22277.2,1.0,{'contains_all': 1.0},360.7581,False,0,ok,,16,True,v3
+FP16_compaction_rep2,FP16,compaction,2,1.0,T02,FACT,3233,4,176.1838,44.04594,1.3025,138.36,194.1,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",536.9418,False,0,ok,,14,True,v3
+FP16_compaction_rep2,FP16,compaction,2,2.0,SONDA_A,SONDA,3284,5,203.4291,40.68582,1.4034,146.3,177.48,22277.2,1.0,{'contains_all': 1.0},740.3709,False,0,ok,,15,True,v3
+FP16_compaction_rep2,FP16,compaction,2,3.0,T03,CLASSIFY,3357,73,539.9182,7.39614,2.6039,206.35,308.84,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",1280.2892,False,0,ok,,27,True,v3
+FP16_compaction_rep2,FP16,compaction,2,4.0,T04,CONSTRAINT,3684,398,2203.3901,5.53616,8.5118,258.03,313.1,22277.2,0.875,{'rota': 0.875},3483.6793,False,0,ok,,86,True,v3
+FP16_compaction_rep2,FP16,compaction,2,5.0,T05,DRAFT,4182,304,1762.8094,5.79872,6.9103,254.2,321.37,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",5246.4886,False,0,ok,,70,True,v3
+FP16_compaction_rep2,FP16,compaction,2,6.0,T06,FACT,4524,40,415.2635,10.38159,2.1036,197.31,320.95,22277.2,1.0,{'contains_all': 1.0},5661.7521,False,0,ok,,22,True,v3
+FP16_compaction_rep2,FP16,compaction,2,6.5,COMPACT_1,COMPACTION,4712,349,2025.3855,,7.8108,258.52,323.77,22277.2,,{},7687.1376,True,1,ok,,79,True,v3
+FP16_compaction_rep2,FP16,compaction,2,7.0,SONDA_B,SONDA,3551,6,198.1872,33.0312,1.4032,144.03,185.74,22277.2,1.0,{'contains_all': 1.0},7885.3248,False,1,ok,,15,True,v3
+FP16_compaction_rep2,FP16,compaction,2,8.0,T07,SUMMARIZE,3596,111,749.8872,6.75574,3.3048,226.01,312.7,22277.2,1.0,{'contains_any': 1.0},8635.2121,False,1,ok,,34,True,v3
+FP16_compaction_rep2,FP16,compaction,2,9.0,SONDA_D,SONDA,3757,9,227.0971,25.23301,1.5029,153.81,212.44,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",8862.3092,False,1,ok,,16,True,v3
+FP16_compaction_rep2,FP16,compaction,2,10.0,FACT_M1,FACT,3807,8,229.3472,28.6684,1.5028,155.45,209.37,22277.2,1.0,{'contains_all': 1.0},9091.6564,False,1,ok,,16,True,v3
+FP16_compaction_rep2,FP16,compaction,2,11.0,SONDA_E,SONDA,3856,6,205.6743,34.27904,1.4033,149.75,196.93,22277.2,1.0,{'contains_any': 1.0},9297.3306,False,1,ok,,15,True,v3
+FP16_compaction_rep2,FP16,compaction,2,12.0,FACT_M2,FACT,3898,7,235.0821,33.58316,1.5027,158.82,197.88,22277.2,1.0,{'contains_all': 1.0},9532.4128,False,1,ok,,16,True,v3
+FP16_compaction_rep2,FP16,compaction,2,13.0,SONDA_F,SONDA,3942,5,204.7208,40.94417,1.4027,149.1,196.77,22277.2,1.0,{'contains_all': 1.0},9737.1336,False,1,ok,,15,True,v3
+FP16_compaction_rep2,FP16,compaction,2,14.0,T08,FACT,3982,13,280.8577,21.60444,1.6026,177.05,221.76,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",10017.9913,False,1,ok,,17,True,v3
+FP16_compaction_rep2,FP16,compaction,2,15.0,SONDA_G,SONDA,4039,2,201.0937,100.54687,1.4026,146.33,193.69,22277.2,1.0,{'contains_any': 1.0},10219.0851,False,1,ok,,15,True,v3
+FP16_compaction_rep2,FP16,compaction,2,16.0,FACT_M3,FACT,4075,9,240.0965,26.67738,1.5029,161.96,208.19,22277.2,1.0,{'contains_all': 1.0},10459.1815,False,1,ok,,16,True,v3
+FP16_compaction_rep2,FP16,compaction,2,17.0,SONDA_H,SONDA,4120,8,239.9005,29.98756,1.5031,162.7,209.44,22277.2,1.0,{'contains_any': 1.0},10699.082,False,1,ok,,16,True,v3
+FP16_compaction_rep2,FP16,compaction,2,18.0,T09,CONSTRAINT,4315,150,986.1445,6.5743,4.106,239.33,322.8,22277.2,1.0,{'rota': 1.0},11685.2265,False,1,ok,,42,True,v3
+FP16_compaction_rep2,FP16,compaction,2,19.0,SONDA_I,SONDA,4507,6,235.4398,39.23996,1.5031,159.09,214.15,22277.2,1.0,{'contains_all': 1.0},11920.6663,False,1,ok,,16,True,v3
+FP16_compaction_rep2,FP16,compaction,2,19.5,COMPACT_2,COMPACTION,4661,417,2407.1435,,9.1113,263.55,328.03,22277.2,,{},14327.8098,True,2,ok,,92,True,v3
+FP16_compaction_rep2,FP16,compaction,2,20.0,T10,DRAFT,3661,371,2079.3958,5.60484,8.01,258.74,316.51,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",16407.2055,False,2,ok,,81,True,v3
+FP16_compaction_rep2,FP16,compaction,2,21.0,T11,RECALL,4080,44,415.6632,9.44689,2.1033,197.67,319.9,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",16822.8687,False,2,ok,,22,True,v3
+FP16_compaction_rep2,FP16,compaction,2,22.0,SONDA_J,SONDA,4167,5,229.1616,45.83233,1.5036,155.04,199.84,22277.2,1.0,{'contains_all': 1.0},17052.0304,False,2,ok,,16,True,v3
+FP16_compaction_rep2,FP16,compaction,2,23.0,SONDA_C,SONDA,4218,6,232.1642,38.69404,1.5035,157.37,205.09,22277.2,0.0,{'contains_any': 0.0},17284.1946,False,2,ok,,16,True,v3
+FP16_compaction_rep2,FP16,compaction,2,24.0,T12,FACT,4254,40,423.0058,10.57514,2.1038,201.47,325.6,22277.2,1.0,{'contains_all': 1.0},17707.2004,False,2,ok,,22,True,v3
+FP16_compaction_rep2,FP16,compaction,2,25.0,T13,SUMMARIZE,4387,82,636.9701,7.76793,2.9047,218.48,322.61,22277.2,1.0,{'contains_any': 1.0},18344.1705,False,2,ok,,30,True,v3
+FP16_compaction_rep2,FP16,compaction,2,26.0,T14,RECALL,4505,42,437.1291,10.40784,2.2036,198.1,324.99,22277.2,1.0,{'contains_all': 1.0},18781.2996,False,2,ok,,23,True,v3
+FP16_compaction_rep2,FP16,compaction,2,26.5,COMPACT_3,COMPACTION,4695,443,2517.4917,,9.5111,264.0,332.58,22277.2,,{},21298.7913,True,3,ok,,96,True,v3
+FP16_compaction_rep2,FP16,compaction,2,27.0,T15,SONDA,3687,166,1041.9681,6.27692,4.3052,240.97,317.32,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",22340.7594,False,3,ok,,44,True,v3
+FP16_compaction_rep2,FP16,compaction,2,28.0,T16,RECALL,3897,38,383.9711,10.1045,2.0038,191.37,315.52,22277.2,1.0,{'contains_any': 1.0},22724.7305,False,3,ok,,21,True,v3
+FP16_compaction_rep1,FP16,compaction,1,0.0,T01,FACT,3183,13,369.7973,28.44595,1.5028,248.31,369.61,22277.2,1.0,{'contains_all': 1.0},369.7973,False,0,ok,,16,True,v3
+FP16_compaction_rep1,FP16,compaction,1,1.0,T02,FACT,3233,4,177.1667,44.29168,1.3026,139.05,194.38,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",546.9641,False,0,ok,,14,True,v3
+FP16_compaction_rep1,FP16,compaction,1,2.0,SONDA_A,SONDA,3284,5,199.86,39.972,1.4031,143.97,167.84,22277.2,1.0,{'contains_all': 1.0},746.8241,False,0,ok,,15,True,v3
+FP16_compaction_rep1,FP16,compaction,1,3.0,T03,CLASSIFY,3357,73,540.838,7.40874,2.604,206.96,311.93,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",1287.6621,False,0,ok,,27,True,v3
+FP16_compaction_rep1,FP16,compaction,1,4.0,T04,CONSTRAINT,3684,398,2198.39,5.52359,8.51,257.54,312.92,22277.2,0.875,{'rota': 0.875},3486.0521,False,0,ok,,86,True,v3
+FP16_compaction_rep1,FP16,compaction,1,5.0,T05,DRAFT,4182,304,1758.796,5.78551,6.9098,253.53,320.02,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",5244.8481,False,0,ok,,70,True,v3
+FP16_compaction_rep1,FP16,compaction,1,6.0,T06,FACT,4524,40,420.0662,10.50165,2.1034,199.16,325.73,22277.2,1.0,{'contains_all': 1.0},5664.9142,False,0,ok,,22,True,v3
+FP16_compaction_rep1,FP16,compaction,1,6.5,COMPACT_1,COMPACTION,4712,349,2031.6216,,7.8111,259.19,328.71,22277.2,,{},7696.5358,True,1,ok,,79,True,v3
+FP16_compaction_rep1,FP16,compaction,1,7.0,SONDA_B,SONDA,3551,6,197.3477,32.89128,1.4033,143.12,181.04,22277.2,1.0,{'contains_all': 1.0},7893.8835,False,1,ok,,15,True,v3
+FP16_compaction_rep1,FP16,compaction,1,8.0,T07,SUMMARIZE,3596,111,758.0861,6.8296,3.3056,228.21,315.93,22277.2,1.0,{'contains_any': 1.0},8651.9696,False,1,ok,,34,True,v3
+FP16_compaction_rep1,FP16,compaction,1,9.0,SONDA_D,SONDA,3757,9,223.0223,24.78025,1.5027,151.08,200.84,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",8874.9918,False,1,ok,,16,True,v3
+FP16_compaction_rep1,FP16,compaction,1,10.0,FACT_M1,FACT,3807,8,231.9973,28.99966,1.5032,157.07,209.15,22277.2,1.0,{'contains_all': 1.0},9106.9891,False,1,ok,,16,True,v3
+FP16_compaction_rep1,FP16,compaction,1,11.0,SONDA_E,SONDA,3856,6,209.0966,34.84943,1.4025,152.39,204.93,22277.2,1.0,{'contains_any': 1.0},9316.0857,False,1,ok,,15,True,v3
+FP16_compaction_rep1,FP16,compaction,1,12.0,FACT_M2,FACT,3898,7,237.8851,33.98358,1.5024,160.61,199.71,22277.2,1.0,{'contains_all': 1.0},9553.9707,False,1,ok,,16,True,v3
+FP16_compaction_rep1,FP16,compaction,1,13.0,SONDA_F,SONDA,3942,5,205.8865,41.17731,1.4026,149.89,196.74,22277.2,1.0,{'contains_all': 1.0},9759.8573,False,1,ok,,15,True,v3
+FP16_compaction_rep1,FP16,compaction,1,14.0,T08,FACT,3982,13,268.5018,20.65398,1.6034,169.7,221.25,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",10028.359,False,1,ok,,17,True,v3
+FP16_compaction_rep1,FP16,compaction,1,15.0,SONDA_G,SONDA,4039,2,203.7286,101.86428,1.4036,148.66,214.38,22277.2,1.0,{'contains_any': 1.0},10232.0876,False,1,ok,,15,True,v3
+FP16_compaction_rep1,FP16,compaction,1,16.0,FACT_M3,FACT,4075,9,240.7663,26.75181,1.5029,162.34,215.72,22277.2,1.0,{'contains_all': 1.0},10472.8539,False,1,ok,,16,True,v3
+FP16_compaction_rep1,FP16,compaction,1,17.0,SONDA_H,SONDA,4120,8,239.6112,29.9514,1.5027,162.89,220.8,22277.2,1.0,{'contains_any': 1.0},10712.465,False,1,ok,,16,True,v3
+FP16_compaction_rep1,FP16,compaction,1,18.0,T09,CONSTRAINT,4315,150,985.454,6.56969,4.106,239.19,321.77,22277.2,1.0,{'rota': 1.0},11697.919,False,1,ok,,42,True,v3
+FP16_compaction_rep1,FP16,compaction,1,19.0,SONDA_I,SONDA,4507,6,230.3068,38.38447,1.5027,156.31,227.62,22277.2,1.0,{'contains_all': 1.0},11928.2259,False,1,ok,,16,True,v3
+FP16_compaction_rep1,FP16,compaction,1,19.5,COMPACT_2,COMPACTION,4661,417,2381.1572,,9.0116,263.62,327.1,22277.2,,{},14309.383,True,2,ok,,91,True,v3
+FP16_compaction_rep1,FP16,compaction,1,20.0,T10,DRAFT,3661,371,2089.5503,5.63221,8.0102,259.96,316.23,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",16398.9334,False,2,ok,,81,True,v3
+FP16_compaction_rep1,FP16,compaction,1,21.0,T11,RECALL,4080,44,420.1803,9.54955,2.1037,199.45,315.59,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",16819.1137,False,2,ok,,22,True,v3
+FP16_compaction_rep1,FP16,compaction,1,22.0,SONDA_J,SONDA,4167,5,228.8914,45.77829,1.5031,154.75,199.47,22277.2,1.0,{'contains_all': 1.0},17048.0051,False,2,ok,,16,True,v3
+FP16_compaction_rep1,FP16,compaction,1,23.0,SONDA_C,SONDA,4218,6,233.2702,38.87837,1.5031,158.09,203.93,22277.2,0.0,{'contains_any': 0.0},17281.2754,False,2,ok,,16,True,v3
+FP16_compaction_rep1,FP16,compaction,1,24.0,T12,FACT,4254,40,420.7722,10.51931,2.1035,200.25,324.08,22277.2,1.0,{'contains_all': 1.0},17702.0476,False,2,ok,,22,True,v3
+FP16_compaction_rep1,FP16,compaction,1,25.0,T13,SUMMARIZE,4387,82,641.5633,7.82394,2.9041,219.87,326.06,22277.2,1.0,{'contains_any': 1.0},18343.611,False,2,ok,,30,True,v3
+FP16_compaction_rep1,FP16,compaction,1,26.0,T14,RECALL,4505,42,442.3122,10.53124,2.2033,200.14,328.64,22277.2,1.0,{'contains_all': 1.0},18785.9231,False,2,ok,,23,True,v3
+FP16_compaction_rep1,FP16,compaction,1,26.5,COMPACT_3,COMPACTION,4695,443,2517.6932,,9.5123,263.93,331.12,22277.2,,{},21303.6163,True,3,ok,,96,True,v3
+FP16_compaction_rep1,FP16,compaction,1,27.0,T15,SONDA,3687,166,1034.6168,6.23263,4.3052,239.44,314.7,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",22338.2331,False,3,ok,,44,True,v3
+FP16_compaction_rep1,FP16,compaction,1,28.0,T16,RECALL,3897,38,382.8265,10.07438,2.0024,191.83,303.03,22277.2,1.0,{'contains_any': 1.0},22721.0595,False,3,ok,,21,True,v3
+FP16_naive_rep3,FP16,naive,3,0.0,T01,FACT,3183,13,364.3736,28.02874,1.5026,244.87,367.28,22277.2,1.0,{'contains_all': 1.0},364.3736,False,0,ok,,16,True,v3
+FP16_naive_rep3,FP16,naive,3,1.0,T02,FACT,3233,4,175.8914,43.97284,1.3026,138.12,193.76,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",540.265,False,0,ok,,14,True,v3
+FP16_naive_rep3,FP16,naive,3,2.0,SONDA_A,SONDA,3284,5,199.3782,39.87564,1.403,143.64,167.44,22277.2,1.0,{'contains_all': 1.0},739.6432,False,0,ok,,15,True,v3
+FP16_naive_rep3,FP16,naive,3,3.0,T03,CLASSIFY,3357,73,540.0179,7.39751,2.6044,206.48,309.13,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",1279.6611,False,0,ok,,27,True,v3
+FP16_naive_rep3,FP16,naive,3,4.0,T04,CONSTRAINT,3684,398,2208.7525,5.54963,8.5342,257.99,314.43,22664.8,0.875,{'rota': 0.875},3488.4136,False,0,ok,,86,True,v3
+FP16_naive_rep3,FP16,naive,3,5.0,T05,DRAFT,4182,304,1746.3091,5.74444,6.9093,251.87,318.51,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",5234.7228,False,0,ok,,70,True,v3
+FP16_naive_rep3,FP16,naive,3,6.0,T06,FACT,4524,40,421.9335,10.54834,2.1041,199.88,324.38,22277.2,1.0,{'contains_all': 1.0},5656.6563,False,0,ok,,22,True,v3
+FP16_naive_rep3,FP16,naive,3,7.0,SONDA_B,SONDA,4597,6,239.6306,39.93844,1.5036,161.67,229.09,22277.2,1.0,{'contains_all': 1.0},5896.2869,False,0,ok,,16,True,v3
+FP16_naive_rep3,FP16,naive,3,8.0,T07,SUMMARIZE,4642,121,855.2925,7.06853,3.6054,236.46,326.1,22277.2,1.0,{'contains_any': 1.0},6751.5794,False,0,ok,,37,True,v3
+FP16_naive_rep3,FP16,naive,3,9.0,SONDA_D,SONDA,4813,12,297.0628,24.75524,1.7028,175.67,250.06,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",7048.6422,False,0,ok,,18,True,v3
+FP16_naive_rep3,FP16,naive,3,10.0,FACT_M1,FACT,4866,8,264.5501,33.06876,1.6028,168.03,238.5,22277.2,1.0,{'contains_all': 1.0},7313.1923,False,0,ok,,17,True,v3
+FP16_naive_rep3,FP16,naive,3,11.0,SONDA_E,SONDA,4915,6,271.425,45.23749,1.6029,171.93,242.38,22277.2,1.0,{'contains_any': 1.0},7584.6172,False,0,ok,,17,True,v3
+FP16_naive_rep3,FP16,naive,3,12.0,FACT_M2,FACT,4957,7,269.8611,38.55158,1.6028,171.57,237.84,22277.2,1.0,{'contains_all': 1.0},7854.4783,False,0,ok,,17,True,v3
+FP16_naive_rep3,FP16,naive,3,13.0,SONDA_F,SONDA,5001,5,244.0297,48.80595,1.5027,166.01,228.05,22277.2,1.0,{'contains_all': 1.0},8098.508,False,0,ok,,16,True,v3
+FP16_naive_rep3,FP16,naive,3,14.0,T08,FACT,5041,17,346.1361,20.36095,1.8032,193.93,272.05,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",8444.6442,False,0,ok,,19,True,v3
+FP16_naive_rep3,FP16,naive,3,15.0,SONDA_G,SONDA,5102,3,235.4603,78.48676,1.5028,159.9,220.93,22277.2,1.0,{'contains_any': 1.0},8680.1044,False,0,ok,,16,True,v3
+FP16_naive_rep3,FP16,naive,3,16.0,FACT_M3,FACT,5139,9,288.4919,32.05465,1.603,183.65,263.8,22277.2,1.0,{'contains_all': 1.0},8968.5963,False,0,ok,,17,True,v3
+FP16_naive_rep3,FP16,naive,3,17.0,SONDA_H,SONDA,5184,8,279.5002,34.93753,1.6036,178.07,245.22,22277.2,1.0,{'contains_any': 1.0},9248.0965,False,0,ok,,17,True,v3
+FP16_naive_rep3,FP16,naive,3,18.0,T09,CONSTRAINT,5379,153,1057.6512,6.91275,4.3065,245.01,330.22,22277.2,1.0,{'rota': 1.0},10305.7477,False,0,ok,,44,True,v3
+FP16_naive_rep3,FP16,naive,3,19.0,SONDA_I,SONDA,5574,6,270.0836,45.01393,1.6036,171.37,250.49,22277.2,1.0,{'contains_all': 1.0},10575.8313,False,0,ok,,17,True,v3
+FP16_naive_rep3,FP16,naive,3,20.0,T10,DRAFT,5655,267,1669.375,6.25234,6.4095,259.97,342.84,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",12245.2063,False,0,ok,,65,True,v3
+FP16_naive_rep3,FP16,naive,3,21.0,T11,RECALL,5970,16,347.5379,21.72112,1.8031,194.75,309.31,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",12592.7442,False,0,ok,,19,True,v3
+FP16_naive_rep3,FP16,naive,3,22.0,SONDA_J,SONDA,6029,6,318.9312,53.1552,1.7034,190.85,284.43,22277.2,1.0,{'contains_all': 1.0},12911.6754,False,0,ok,,18,True,v3
+FP16_naive_rep3,FP16,naive,3,23.0,SONDA_C,SONDA,6081,5,282.453,56.4906,1.6028,180.54,264.63,22277.2,1.0,{'contains_any': 1.0},13194.1284,False,0,ok,,17,True,v3
+FP16_naive_rep3,FP16,naive,3,24.0,T12,FACT,6116,40,523.0816,13.07704,2.3034,227.53,355.11,22277.2,1.0,{'contains_all': 1.0},13717.21,False,0,ok,,24,True,v3
+FP16_naive_rep3,FP16,naive,3,25.0,T13,SUMMARIZE,6249,75,697.1132,9.29484,3.0046,230.64,345.99,22277.2,1.0,{'contains_any': 1.0},14414.3232,False,0,ok,,31,True,v3
+FP16_naive_rep3,FP16,naive,3,26.0,T14,RECALL,6360,24,429.714,17.90475,2.1036,203.4,347.83,22277.2,1.0,{'contains_all': 1.0},14844.0372,False,0,ok,,22,True,v3
+FP16_naive_rep3,FP16,naive,3,27.0,T15,SONDA,6459,30,464.8833,15.49611,2.2039,209.84,351.49,22277.2,0.0,"{'contains_all': 0.0, 'contains_any': 0.0}",15308.9206,False,0,ok,,23,True,v3
+FP16_naive_rep3,FP16,naive,3,28.0,T16,RECALL,6533,8,344.1674,43.02092,1.8031,191.62,307.3,22277.2,1.0,{'contains_any': 1.0},15653.0879,False,0,ok,,19,True,v3
+FP16_naive_rep2,FP16,naive,2,0.0,T01,FACT,3183,13,362.6218,27.89398,1.5029,243.71,366.57,22277.2,1.0,{'contains_all': 1.0},362.6218,False,0,ok,,16,True,v3
+FP16_naive_rep2,FP16,naive,2,1.0,T02,FACT,3233,4,176.9003,44.22507,1.3024,138.87,193.9,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",539.522,False,0,ok,,14,True,v3
+FP16_naive_rep2,FP16,naive,2,2.0,SONDA_A,SONDA,3284,5,202.9229,40.58458,1.4031,146.01,167.8,22277.2,1.0,{'contains_all': 1.0},742.4449,False,0,ok,,15,True,v3
+FP16_naive_rep2,FP16,naive,2,3.0,T03,CLASSIFY,3357,73,540.0972,7.39859,2.6038,206.46,307.96,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",1282.5421,False,0,ok,,27,True,v3
+FP16_naive_rep2,FP16,naive,2,4.0,T04,CONSTRAINT,3684,398,2207.6615,5.54689,8.511,258.55,312.94,22277.2,0.875,{'rota': 0.875},3490.2036,False,0,ok,,86,True,v3
+FP16_naive_rep2,FP16,naive,2,5.0,T05,DRAFT,4182,304,1763.9252,5.80239,6.9101,254.35,321.13,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",5254.1288,False,0,ok,,70,True,v3
+FP16_naive_rep2,FP16,naive,2,6.0,T06,FACT,4524,40,417.82,10.4455,2.1039,198.46,321.43,22277.2,1.0,{'contains_all': 1.0},5671.9488,False,0,ok,,22,True,v3
+FP16_naive_rep2,FP16,naive,2,7.0,SONDA_B,SONDA,4597,6,236.0589,39.34315,1.5025,159.86,226.98,22277.2,1.0,{'contains_all': 1.0},5908.0077,False,0,ok,,16,True,v3
+FP16_naive_rep2,FP16,naive,2,8.0,T07,SUMMARIZE,4642,121,854.2502,7.05992,3.6054,236.27,323.75,22277.2,1.0,{'contains_any': 1.0},6762.2579,False,0,ok,,37,True,v3
+FP16_naive_rep2,FP16,naive,2,9.0,SONDA_D,SONDA,4813,12,269.4354,22.45295,1.603,170.96,262.38,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",7031.6934,False,0,ok,,17,True,v3
+FP16_naive_rep2,FP16,naive,2,10.0,FACT_M1,FACT,4866,8,277.0313,34.62891,1.6034,176.52,239.02,22277.2,1.0,{'contains_all': 1.0},7308.7246,False,0,ok,,17,True,v3
+FP16_naive_rep2,FP16,naive,2,11.0,SONDA_E,SONDA,4915,6,244.9545,40.82575,1.5031,167.02,229.04,22277.2,1.0,{'contains_any': 1.0},7553.6792,False,0,ok,,16,True,v3
+FP16_naive_rep2,FP16,naive,2,12.0,FACT_M2,FACT,4957,7,282.8539,40.4077,1.6029,179.59,247.71,22277.2,1.0,{'contains_all': 1.0},7836.5331,False,0,ok,,17,True,v3
+FP16_naive_rep2,FP16,naive,2,13.0,SONDA_F,SONDA,5001,5,243.5779,48.71558,1.5026,166.25,229.94,22277.2,1.0,{'contains_all': 1.0},8080.111,False,0,ok,,16,True,v3
+FP16_naive_rep2,FP16,naive,2,14.0,T08,FACT,5041,17,346.6051,20.38854,1.8031,194.44,291.87,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",8426.7161,False,0,ok,,19,True,v3
+FP16_naive_rep2,FP16,naive,2,15.0,SONDA_G,SONDA,5102,3,234.0019,78.00062,1.5029,159.43,220.98,22277.2,1.0,{'contains_any': 1.0},8660.718,False,0,ok,,16,True,v3
+FP16_naive_rep2,FP16,naive,2,16.0,FACT_M3,FACT,5139,9,280.9169,31.21299,1.603,178.31,247.57,22277.2,1.0,{'contains_all': 1.0},8941.6349,False,0,ok,,17,True,v3
+FP16_naive_rep2,FP16,naive,2,17.0,SONDA_H,SONDA,5184,8,282.3578,35.29473,1.6029,179.48,245.88,22277.2,1.0,{'contains_any': 1.0},9223.9927,False,0,ok,,17,True,v3
+FP16_naive_rep2,FP16,naive,2,18.0,T09,CONSTRAINT,5379,153,1056.7759,6.90703,4.3067,244.51,333.79,22277.2,1.0,{'rota': 1.0},10280.7686,False,0,ok,,44,True,v3
+FP16_naive_rep2,FP16,naive,2,19.0,SONDA_I,SONDA,5574,6,277.4705,46.24509,1.6029,175.53,267.86,22277.2,1.0,{'contains_all': 1.0},10558.2392,False,0,ok,,17,True,v3
+FP16_naive_rep2,FP16,naive,2,20.0,T10,DRAFT,5655,267,1671.0205,6.2585,6.4074,260.1,341.75,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",12229.2597,False,0,ok,,65,True,v3
+FP16_naive_rep2,FP16,naive,2,21.0,T11,RECALL,5970,16,350.4225,21.90141,1.803,195.6,325.16,22277.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",12579.6822,False,0,ok,,19,True,v3
+FP16_naive_rep2,FP16,naive,2,22.0,SONDA_J,SONDA,6029,6,316.8452,52.80753,1.7034,188.3,267.67,22277.2,1.0,{'contains_all': 1.0},12896.5274,False,0,ok,,18,True,v3
+FP16_naive_rep2,FP16,naive,2,23.0,SONDA_C,SONDA,6081,5,290.4901,58.09803,1.6025,185.08,283.18,22277.2,1.0,{'contains_any': 1.0},13187.0175,False,0,ok,,17,True,v3
+FP16_naive_rep2,FP16,naive,2,24.0,T12,FACT,6116,40,518.9428,12.97357,2.3035,225.2,344.13,22277.2,1.0,{'contains_all': 1.0},13705.9603,False,0,ok,,24,True,v3
+FP16_naive_rep2,FP16,naive,2,25.0,T13,SUMMARIZE,6249,75,694.2805,9.25707,3.0046,229.54,349.0,22277.2,1.0,{'contains_any': 1.0},14400.2408,False,0,ok,,31,True,v3
+FP16_naive_rep2,FP16,naive,2,26.0,T14,RECALL,6360,24,436.0526,18.16886,2.1033,206.85,351.49,22277.2,1.0,{'contains_all': 1.0},14836.2933,False,0,ok,,22,True,v3
+FP16_naive_rep2,FP16,naive,2,27.0,T15,SONDA,6459,30,464.4108,15.48036,2.2034,210.24,354.06,22277.2,0.0,"{'contains_all': 0.0, 'contains_any': 0.0}",15300.7042,False,0,ok,,23,True,v3
+FP16_naive_rep2,FP16,naive,2,28.0,T16,RECALL,6533,8,335.6321,41.95401,1.8034,187.82,293.76,22277.2,1.0,{'contains_any': 1.0},15636.3363,False,0,ok,,19,True,v3
+FP16_naive_rep1,FP16,naive,1,0.0,T01,FACT,3183,13,371.5798,28.58306,1.5026,249.38,367.23,21887.2,1.0,{'contains_all': 1.0},371.5798,False,0,ok,,16,True,v3
+FP16_naive_rep1,FP16,naive,1,1.0,T02,FACT,3233,4,177.2057,44.30144,1.3024,139.1,194.23,22065.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",548.7856,False,0,ok,,14,True,v3
+FP16_naive_rep1,FP16,naive,1,2.0,SONDA_A,SONDA,3284,5,200.4553,40.09106,1.4033,144.34,167.79,22245.2,1.0,{'contains_all': 1.0},749.2408,False,0,ok,,15,True,v3
+FP16_naive_rep1,FP16,naive,1,3.0,T03,CLASSIFY,3357,73,541.1294,7.41273,2.6048,206.98,310.13,22429.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",1290.3703,False,0,ok,,27,True,v3
+FP16_naive_rep1,FP16,naive,1,4.0,T04,CONSTRAINT,3684,398,2200.9861,5.53012,8.5092,257.99,312.27,22631.2,0.875,{'rota': 0.875},3491.3564,False,0,ok,,86,True,v3
+FP16_naive_rep1,FP16,naive,1,5.0,T05,DRAFT,4182,304,1767.3791,5.81375,6.909,254.91,319.29,22861.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",5258.7355,False,0,ok,,70,True,v3
+FP16_naive_rep1,FP16,naive,1,6.0,T06,FACT,4524,40,419.4808,10.48702,2.1034,198.82,325.19,23109.2,1.0,{'contains_all': 1.0},5678.2163,False,0,ok,,22,True,v3
+FP16_naive_rep1,FP16,naive,1,7.0,SONDA_B,SONDA,4597,6,239.1167,39.85279,1.5029,161.45,228.99,23361.2,1.0,{'contains_all': 1.0},5917.333,False,0,ok,,16,True,v3
+FP16_naive_rep1,FP16,naive,1,8.0,T07,SUMMARIZE,4642,121,857.0809,7.08331,3.6049,237.0,326.9,23615.2,1.0,{'contains_any': 1.0},6774.4139,False,0,ok,,37,True,v3
+FP16_naive_rep1,FP16,naive,1,9.0,SONDA_D,SONDA,4813,12,295.8889,24.65741,1.7026,175.41,251.9,23879.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",7070.3029,False,0,ok,,18,True,v3
+FP16_naive_rep1,FP16,naive,1,10.0,FACT_M1,FACT,4866,8,266.4557,33.30697,1.6027,169.33,240.08,24147.2,1.0,{'contains_all': 1.0},7336.7586,False,0,ok,,17,True,v3
+FP16_naive_rep1,FP16,naive,1,11.0,SONDA_E,SONDA,4915,6,247.6107,41.26846,1.503,168.31,227.8,24417.2,1.0,{'contains_any': 1.0},7584.3693,False,0,ok,,16,True,v3
+FP16_naive_rep1,FP16,naive,1,12.0,FACT_M2,FACT,4957,7,280.2059,40.02941,1.6029,178.25,248.28,24417.2,1.0,{'contains_all': 1.0},7864.5752,False,0,ok,,17,True,v3
+FP16_naive_rep1,FP16,naive,1,13.0,SONDA_F,SONDA,5001,5,250.5312,50.10624,1.5026,170.41,226.93,22251.2,1.0,{'contains_all': 1.0},8115.1064,False,0,ok,,16,True,v3
+FP16_naive_rep1,FP16,naive,1,14.0,T08,FACT,5041,17,345.1673,20.30396,1.8031,193.54,272.29,22527.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",8460.2737,False,0,ok,,19,True,v3
+FP16_naive_rep1,FP16,naive,1,15.0,SONDA_G,SONDA,5102,3,235.7526,78.58421,1.5025,160.19,221.24,22807.2,1.0,{'contains_any': 1.0},8696.0263,False,0,ok,,16,True,v3
+FP16_naive_rep1,FP16,naive,1,16.0,FACT_M3,FACT,5139,9,285.0254,31.66948,1.6026,181.4,263.88,23089.2,1.0,{'contains_all': 1.0},8981.0517,False,0,ok,,17,True,v3
+FP16_naive_rep1,FP16,naive,1,17.0,SONDA_H,SONDA,5184,8,283.5849,35.44811,1.6027,180.63,256.82,23373.2,1.0,{'contains_any': 1.0},9264.6366,False,0,ok,,17,True,v3
+FP16_naive_rep1,FP16,naive,1,18.0,T09,CONSTRAINT,5379,153,1062.3026,6.94315,4.3054,246.15,331.43,23669.2,1.0,{'rota': 1.0},10326.9392,False,0,ok,,44,True,v3
+FP16_naive_rep1,FP16,naive,1,19.0,SONDA_I,SONDA,5574,6,270.2755,45.04592,1.602,171.29,267.93,23975.2,1.0,{'contains_all': 1.0},10597.2147,False,0,ok,,17,True,v3
+FP16_naive_rep1,FP16,naive,1,20.0,T10,DRAFT,5655,267,1673.6656,6.26841,6.4069,260.72,338.68,24285.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0, 'required_fields': 1.0}",12270.8803,False,0,ok,,65,True,v3
+FP16_naive_rep1,FP16,naive,1,21.0,T11,RECALL,5970,16,368.9449,23.05906,1.9034,195.03,323.43,24285.2,1.0,"{'contains_all': 1.0, 'contains_any': 1.0}",12639.8252,False,0,ok,,20,True,v3
+FP16_naive_rep1,FP16,naive,1,22.0,SONDA_J,SONDA,6029,6,308.4572,51.40953,1.703,184.36,287.55,22555.2,1.0,{'contains_all': 1.0},12948.2824,False,0,ok,,18,True,v3
+FP16_naive_rep1,FP16,naive,1,23.0,SONDA_C,SONDA,6081,5,289.1096,57.82191,1.6028,185.08,285.24,22889.2,1.0,{'contains_any': 1.0},13237.3919,False,0,ok,,17,True,v3
+FP16_naive_rep1,FP16,naive,1,24.0,T12,FACT,6116,40,521.4175,13.03544,2.3036,226.82,349.31,23225.2,1.0,{'contains_all': 1.0},13758.8095,False,0,ok,,24,True,v3
+FP16_naive_rep1,FP16,naive,1,25.0,T13,SUMMARIZE,6249,75,693.6595,9.24879,3.0044,229.55,346.04,23567.2,1.0,{'contains_any': 1.0},14452.469,False,0,ok,,31,True,v3
+FP16_naive_rep1,FP16,naive,1,26.0,T14,RECALL,6360,24,438.0783,18.25326,2.1036,207.19,348.31,23915.2,1.0,{'contains_all': 1.0},14890.5472,False,0,ok,,22,True,v3
+FP16_naive_rep1,FP16,naive,1,27.0,T15,SONDA,6459,30,464.6007,15.48669,2.2038,209.71,351.02,24269.2,0.0,"{'contains_all': 0.0, 'contains_any': 0.0}",15355.1479,False,0,ok,,23,True,v3
+FP16_naive_rep1,FP16,naive,1,28.0,T16,RECALL,6533,8,340.0175,42.50219,1.8029,189.3,315.66,24269.2,1.0,{'contains_any': 1.0},15695.1654,False,0,ok,,19,True,v3
