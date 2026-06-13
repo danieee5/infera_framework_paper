@@ -1,11 +1,5 @@
-# Results (large files, not committed — download from RunPod separately)
-results/*/
-
-# Keep results directory structure but not contents
-!results/.gitkeep
-
-# Generated prompt corpus (regenerate with build_prompt_dataset.py)
-data/prompts/prompt_corpus.jsonl
+# Generated prompt corpus (regenerate con build_prompt_dataset.py)
+01_piloto_validacion_instrumento/data/prompts/prompt_corpus.jsonl
 
 # Python
 __pycache__/
@@ -26,13 +20,8 @@ venv/
 .DS_Store
 Thumbs.db
 
-# Logs
-logs/
-*.log
-
 # HuggingFace token (never commit)
 .env
 *.token
-# EXP2 generated files (Phase 1 output — do not commit)
-data/multiturn/conversation_history.json
 *.pid
+*.log

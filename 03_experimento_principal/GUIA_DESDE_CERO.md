@@ -5,61 +5,40 @@ Síguela en orden. No necesitas decidir nada: las decisiones ya están tomadas.
 
 ---
 
-## DECISIÓN 1: ¿repo nuevo o el mismo?
-
-**El MISMO repo de EXP1** (`titan_framework_paper`), en una **rama nueva** y una **carpeta nueva**.
-Razón: EXP1 es tu piloto (lo citamos así en el paper); mantener todo junto da continuidad y no pierdes tus 243 corridas.
-
----
-
-## DECISIÓN 2: estructura final del repo
+## Estructura de esta carpeta
 
 ```
-titan_framework_paper/
-├── (todo lo de EXP1, intacto)              <- branch main / pilot-run
-└── exp2_protocolo_c/                       <- carpeta nueva (en branch nueva)
-    ├── kb/
-    │   ├── vigia_kb.md
-    │   ├── permisos_medicos.csv
-    │   └── inventario_uniformes.csv
-    ├── session_tasks.json
-    ├── infera_kb.py
-    ├── infera_quality.py
-    ├── infera_compaction.py
-    ├── infera_session_runner.py
-    ├── infera_analysis.py
-    ├── gpu_power_monitor.py        <- COPIА el de EXP1 aquí (lo importa el runner)
-    ├── setup_infera.sh
-    ├── run_all.sh                  <- corrida manual de UNA cuantización
-    ├── overnight.sh                <- corrida DESATENDIDA de toda la noche
-    ├── README.md
-    ├── GUIA_DESDE_CERO.md          <- este archivo
-    ├── paper/
-    │   └── INFERA_paper_C.md
-    └── results/                    <- se crea solo al correr
+03_experimento_principal/
+├── kb/
+│   ├── vigia_kb.md
+│   ├── permisos_medicos.csv
+│   └── inventario_uniformes.csv
+├── session_tasks_v3.json
+├── session_tasks_v3_filler.json
+├── infera_kb.py
+├── infera_quality.py
+├── infera_compaction.py
+├── infera_session_runner.py
+├── infera_analysis.py
+├── gpu_power_monitor.py
+├── setup_infera.sh
+├── run_all.sh                  <- corrida manual de UNA cuantización
+├── overnight.sh                <- corrida DESATENDIDA de toda la noche
+├── README.md
+├── GUIA_DESDE_CERO.md          <- este archivo
+└── results/                    <- run_v3_*.jsonl + results/analisis/
 ```
 
 ---
 
-## PASO 0 — En tu computador: armar la carpeta y subir a GitHub
+## PASO 0 — En tu computador: subir cambios a GitHub
 
 ```bash
-# 1. Clona tu repo (si no lo tienes local) o entra a él
 git clone https://github.com/danieee5/titan_framework_paper.git
 cd titan_framework_paper
-
-# 2. Crea la rama nueva
-git checkout -b exp2-protocolo-c
-
-# 3. Copia TODO lo que te entregué dentro de exp2_protocolo_c/
-#    (descomprime el paquete infera_c y renómbralo a exp2_protocolo_c, o copia archivo por archivo)
-
-# 4. COPIA tu gpu_power_monitor.py de EXP1 dentro de exp2_protocolo_c/
-cp gpu_power_monitor.py exp2_protocolo_c/    # ajusta la ruta de origen si está en otra carpeta
-
-# 5. Sube
-git add exp2_protocolo_c/
-git commit -m "EXP2 Protocolo C: framework sobre energia-calidad + compactacion"
+git checkout -b exp2-protocolo-c   # o la rama que corresponda
+git add 03_experimento_principal/
+git commit -m "Protocolo C: framework sobre energia-calidad + compactacion"
 git push -u origin exp2-protocolo-c
 ```
 
@@ -75,10 +54,8 @@ cd titan_framework_paper && git fetch && git checkout exp2-protocolo-c && git pu
 git clone https://github.com/danieee5/titan_framework_paper.git
 cd titan_framework_paper && git checkout exp2-protocolo-c
 
-cd exp2_protocolo_c
+cd 03_experimento_principal
 ```
-
-> Verifica que `gpu_power_monitor.py` esté en esta carpeta. Si no: `cp /ruta/a/gpu_power_monitor.py .`
 
 ---
 
@@ -111,7 +88,7 @@ python infera_session_runner.py \
   --vllm-url http://localhost:8000/v1/chat/completions \
   --model /models/llama3.1-8b-instruct \
   --quant FP16 --arm naive --rep 1 \
-  --kb-dir kb --tasks session_tasks.json \
+  --kb-dir kb --tasks session_tasks_v3.json \
   --out results/PRUEBA_fp16_naive.jsonl
 
 # si ves 16 líneas con ctx=, E= y Q=, FUNCIONA. baja vLLM:
@@ -130,7 +107,7 @@ tmux new -s infera
 
 # 2. (dentro de tmux) activa el entorno
 source /workspace/venv/bin/activate
-cd /workspace/titan_framework_paper/exp2_protocolo_c
+cd /workspace/titan_framework_paper/03_experimento_principal
 
 # 3. lanza la corrida desatendida (FP16 + AWQ, naive + compaction, 3 reps c/u)
 bash overnight.sh
@@ -156,8 +133,8 @@ Duración estimada: 2 cuantizaciones × 2 brazos × 3 reps × (16 tareas + cooli
 ```bash
 tmux attach -t infera                       # ¿terminó?  busca "FIN" al final
 ls results/                                 # deben estar los run_*.jsonl
-ls results/analysis/                        # envelope_FP16.png, envelope_AWQ.png, recovery_*.csv
-cat results/analysis/recovery_naive_vs_compaction.csv
+ls results/analisis/                        # envelope_FP16.png, envelope_AWQ.png, recovery_*.csv
+cat results/analisis/recovery_naive_vs_compaction.csv
 ```
 
 Mira el log para el **codo** detectado:
@@ -169,7 +146,7 @@ grep CODO overnight_*.log
   # (con vLLM FP16 servido)
   ./run_all.sh FP16 /models/llama3.1-8b-instruct 3 <umbral_del_codo>
   ```
-- Si el codo **no aparece** ("no detectado"): la sesión es muy corta para que el rot muerda en 8k. Duplica el bloque de tareas RECALL/DRAFT en `session_tasks.json` (copia T11–T16 con nuevos ids T17–T22) y vuelve a correr. Esto fuerza más acumulación.
+- Si el codo **no aparece** ("no detectado"): la sesión es muy corta para que el rot muerda en 8k. Duplica el bloque de tareas RECALL/DRAFT en `session_tasks_v3.json` (copia T11–T16 con nuevos ids T17–T22) y vuelve a correr. Esto fuerza más acumulación.
 
 Sube los resultados:
 ```bash
@@ -196,12 +173,12 @@ bash setup_infera.sh && source /workspace/venv/bin/activate
 
 # noche
 tmux new -s infera
-source /workspace/venv/bin/activate && cd /workspace/titan_framework_paper/exp2_protocolo_c
+source /workspace/venv/bin/activate && cd /workspace/titan_framework_paper/03_experimento_principal
 bash overnight.sh
 # Ctrl+b  d   (detach, cierra laptop)
 
 # mañana
 tmux attach -t infera
-cat results/analysis/recovery_naive_vs_compaction.csv
+cat results/analisis/recovery_naive_vs_compaction.csv
 grep CODO overnight_*.log
 ```

@@ -283,9 +283,9 @@ def run_warmup(sample_messages: list[list[dict]], max_new_tokens: int,
 
 # ── EXPERIMENT MATRIX ─────────────────────────────────────────────────────────
 
-def build_matrix(quantization: str, pilot: bool) -> list[dict]:
+def build_matrix(quantization: str, pilot: bool, reps: int = REPETITIONS) -> list[dict]:
     """
-    Full mode:  81 (config × rep) entries, shuffled seed=42.
+    Full mode:  27*reps (config × rep) entries, shuffled seed=42.
     Pilot mode: 9 entries (Case A, rep=1, all batch × output combos).
     """
     configs = [
@@ -294,7 +294,7 @@ def build_matrix(quantization: str, pilot: bool) -> list[dict]:
         for b in BATCH_SIZES
         for o in OUTPUT_LENGTHS
         for c in CASES
-        for r in range(1, REPETITIONS + 1)
+        for r in range(1, reps + 1)
     ]
     if pilot:
         configs = [x for x in configs
@@ -437,7 +437,8 @@ def run_config_rep(
 # ── MAIN RUNNER ───────────────────────────────────────────────────────────────
 
 def run_benchmark(quantization: str, pilot: bool,
-                  corpus_path: str, results_dir: Optional[str]):
+                  corpus_path: str, results_dir: Optional[str],
+                  reps: int = REPETITIONS):
 
     ts      = datetime.now().strftime("%Y%m%d_%H%M%S")
     out_dir = Path(results_dir or f"results/{quantization}_{ts}")
@@ -453,13 +454,13 @@ def run_benchmark(quantization: str, pilot: bool,
     print("  Batch calls per (config × rep) for this quantization:")
     for b in BATCH_SIZES:
         n_calls     = math.ceil(PROMPTS_PER_CASE / b)
-        n_config_rep = 3 * 3 * 3   # output × cases × reps
+        n_config_rep = 3 * 3 * reps   # output × cases × reps
         total       = n_config_rep * n_calls
         print(f"    batch={b}: {n_config_rep} config×rep × {n_calls} calls"
               f" = {total} batch calls  ({total * b} concurrent HTTP requests)")
     print()
 
-    configs = build_matrix(quantization, pilot)
+    configs = build_matrix(quantization, pilot, reps)
     monitor = GPUPowerMonitor(device_index=0)
 
     summary = {
@@ -535,6 +536,12 @@ if __name__ == "__main__":
                         help="Case A only, rep=1, all batch×output combos")
     parser.add_argument("--corpus", default="data/prompts/prompt_corpus.jsonl")
     parser.add_argument("--results-dir", default=None)
+    parser.add_argument("--reps", type=int, default=REPETITIONS,
+                        help="Repeticiones por configuracion (default: 3, "
+                             "el valor del experimento original). Se puede "
+                             "reducir para una reproduccion mas rapida, "
+                             "siempre que el CV resultante se mantenga bajo.")
     args = parser.parse_args()
 
-    run_benchmark(args.quantization, args.pilot, args.corpus, args.results_dir)
+    run_benchmark(args.quantization, args.pilot, args.corpus,
+                   args.results_dir, args.reps)

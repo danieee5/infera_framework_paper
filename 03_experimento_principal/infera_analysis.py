@@ -471,7 +471,7 @@ def recovery_table(df: pd.DataFrame) -> pd.DataFrame:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", default="results")
-    ap.add_argument("--out", default="results/analysis")
+    ap.add_argument("--out", default="results/analisis")
     ap.add_argument("--session", default=None,
                     help="Filtrar por session_tag (ej: v3, v3_filler). Default: todos.")
     args = ap.parse_args()

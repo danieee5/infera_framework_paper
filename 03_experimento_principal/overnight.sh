@@ -130,7 +130,7 @@ fi
 
 echo ""
 echo ">>>>>> Analisis final"
-python infera_analysis.py --results results --out results/analysis \
+python infera_analysis.py --results results --out results/analisis \
   || echo "WARN: el analisis fallo; correlo manualmente luego."
 
 echo ""

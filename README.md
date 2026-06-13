@@ -1,172 +1,77 @@
-# LLM Inference Energy Benchmark
+# INFERA — Energía y calidad en inferencia de LLM auto-hospedados
 
-**A reproducible framework for evaluating performance/energy trade-offs in Transformer-based language model inference**
-
-*Undergraduate Paper — Universidad de Especialidades Espíritu Santo (UEES), Ecuador, 2026*
-*Author: Daniela Mora*
+**Trabajo de titulación — Universidad de Especialidades Espíritu Santo (UEES), Ecuador, 2026**
+*Autora: Daniela Mora*
 
 ---
 
-## Motivation
+## ¿Qué es esto?
 
-Every time a practitioner deploys a large language model, they face a decision that current benchmarks rarely help answer: **which configuration of quantization, batch size, and context length actually minimizes energy consumption per token — on the hardware I have available?**
+Este repositorio es el entregable reproducible del estudio reportado en
+[`INFERA_paper_pivote_hasta_resultados.md`](./INFERA_paper_pivote_hasta_resultados.md):
+una caracterización de cómo varían el **consumo de energía** (medido vía
+NVML) y la **calidad de respuesta** de un modelo LLaMA 3.1 8B Instruct
+auto-hospedado, a medida que crece el contexto acumulado de una sesión de
+chat, y de si **compactar el contexto** (resumir + reiniciar) es
+energéticamente rentable.
 
-Existing benchmarks (MLPerf Power, ML.ENERGY) target datacenter hardware and assume high-concurrency workloads. Tools like MELODI measure energy but without concurrent requests. None of them characterize the behavior on consumer-grade GPUs (RTX 3090/4090) under the workload patterns of real enterprise deployments: chatbots, memory-augmented assistants, and document analysis.
-
-This framework fills that gap. It runs a fully factorial experiment across four configuration variables, measures real energy consumption via NVML hardware counters, and produces results a practitioner can act on: *"for my use case, INT4 AWQ at batch size 4 reduces energy by X% with Y% throughput cost."*
-
----
-
-## What this framework measures
-
-Four independent variables, fully crossed:
-
-| Variable | Levels | Description |
-|----------|--------|-------------|
-| **VI1** Quantization | FP16 · INT8 W8A16 · INT4 AWQ | Numerical precision of model weights |
-| **VI2** Batch size | 1 · 4 · 8 | Concurrent requests per inference call |
-| **VI3** Output length | 64 · 256 · 512 tokens | Maximum generated tokens per request |
-| **VI4** Effective contextual load | ~256 · ~1024 · ~4096 tokens | Total input tokens (system + context + history + question) |
-
-**3 × 3 × 3 × 3 = 81 configurations × 3 repetitions = 243 runs**
-
-Dependent variables measured per run:
-
-- `energy_j` — Joules consumed (NVML trapezoidal integration)
-- `j_per_token` — Energy efficiency: joules per generated token
-- `throughput_tok_s` — Generated tokens per second
-- `tpot_ms` — Time Per Output Token (ms)
-- `vram_peak_mb` — Peak VRAM usage during inference
-- `status` — `success` | `oom` | `timeout` (OOM is a valid experimental result)
+El trabajo se ejecutó en tres etapas, cada una en su propia carpeta numerada.
+Las tres comparten el mismo hardware (GPU NVIDIA RTX 4090, 24 GB) y el mismo
+modelo servido con vLLM.
 
 ---
 
-## Quick start
+## Las tres etapas
 
-```bash
-git clone https://github.com/danieee5/titan_framework_paper.git
-cd llm-inference-energy-benchmark
+| Carpeta | Nombre | Qué es | Relación con el paper |
+|---|---|---|---|
+| [`01_piloto_validacion_instrumento/`](./01_piloto_validacion_instrumento/) | Piloto de validación del instrumento | Diseño factorial 3⁴×3 = 243 corridas con peticiones aisladas (sin sesión incremental). Valida el protocolo de medición de energía (NVML, buffer 500 ms) y ancla la relación energía-vs-contexto corto. | §5.3, CV reportado en §6.1 |
+| [`02_calibracion_sondas/`](./02_calibracion_sondas/) | Calibración de sondas | Sesión incremental de 19 tareas (3 de ellas "sondas" de calidad). Se usó para decidir el umbral de compactación (4000 tokens) y la posición de las sondas densas de la sesión final. | §5.4.1 |
+| [`03_experimento_principal/`](./03_experimento_principal/) | Experimento principal (Protocolo C) | 12 sesiones incrementales de 29 tareas (2 esquemas × 2 brazos × 3 repeticiones), más una sesión de control causal ("filler"). Es el experimento reportado en Resultados. | §5.4.2–§5.5, §6 |
 
-# 1. Add your own context files (see docs/context_guide.md)
-# The included files are placeholders — replace them with your domain
-
-# 2. Set up the environment (RunPod RTX 4090 or equivalent)
-export HF_TOKEN=hf_...   # HuggingFace token with Meta-LLaMA access
-bash scripts/setup_runpod.sh
-
-# 3. Build the prompt corpus
-python scripts/build_prompt_dataset.py --verify-only
-python scripts/build_prompt_dataset.py
-
-# 4. [Terminal 2] Start vLLM server
-bash scripts/start_vllm_fp16.sh
-
-# 5. [Terminal 1] Run pilot (9 configs, ~15 min)
-python scripts/benchmark_runner.py --quantization fp16 --pilot
-
-# 6. Full benchmark (one command per quantization level)
-python scripts/benchmark_runner.py --quantization fp16
-# swap server → int8_w8a16, then:
-python scripts/benchmark_runner.py --quantization int8_w8a16
-# swap server → int4_awq, then:
-python scripts/benchmark_runner.py --quantization int4_awq
-```
+El orden de lectura recomendado es 01 → 02 → 03: cada etapa usa lo aprendido
+en la anterior. Cada carpeta tiene su propio `README.md` con instrucciones de
+ejecución.
 
 ---
 
-## Repository structure
+## Estructura del repositorio
 
 ```
 .
-├── README.md                          ← You are here
-├── requirements.txt                   ← Pinned dependencies
+├── README.md                              ← este archivo
+├── INFERA_paper_pivote_hasta_resultados.md  ← paper completo
+├── INFERA_tablas_revision.docx            ← tablas del paper en formato Word
+├── requirements.txt                       ← dependencias Python ancladas
 │
-├── scripts/
-│   ├── benchmark_runner.py            ← Main runner: 81 configs × 3 reps
-│   ├── build_prompt_dataset.py        ← Corpus builder with real tokenization
-│   ├── gpu_power_monitor.py           ← NVML energy + VRAM measurement
-│   ├── generate_reproducibility_info.py ← Environment metadata snapshot
-│   ├── setup_runpod.sh                ← Full RunPod environment setup
-│   ├── start_vllm_fp16.sh             ← vLLM server: FP16
-│   ├── start_vllm_int8.sh             ← vLLM server: INT8 W8A16
-│   └── start_vllm_awq.sh              ← vLLM server: INT4 AWQ
+├── 01_piloto_validacion_instrumento/      ← Etapa 1: validación del instrumento (243 corridas)
+├── 02_calibracion_sondas/                 ← Etapa 2: calibración (19 tareas)
+├── 03_experimento_principal/              ← Etapa 3: Protocolo C (experimento principal)
 │
-├── data/
-│   ├── context/
-│   │   ├── company_profile.md         ← [REPLACE] Short company/system description
-│   │   ├── company_policies.md        ← [REPLACE] FAQ / policies document
-│   │   ├── sample_contract.md         ← [REPLACE] Long document for Case C
-│   │   └── internal_faq.md            ← [REPLACE] Additional context
-│   ├── conversations/
-│   │   └── conversation_histories.jsonl ← [REPLACE] Conversation histories for Case B
-│   └── prompts/
-│       └── prompt_corpus.jsonl        ← Generated by build_prompt_dataset.py
-│
-├── results/                           ← Generated during benchmark
-│   ├── reproducibility.json           ← Environment snapshot (auto-generated)
-│   ├── fp16_<timestamp>/
-│   ├── int8_w8a16_<timestamp>/
-│   └── int4_awq_<timestamp>/
-│
-└── docs/
-    ├── context_guide.md               ← How to replace context files
-    ├── runpod_guide.md                ← Step-by-step RunPod execution guide
-    └── methodology.md                 ← Measurement protocol and design decisions
+├── referencias/                           ← lecturas de referencia del marco teórico
+└── _archivo/                              ← diseños anteriores, ya no vigentes (ver su README)
 ```
 
 ---
 
-## Hardware and software requirements
+## Requisitos de hardware y software
 
-**Minimum hardware:** NVIDIA GPU with ≥ 24 GB VRAM (RTX 4090 or equivalent)
-**Required:** Dedicated GPU instance — NVML measures total GPU power; shared instances contaminate measurements
+- GPU NVIDIA con ≥ 24 GB de VRAM (RTX 4090 o equivalente), instancia dedicada
+  (NVML mide la potencia total de la tarjeta; instancias compartidas
+  contaminan la medición).
+- CUDA 12.1, PyTorch 2.3.1, Python 3.10, vLLM 0.5.3.
+- Ver [`requirements.txt`](./requirements.txt) para las versiones exactas.
 
-**Tested configuration:**
-- GPU: NVIDIA RTX 4090 (24 GB VRAM) — RunPod dedicated instance
-- CUDA: 12.1
-- Driver: 535.x
-- Python: 3.10
-
-See `requirements.txt` for pinned software versions.
-
----
-
-## Replacing the context files
-
-This framework ships with placeholder context files representing a fictional Ecuadorian tech company (TechSolutions Ecuador). **These files must be replaced** with your own domain content before running.
-
-See `docs/context_guide.md` for token budget constraints and replacement instructions.
-
-**Short version:**
-- `company_profile.md` + `company_policies.md` → together ~400 tokens (Case A/B context)
-- `sample_contract.md` + `internal_faq.md` → together ~3800–4000 tokens (Case C document)
-- `conversation_histories.jsonl` → 30+ JSON objects with `turns`, `new_question`, `scenario_tag`
-
-The prompt builder validates token counts automatically. Prompts outside ±15% of target are flagged but not discarded — they are recorded with their real measured token count.
+Cada carpeta de etapa documenta sus propios pasos de ejecución; las etapas 02
+y 03 comparten el mismo instrumento (`infera_session_runner.py`, dentro de
+`03_experimento_principal/`).
 
 ---
 
-## Language note
+## `_archivo/`
 
-The included context files are in Spanish. The measurement methodology is language-agnostic: energy consumption depends on token count, not language semantics. However, the LLaMA 3.1 tokenizer is less token-efficient for Spanish than English (~15–20% more tokens for equivalent content), which affects VI4 absolute levels. If you replace context files with English content, re-validate token counts with `build_prompt_dataset.py --verify-only`.
-
----
-
-## Citing this work
-
-```bibtex
-@mastersthesis{mora2026llminference,
-  author  = {Mora Guevara, [Nombre]},
-  title   = {A Reproducible Framework for Evaluating Performance/Energy 
-             Trade-offs in Transformer-based Language Model Inference},
-  school  = {Universidad de Especialidades Espíritu Santo},
-  year    = {2026},
-  address = {Samborondón, Ecuador}
-}
-```
-
----
-
-## License
-
-MIT License. Context files in `data/context/` are fictional and provided as structural placeholders only.
+Contiene un diseño experimental anterior (multi-turno, empresa ficticia
+"MOSS") que fue reemplazado por el diseño VIGÍA/Protocolo C usado en las
+etapas 02 y 03, y un borrador previo del paper. Se conservan por
+trazabilidad; no forman parte del estudio reportado. Ver
+[`_archivo/README.md`](./_archivo/README.md).

@@ -24,7 +24,7 @@ for arm in naive compaction; do
     python infera_session_runner.py \
       --vllm-url "$URL" --model "$MODEL" \
       --quant "$QUANT" --arm "$arm" --rep "$rep" \
-      --kb-dir kb --tasks session_tasks.json \
+      --kb-dir kb --tasks session_tasks_v3.json \
       --compaction-threshold "$THRESH" \
       --out "$OUT"
     echo ">> cooling ${COOL}s ..."
