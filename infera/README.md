@@ -1,15 +1,24 @@
 # Ejecutar INFERA
 
-Esta carpeta contiene todo lo necesario para medir y analizar una conversación
-incremental con dos estrategias de gestión del historial.
+Esta carpeta contiene el runner principal para medir y analizar una
+conversación incremental. El conjunto de referencia publicado conserva el
+diseño original de dos brazos. La campaña nueva, aún no ejecutada, añade una
+tercera política de descarte por recencia.
 
 INFERA envía la misma secuencia de tareas a:
 
 - un brazo que conserva el historial completo;
-- un brazo que genera un resumen cuando el prompt supera la regla declarada.
+- un brazo que genera un resumen cuando el prompt supera la regla declarada;
+- en la campaña nueva, un brazo que conserva solo los cuatro pares completos
+  más recientes mediante un recorte local.
 
 La unidad de análisis es la sesión completa. El costo de cada resumen se mide
 y se añade a la energía de la estrategia compactada.
+
+La campaña nueva compara `completo | resumen | descarte`. El descarte conserva
+los cuatro pares usuario/asistente completos más recientes y no emite una
+petición propia. Esto no iguala por sí solo la ocupación del prompt frente al
+resumen; el analizador informa la ocupación observada.
 
 ## Antes de comenzar
 
@@ -41,6 +50,13 @@ joules de la RTX 4090.
 - `infera_compaction.py`: genera y aplica los resúmenes.
 - `infera_quality.py`: calcula el puntaje programático.
 - `analyze_results.py`: valida los JSONL y genera tablas, figuras e informe.
+- `run_campana_tres_brazos.sh`: orquesta las 18 sesiones del diseño nuevo.
+- `preflight_campana_tres_brazos.py`: congela tokenizers, versiones, hashes y
+  presupuesto sin ejecutar inferencia.
+- `analiza_tres_brazos.py`: valida la campaña completa y separa energía,
+  mecanismo y puntaje programático.
+- `reanaliza_campana_tres_brazos.sh`: recupera el análisis de 18 sesiones ya
+  recolectadas sin levantar vLLM ni volver a usar GPU.
 
 ## Preparar tu experimento
 
@@ -103,6 +119,92 @@ python config/validate_configuration.py \
 
 No continúes si aparecen errores. La advertencia que indica ausencia de
 tokenizador significa que todavía no se comprobó el presupuesto real.
+
+## Campaña nueva de tres brazos
+
+El launcher nuevo es independiente de `overnight.sh` y no modifica
+`results/reference/`:
+
+```bash
+cp config/reference/experiment.env.example config/experiment.env
+# Edita FP16_MODEL y AWQ_MODEL con las rutas reales.
+bash run_campana_tres_brazos.sh
+```
+
+Antes de levantar vLLM exige el stack histórico exacto, tokenizers equivalentes,
+29 tareas, una RTX 4090 exclusiva, telemetría NVML completa y un directorio de
+salida nuevo.
+Cada petición se vuelve a contar con la plantilla de chat real y aborta antes
+de enviarse si `prompt_tokens + max_tokens > 8192`. Los JSONL se escriben como
+`.partial` y solo se publican al completar la sesión. La caché de prefijos queda
+apagada; encenderla define otro sistema experimental.
+
+Cada muestra NVML queda persistida dentro del registro de su llamada: potencia,
+VRAM, temperatura, clocks, utilización, estado de rendimiento, razones de
+clock/throttling y PIDs/PGIDs de cómputo. El baseline conserva la misma traza en
+el manifiesto de sesión. El analizador vuelve a integrar cada traza y comprueba
+cobertura temporal, buffers y ausencia de procesos GPU ajenos. También registra
+`finish_reason`, respuesta completa, tokens, tiempos y metadatos del servidor.
+
+El análisis solo se publica si existen las 18 sesiones, sus manifiestos y
+hashes, el orden contrabalanceado predeclarado y exactamente 29 tareas medidas
+por sesión. Sus tres pasadas son repeticiones instrumentales de una trayectoria
+fija, no réplicas independientes de calidad.
+
+### Única corrida final en RunPod
+
+No ejecutes una prueba GPU separada si solo puedes pagar una campaña. Las
+pruebas unitarias siguientes no usan GPU:
+
+```bash
+cd infera
+python -m unittest tests.test_tres_brazos
+cp config/reference/experiment.env.example config/experiment.env
+# Edita únicamente FP16_MODEL y AWQ_MODEL con directorios locales reales.
+```
+
+Instala y activa el entorno una sola vez:
+
+```bash
+cd ..
+bash infera/setup_infera.sh
+source infera/.runtime/venv/bin/activate
+cd infera
+```
+
+Inicia la campaña dentro de `tmux`, y despréndete con `Ctrl-b d`:
+
+```bash
+tmux new -s infera-final
+bash run_campana_tres_brazos.sh
+```
+
+No lances una segunda instancia. El preflight inicial no emite inferencias,
+pero puede tardar porque calcula una huella completa de ambos modelos. Cada
+repetición carga un servidor nuevo; sus tres brazos comparten los pesos dentro
+del bloque, con orden latino, 120 s de cooldown, cinco warmups, 30 s de
+estabilización y 30 s de baseline.
+
+Al terminar, conserva y descarga la carpeta completa
+`results/runs/tres_brazos_<UTC>/`, no solo los CSV. El estado correcto es
+`complete`:
+
+```bash
+python -c 'import json,glob; p=sorted(glob.glob("results/runs/tres_brazos_*/manifiesto_campana.json"))[-1]; d=json.load(open(p)); print(p, d["status"], len(d["artifacts"]["raws"]))'
+```
+
+Si el estado es `failed` pero existen los 18 JSONL finales y sus 18 manifiestos,
+recupera solo el análisis con:
+
+```bash
+bash reanaliza_campana_tres_brazos.sh \
+  results/runs/tres_brazos_<UTC>
+```
+
+Esto no levanta vLLM. Si faltan sesiones o quedó algún `.partial`, la campaña
+es incompleta y no debe incorporarse al manuscrito. Una interrupción del Pod,
+un modelo incompatible o un fallo físico siguen siendo incertidumbres que
+ningún launcher puede eliminar.
 
 ## Instalar el entorno GPU
 

@@ -9,6 +9,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 INFERA_RUNTIME="${INFERA_RUNTIME:-${SCRIPT_DIR}/.runtime}"
 
+python3 -c 'import sys; raise SystemExit(0 if sys.version_info[:2] == (3, 10) else 1)' || {
+  echo "Se exige Python 3.10 para el stack vLLM 0.5.3" >&2
+  exit 2
+}
+
 # ---------------------------------------------------------------------------
 # 0. Caché y entorno. Para un volumen persistente, define INFERA_RUNTIME antes
 #    de ejecutar este script.
@@ -80,13 +85,21 @@ echo
 echo "[OK] Entorno listo en $VENV"
 echo "[OK] HF cache en $HF_HOME"
 python - <<'PY'
-import torch, vllm
-print("torch:", torch.__version__, "| CUDA:", torch.version.cuda, "| GPU:", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "N/A")
-print("vllm :", vllm.__version__)
+import pynvml
+import torch
+import vllm
+
+assert torch.cuda.is_available(), "PyTorch no ve CUDA"
+assert torch.cuda.device_count() == 1, "se exige exactamente una GPU CUDA"
+pynvml.nvmlInit()
 try:
-    import pynvml; pynvml.nvmlInit(); print("NVML : OK")
-except Exception as e:
-    print("NVML : FALLO ->", e)
+    handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+    pynvml.nvmlDeviceGetPowerUsage(handle)
+finally:
+    pynvml.nvmlShutdown()
+print("torch:", torch.__version__, "| CUDA:", torch.version.cuda, "| GPU:", torch.cuda.get_device_name(0))
+print("vllm :", vllm.__version__)
+print("NVML : OK")
 PY
 
 cat <<'NOTE'
@@ -110,7 +123,8 @@ python -m vllm.entrypoints.openai.api_server \
   --quantization bitsandbytes --load-format bitsandbytes \
   --max-model-len 8192 --port 8000
 
-Configura las rutas reales en config/experiment.env antes de ejecutar
-overnight.sh. Los valores /models/... de arriba son solo ejemplos.
+Configura las rutas reales en config/experiment.env. Para la campaña final de
+tres brazos ejecuta run_campana_tres_brazos.sh; los valores /models/... son
+solo ejemplos.
 ------------------------------------------------------------------
 NOTE
