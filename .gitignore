@@ -1,6 +1,3 @@
-# Generated prompt corpus (regenerate con build_prompt_dataset.py)
-01_piloto_validacion_instrumento/data/prompts/prompt_corpus.jsonl
-
 # Python
 __pycache__/
 *.py[cod]
@@ -25,3 +22,30 @@ Thumbs.db
 *.token
 *.pid
 *.log
+
+# Bibliografia convertida a markdown para verificacion de claims (no es parte del paper)
+referencias/
+
+# Contexto local de asistentes de IA (privado; no publicar)
+.ai-local/
+AGENTS.md
+CLAUDE.local.md
+.claude
+.claude/settings.local.json
+
+# Configuración y artefactos locales de ejecución
+infera/config/experiment.env
+infera/.runtime/
+infera/results/runs/*
+!infera/results/runs/.gitkeep
+
+# Archivos temporales de Microsoft Word
+~$*
+
+# Manuscritos académicos locales; el repositorio público contiene el código.
+resultados_infera_*.docx
+
+.infera-private/
+findings.md
+progress.md
+task_plan.md

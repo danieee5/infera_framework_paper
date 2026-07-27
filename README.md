@@ -1,77 +1,141 @@
-# INFERA — Energía y calidad en inferencia de LLM auto-hospedados
+# INFERA
 
-**Trabajo de titulación — Universidad de Especialidades Espíritu Santo (UEES), Ecuador, 2026**
-*Autora: Daniela Mora*
+INFERA es un conjunto reproducible de scripts para medir la energía consumida
+por una GPU durante una conversación incremental con un modelo de lenguaje
+autoalojado.
 
----
+El experimento compara dos estrategias:
 
-## ¿Qué es esto?
+- **Historial completo:** cada petición conserva toda la conversación previa.
+- **Compactación periódica:** cuando el prompt supera una regla de longitud,
+  el modelo genera un resumen y continúa desde ese estado reducido.
 
-Este repositorio es el entregable reproducible del estudio reportado en
-[`INFERA_paper_pivote_hasta_resultados.md`](./INFERA_paper_pivote_hasta_resultados.md):
-una caracterización de cómo varían el **consumo de energía** (medido vía
-NVML) y la **calidad de respuesta** de un modelo LLaMA 3.1 8B Instruct
-auto-hospedado, a medida que crece el contexto acumulado de una sesión de
-chat, y de si **compactar el contexto** (resumir + reiniciar) es
-energéticamente rentable.
+Para cada estrategia, INFERA registra energía en joules, potencia, duración,
+tokens de entrada y salida, eventos de compactación y éxito programático de
+las tareas. No es necesario leer el paper para utilizar el repositorio.
 
-El trabajo se ejecutó en tres etapas, cada una en su propia carpeta numerada.
-Las tres comparten el mismo hardware (GPU NVIDIA RTX 4090, 24 GB) y el mismo
-modelo servido con vLLM.
+Proyecto académico de Daniela Mora, Universidad de Especialidades Espíritu
+Santo, Ecuador, 2026.
 
----
+## Qué puedes hacer
 
-## Las tres etapas
+### Medir tu propia sesión
 
-| Carpeta | Nombre | Qué es | Relación con el paper |
-|---|---|---|---|
-| [`01_piloto_validacion_instrumento/`](./01_piloto_validacion_instrumento/) | Piloto de validación del instrumento | Diseño factorial 3⁴×3 = 243 corridas con peticiones aisladas (sin sesión incremental). Valida el protocolo de medición de energía (NVML, buffer 500 ms) y ancla la relación energía-vs-contexto corto. | §5.3, CV reportado en §6.1 |
-| [`02_calibracion_sondas/`](./02_calibracion_sondas/) | Calibración de sondas | Sesión incremental de 19 tareas (3 de ellas "sondas" de calidad). Se usó para decidir el umbral de compactación (4000 tokens) y la posición de las sondas densas de la sesión final. | §5.4.1 |
-| [`03_experimento_principal/`](./03_experimento_principal/) | Experimento principal (Protocolo C) | 12 sesiones incrementales de 29 tareas (2 esquemas × 2 brazos × 3 repeticiones), más una sesión de control causal ("filler"). Es el experimento reportado en Resultados. | §5.4.2–§5.5, §6 |
+Esta es la ruta principal. Puedes sustituir la base de conocimiento, las
+tareas, los modelos, la cantidad de réplicas y la regla de compactación.
+Necesitas Linux, una GPU NVIDIA dedicada, CUDA, NVML y dos representaciones
+compatibles del modelo que quieras comparar.
 
-El orden de lectura recomendado es 01 → 02 → 03: cada etapa usa lo aprendido
-en la anterior. Cada carpeta tiene su propio `README.md` con instrucciones de
-ejecución.
+El flujo es:
 
----
-
-## Estructura del repositorio
-
-```
-.
-├── README.md                              ← este archivo
-├── INFERA_paper_pivote_hasta_resultados.md  ← paper completo
-├── INFERA_tablas_revision.docx            ← tablas del paper en formato Word
-├── requirements.txt                       ← dependencias Python ancladas
-│
-├── 01_piloto_validacion_instrumento/      ← Etapa 1: validación del instrumento (243 corridas)
-├── 02_calibracion_sondas/                 ← Etapa 2: calibración (19 tareas)
-├── 03_experimento_principal/              ← Etapa 3: Protocolo C (experimento principal)
-│
-├── referencias/                           ← lecturas de referencia del marco teórico
-└── _archivo/                              ← diseños anteriores, ya no vigentes (ver su README)
+```text
+configuración + base de conocimiento
+              ↓
+       ejecución en GPU
+              ↓
+     archivos JSONL crudos
+              ↓
+      tablas + figuras + informe
 ```
 
----
+Empieza con la [guía desde cero](./infera/GUIA_DESDE_CERO.md).
 
-## Requisitos de hardware y software
+### Auditar el estudio publicado
 
-- GPU NVIDIA con ≥ 24 GB de VRAM (RTX 4090 o equivalente), instancia dedicada
-  (NVML mide la potencia total de la tarjeta; instancias compartidas
-  contaminan la medición).
-- CUDA 12.1, PyTorch 2.3.1, Python 3.10, vLLM 0.5.3.
-- Ver [`requirements.txt`](./requirements.txt) para las versiones exactas.
+El repositorio incluye, como conjunto de referencia, las doce sesiones
+utilizadas en el paper. Esta ruta no vuelve a ejecutar el modelo: verifica las
+huellas de los JSONL y recalcula las cifras, tablas y figuras a partir de esas
+mediciones.
 
-Cada carpeta de etapa documenta sus propios pasos de ejecución; las etapas 02
-y 03 comparten el mismo instrumento (`infera_session_runner.py`, dentro de
-`03_experimento_principal/`).
+Empieza con la [guía de auditoría](./docs/REPRODUCCION.md).
 
----
+## Inicio rápido para una medición propia
 
-## `_archivo/`
+Desde la raíz del repositorio:
 
-Contiene un diseño experimental anterior (multi-turno, empresa ficticia
-"MOSS") que fue reemplazado por el diseño VIGÍA/Protocolo C usado en las
-etapas 02 y 03, y un borrador previo del paper. Se conservan por
-trazabilidad; no forman parte del estudio reportado. Ver
-[`_archivo/README.md`](./_archivo/README.md).
+```bash
+cd infera
+cp config/experiment.env.example config/experiment.env
+cp config/session_tasks.example.json config/mi_sesion.json
+```
+
+Después:
+
+1. Edita `config/mi_sesion.json` con tus tareas y reglas de validación.
+2. Sustituye o adapta la base ficticia de `kb/`.
+3. Edita `config/experiment.env` con tus modelos, etiqueta y parámetros.
+4. Valida la configuración con el tokenizador real.
+5. Ejecuta primero una prueba de humo.
+6. Ejecuta la corrida completa y revisa `results/runs/`.
+
+Los comandos completos y las comprobaciones están en
+[`infera/GUIA_DESDE_CERO.md`](./infera/GUIA_DESDE_CERO.md).
+
+## Qué genera una corrida
+
+Cada combinación de representación, estrategia y réplica produce un JSONL.
+Al finalizar, `analyze_results.py` genera:
+
+- tablas normalizadas por sesión y tarea;
+- totales de energía por condición;
+- contabilidad del costo de los resúmenes;
+- diferencia acumulada entre estrategias;
+- tokens de entrada y salida;
+- puntaje programático;
+- tres figuras PNG;
+- un informe legible y un manifiesto de procedencia.
+
+Consulta [la guía de salidas](./docs/SALIDAS.md) para identificar cada archivo.
+
+## Alcance configurable
+
+Sin modificar el código puedes cambiar:
+
+- rutas o identificadores de los modelos FP16 y AWQ;
+- base de conocimiento;
+- secuencia y cantidad de tareas;
+- reglas programáticas de verificación;
+- cantidad de réplicas;
+- presupuesto de contexto;
+- longitud máxima de salida;
+- regla de activación de la compactación.
+
+El código compara historial completo contra compactación periódica activada
+por longitud. RAG, memoria externa, otro compresor o una política distinta
+requieren adaptar y volver a validar el runner.
+
+## Organización
+
+- [`infera/`](./infera/): código, configuración, base ficticia, ejecución,
+  análisis y resultados de referencia.
+- [`docs/`](./docs/): instalación, configuración, reproducción, salidas,
+  limitaciones y mapa para el anexo.
+- [`requirements-gpu.txt`](./requirements-gpu.txt): entorno para ejecutar la
+  medición con GPU.
+- [`requirements.txt`](./requirements.txt): entorno mínimo para analizar el
+  conjunto de referencia sin GPU.
+
+## Resultado de referencia
+
+El estudio incluido comparó Llama 3.1 8B Instruct bajo FP16 y AWQ en una RTX
+4090. Se ejecutaron tres réplicas de historial completo y compactación para
+cada representación, con 29 tareas por sesión.
+
+En esa configuración, la política de tres compactaciones no recuperó la
+energía empleada para producir los resúmenes dentro del horizonte observado.
+La conclusión no implica que compactar siempre sea ineficiente ni identifica
+un umbral universal.
+
+## Documentación
+
+- [Instalación](./docs/INSTALACION.md)
+- [Guía desde cero](./infera/GUIA_DESDE_CERO.md)
+- [Configuración](./docs/CONFIGURACION.md)
+- [Auditar el conjunto de referencia](./docs/REPRODUCCION.md)
+- [Archivos de salida](./docs/SALIDAS.md)
+- [Limitaciones](./docs/LIMITACIONES.md)
+- [Mapa para el anexo](./docs/ANEXO_REPOSITORIO.md)
+
+El repositorio todavía no declara una licencia de reutilización ni una forma
+de citación definitiva. Esos archivos deben añadirse después de confirmar las
+condiciones institucionales y los metadatos finales.

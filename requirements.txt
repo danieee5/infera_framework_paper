@@ -1,26 +1,7 @@
-# INFERA — Requirements
-# Versiones fijadas para reproducibilidad del benchmark.
-# NO instalar sobre el Python global de RunPod.
-# Usar siempre en venv: source /workspace/venv/bin/activate
+# Reproducción del análisis V3 sin GPU.
+# Python 3.10 o superior.
 #
-# Historial de cambios:
-#   vllm: 0.4.3 → 0.5.3 (incompatibilidad rope_scaling LLaMA 3.1)
-#   outlines: (no fijada) → 0.0.46 (vLLM 0.5.3 requiere outlines<0.1.0)
-#   huggingface-hub: (no fijada) → 0.24.0 (vLLM 0.5.3 requiere <1.0)
+# Las tablas CSV usan únicamente la biblioteca estándar. Pillow se utiliza
+# para las tres figuras PNG del paper.
 
-# Core inference
-vllm==0.5.3
-
-# Monitoring energético
-pynvml==11.5.0
-
-# HTTP async para benchmark_runner (asyncio.gather + httpx)
-httpx==0.27.0
-
-# Tokenizador y modelos
-transformers==4.43.3
-huggingface-hub==0.24.0
-
-# Utilidades
-tqdm>=4.66.0
-numpy>=1.24.0
+Pillow==12.3.0
