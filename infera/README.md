@@ -2,8 +2,8 @@
 
 Esta carpeta contiene el runner principal para medir y analizar una
 conversación incremental. El conjunto de referencia publicado conserva el
-diseño original de dos brazos. La campaña nueva, aún no ejecutada, añade una
-tercera política de descarte por recencia.
+diseño original de dos brazos. La campaña de tres brazos añade una tercera
+política de descarte por recencia.
 
 INFERA envía la misma secuencia de tareas a:
 
@@ -57,6 +57,10 @@ joules de la RTX 4090.
   mecanismo y puntaje programático.
 - `reanaliza_campana_tres_brazos.sh`: recupera el análisis de 18 sesiones ya
   recolectadas sin levantar vLLM ni volver a usar GPU.
+- `audita_paquete_tres_brazos.py`: comprueba sin GPU el paquete descargado,
+  todos sus hashes, conteos y una reanálisis opcional sobre copias temporales.
+- `figuras_tres_brazos.py`: genera cuatro figuras PNG/PDF desde una campaña
+  ya validada, sin modificar raws ni emitir inferencias.
 
 ## Preparar tu experimento
 
@@ -205,6 +209,38 @@ Esto no levanta vLLM. Si faltan sesiones o quedó algún `.partial`, la campaña
 es incompleta y no debe incorporarse al manuscrito. Una interrupción del Pod,
 un modelo incompatible o un fallo físico siguen siendo incertidumbres que
 ningún launcher puede eliminar.
+
+### Auditar la descarga y generar figuras sin GPU
+
+Desde la raíz del repositorio, conserva la carpeta completa, el archivo
+comprimido y el `.sha256`. La auditoría es de solo lectura; la reanálisis usa
+copias temporales:
+
+```bash
+python3 infera/audita_paquete_tres_brazos.py \
+  --campaign tres_brazos_<UTC> \
+  --archive tres_brazos_<UTC>.tar.gz.bin \
+  --checksum tres_brazos_<UTC>.tar.gz.sha256 \
+  --reanalysis /tmp/reanalysis_tres_brazos
+```
+
+Solo acepta el paquete si informa `ok: true`,
+`reanalysis_matches_download: true`, 18 raws, 18 manifiestos de sesión,
+29 tareas y 0 parciales. La extensión `.bin` permite conservar el contenedor
+exacto cuando el navegador descomprime automáticamente un `.tar.gz`.
+
+Las figuras se crean en un directorio nuevo y fallan si la salida ya existe:
+
+```bash
+python3 infera/figuras_tres_brazos.py \
+  --campaign tres_brazos_<UTC> \
+  --output /ruta/nueva/figuras
+```
+
+El puntaje mostrado es programático, no una evaluación humana de tarea
+resuelta. La cuarta figura incluye una sensibilidad mínima que excluye
+respuestas terminadas por `max_tokens`. Los textos completos permanecen en
+los JSONL para una revisión humana posterior.
 
 ## Instalar el entorno GPU
 

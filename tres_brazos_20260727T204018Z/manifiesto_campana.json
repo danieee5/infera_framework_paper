@@ -1,0 +1,435 @@
+{
+  "schema_version": 1,
+  "campaign": "tres_brazos",
+  "status": "complete",
+  "started_utc": "2026-07-27T20:41:05.814332+00:00",
+  "preflight": "/workspace/infera_extra_run/infera/results/runs/tres_brazos_20260727T204018Z/preflight.json",
+  "preflight_sha256": "d1b4d47d665485ffb0cb1d21fb7b1de9576b79ba24924a68e162dc04e2f501b0",
+  "schedule": [
+    {
+      "position": 1,
+      "quant": "AWQ",
+      "rep": 1,
+      "arm": "completo"
+    },
+    {
+      "position": 2,
+      "quant": "AWQ",
+      "rep": 1,
+      "arm": "resumen"
+    },
+    {
+      "position": 3,
+      "quant": "AWQ",
+      "rep": 1,
+      "arm": "descarte"
+    },
+    {
+      "position": 4,
+      "quant": "FP16",
+      "rep": 1,
+      "arm": "descarte"
+    },
+    {
+      "position": 5,
+      "quant": "FP16",
+      "rep": 1,
+      "arm": "resumen"
+    },
+    {
+      "position": 6,
+      "quant": "FP16",
+      "rep": 1,
+      "arm": "completo"
+    },
+    {
+      "position": 7,
+      "quant": "FP16",
+      "rep": 2,
+      "arm": "completo"
+    },
+    {
+      "position": 8,
+      "quant": "FP16",
+      "rep": 2,
+      "arm": "descarte"
+    },
+    {
+      "position": 9,
+      "quant": "FP16",
+      "rep": 2,
+      "arm": "resumen"
+    },
+    {
+      "position": 10,
+      "quant": "AWQ",
+      "rep": 2,
+      "arm": "resumen"
+    },
+    {
+      "position": 11,
+      "quant": "AWQ",
+      "rep": 2,
+      "arm": "descarte"
+    },
+    {
+      "position": 12,
+      "quant": "AWQ",
+      "rep": 2,
+      "arm": "completo"
+    },
+    {
+      "position": 13,
+      "quant": "AWQ",
+      "rep": 3,
+      "arm": "descarte"
+    },
+    {
+      "position": 14,
+      "quant": "AWQ",
+      "rep": 3,
+      "arm": "completo"
+    },
+    {
+      "position": 15,
+      "quant": "AWQ",
+      "rep": 3,
+      "arm": "resumen"
+    },
+    {
+      "position": 16,
+      "quant": "FP16",
+      "rep": 3,
+      "arm": "resumen"
+    },
+    {
+      "position": 17,
+      "quant": "FP16",
+      "rep": 3,
+      "arm": "completo"
+    },
+    {
+      "position": 18,
+      "quant": "FP16",
+      "rep": 3,
+      "arm": "descarte"
+    }
+  ],
+  "gpu": {
+    "disponible": true,
+    "device_index": 0,
+    "name": "NVIDIA GeForce RTX 4090",
+    "uuid": "GPU-84273379-4559-39de-4b96-c1324d71db9c",
+    "driver_version": "580.126.20",
+    "nvml_version": "13.580.126.20",
+    "memory_total_bytes": 25757220864,
+    "power_limit_w": 450.0,
+    "telemetry_probe": {
+      "complete": true,
+      "missing": [],
+      "sample": {
+        "timestamp_monotonic_s": 9022580.344112473,
+        "timestamp_unix_s": 1785184865.834916,
+        "power_w": 10.153,
+        "vram_used_mb": 484.062,
+        "vram_free_mb": 24079.938,
+        "vram_total_mb": 24564.0,
+        "temperature_c": 31.0,
+        "graphics_clock_mhz": 210,
+        "sm_clock_mhz": 210,
+        "memory_clock_mhz": 405,
+        "gpu_utilization_pct": 0,
+        "memory_utilization_pct": 0,
+        "throttle_reasons_mask": 1,
+        "throttle_reasons_active": [
+          "nvmlClocksEventReasonGpuIdle",
+          "nvmlClocksThrottleReasonGpuIdle"
+        ],
+        "performance_state": 8,
+        "process_query_available": true,
+        "compute_pids": [],
+        "compute_process_groups": {},
+        "foreign_compute_pids": []
+      }
+    }
+  },
+  "finished_utc": "2026-07-27T22:23:18.699360+00:00",
+  "exit_code": 0,
+  "artifacts": {
+    "raws": [
+      {
+        "name": "run_AWQ_completo_rep1.jsonl",
+        "sha256": "b5d81c49f72d997dd3ab8df8d13712e7a938f002f55321c3ea57027b3d551efc",
+        "bytes": 376099
+      },
+      {
+        "name": "run_AWQ_completo_rep2.jsonl",
+        "sha256": "6b6b2d05f512850e90ca07b939da7541e15ff2f8d68ccc227fef013bad4245b0",
+        "bytes": 375044
+      },
+      {
+        "name": "run_AWQ_completo_rep3.jsonl",
+        "sha256": "d0cb21b4308be254c0c9b1f4587ace1d537dc5fcfb826037aef8f1232bc35956",
+        "bytes": 376659
+      },
+      {
+        "name": "run_AWQ_descarte_rep1.jsonl",
+        "sha256": "54dbfd8a01d2966f86e97da7dd3dcef38b458b8aaa826337d21e223d64464fd6",
+        "bytes": 358939
+      },
+      {
+        "name": "run_AWQ_descarte_rep2.jsonl",
+        "sha256": "2bc044832188bda41468ee647c8a38c9f03a92d743b1c6ed48654d1b56e51f9d",
+        "bytes": 360143
+      },
+      {
+        "name": "run_AWQ_descarte_rep3.jsonl",
+        "sha256": "5b595184b05d243070ff462aba1d9bd5160518e007143902e6d1313e359c6b7f",
+        "bytes": 359869
+      },
+      {
+        "name": "run_AWQ_resumen_rep1.jsonl",
+        "sha256": "9202b8edd9523dfdaa3cda37ba887aa83bbb88909feaa12fa577b19e0740f471",
+        "bytes": 473091
+      },
+      {
+        "name": "run_AWQ_resumen_rep2.jsonl",
+        "sha256": "a7ace6d8c140af7d14d832dd7bf6572df07d7b1e446ddfdf7e586c64811de796",
+        "bytes": 474188
+      },
+      {
+        "name": "run_AWQ_resumen_rep3.jsonl",
+        "sha256": "de0182bacfc03912de1c5a0d4f143bb946971cb8841a8491667f18e27e4d727f",
+        "bytes": 471834
+      },
+      {
+        "name": "run_FP16_completo_rep1.jsonl",
+        "sha256": "cd060ed5dd2fd7c364b233f92b4f7509595a1aeea9d6f9cd6b657702eb002e29",
+        "bytes": 463352
+      },
+      {
+        "name": "run_FP16_completo_rep2.jsonl",
+        "sha256": "c3435e5820ccdd37fec80641075188ed868e9149a49c3272ad79625dabde99e7",
+        "bytes": 463826
+      },
+      {
+        "name": "run_FP16_completo_rep3.jsonl",
+        "sha256": "a63e739a8ee93f0d0623e9edf5cf06b7c0c6ba9686eadbfe8e14dd10168825a3",
+        "bytes": 464336
+      },
+      {
+        "name": "run_FP16_descarte_rep1.jsonl",
+        "sha256": "942f93eadb0b54e56dc5a28791c202fbe8b9ce7aa63dfa72b31c6858796d7ab8",
+        "bytes": 447989
+      },
+      {
+        "name": "run_FP16_descarte_rep2.jsonl",
+        "sha256": "87c713f70b6854ea79b552be7df326ac42e7248229706a10fd89bc3041c42b13",
+        "bytes": 447446
+      },
+      {
+        "name": "run_FP16_descarte_rep3.jsonl",
+        "sha256": "035988de476ddbfc143c9898378fb6f7b5e3018f185229fe3d374b459aba1bbe",
+        "bytes": 446690
+      },
+      {
+        "name": "run_FP16_resumen_rep1.jsonl",
+        "sha256": "e3c6ac1186fd065d7e00d1aa35da04dfdbcad8372a3b9a5b306af1118537e7d7",
+        "bytes": 630512
+      },
+      {
+        "name": "run_FP16_resumen_rep2.jsonl",
+        "sha256": "e9d6efb3d6542fc357502d4d9260cf42ede7c7e11699ff61638cd93ae85277ef",
+        "bytes": 631536
+      },
+      {
+        "name": "run_FP16_resumen_rep3.jsonl",
+        "sha256": "1506896b6d896fe142987ec87f9843ac6d4bd56ff9b2df387e0cd458168a8ec6",
+        "bytes": 630713
+      }
+    ],
+    "session_manifests": [
+      {
+        "name": "run_AWQ_completo_rep1.jsonl.manifiesto.json",
+        "sha256": "6bd37f314b49149b4a89824702d7970da3473e00b5f7f254c32e21a717e94900",
+        "status": "complete"
+      },
+      {
+        "name": "run_AWQ_completo_rep2.jsonl.manifiesto.json",
+        "sha256": "41ba3cf571a14d0510e383c247d275b3bd1653f3e72dd9130cf22e002a5d7efd",
+        "status": "complete"
+      },
+      {
+        "name": "run_AWQ_completo_rep3.jsonl.manifiesto.json",
+        "sha256": "9592230bec75f67e8c5aaa0e485377b99c1cdc09071bb7ea2c742d686063a49e",
+        "status": "complete"
+      },
+      {
+        "name": "run_AWQ_descarte_rep1.jsonl.manifiesto.json",
+        "sha256": "61ea333e0221168bdccb744227b48ffe433cce75448383b3ab94f656e98546ca",
+        "status": "complete"
+      },
+      {
+        "name": "run_AWQ_descarte_rep2.jsonl.manifiesto.json",
+        "sha256": "be25c02eb2da9d5c8f8983f09d91cd6210e3ad1a5251f5e316868adbe3fed412",
+        "status": "complete"
+      },
+      {
+        "name": "run_AWQ_descarte_rep3.jsonl.manifiesto.json",
+        "sha256": "9f6ab4dcbf910271188444edee2adea56502aeb965220845c3458c399f77adb1",
+        "status": "complete"
+      },
+      {
+        "name": "run_AWQ_resumen_rep1.jsonl.manifiesto.json",
+        "sha256": "9b836e385ac42d2c8cb15d2bd49160b1eb8d738b0f773fd26ee51a671e25a808",
+        "status": "complete"
+      },
+      {
+        "name": "run_AWQ_resumen_rep2.jsonl.manifiesto.json",
+        "sha256": "99a2e9a6d1bdfd49d6b0a7d876c9f238a4dad962d1649ea4223036859ce21012",
+        "status": "complete"
+      },
+      {
+        "name": "run_AWQ_resumen_rep3.jsonl.manifiesto.json",
+        "sha256": "02a6b022451c0df58a4e5058cfad763a626a0744b165f875e5a66048c7a30351",
+        "status": "complete"
+      },
+      {
+        "name": "run_FP16_completo_rep1.jsonl.manifiesto.json",
+        "sha256": "cede42bfc3c0d69fa93663ff2117c44abe10b0a351ad66c4b820719f954f6ec2",
+        "status": "complete"
+      },
+      {
+        "name": "run_FP16_completo_rep2.jsonl.manifiesto.json",
+        "sha256": "51010ef0c39efa47e0a2858564bd22bb1473031a1aa6cdf1b80e833faeb7f008",
+        "status": "complete"
+      },
+      {
+        "name": "run_FP16_completo_rep3.jsonl.manifiesto.json",
+        "sha256": "59364b20a4999dde5772be4cc08135732a17f67aec6e2724d1a1409f298ec5e6",
+        "status": "complete"
+      },
+      {
+        "name": "run_FP16_descarte_rep1.jsonl.manifiesto.json",
+        "sha256": "d6c3b4c9b300fafe441bb025c33369a88def34b96536ee17f122cb94e15df734",
+        "status": "complete"
+      },
+      {
+        "name": "run_FP16_descarte_rep2.jsonl.manifiesto.json",
+        "sha256": "a61d84a1d9de02288de62a7a3ac8ba69027bf190e2fb94c30d00a222f92dd5bb",
+        "status": "complete"
+      },
+      {
+        "name": "run_FP16_descarte_rep3.jsonl.manifiesto.json",
+        "sha256": "68ff1b3cba37cd6e88a1ce0ad566549d054a64b7b125034fe56a5c24427b0a8c",
+        "status": "complete"
+      },
+      {
+        "name": "run_FP16_resumen_rep1.jsonl.manifiesto.json",
+        "sha256": "7517ee65bcf4b6e4ad4bedf73f9193d9103fb0740f9ee7884cbef15d57ac1dd3",
+        "status": "complete"
+      },
+      {
+        "name": "run_FP16_resumen_rep2.jsonl.manifiesto.json",
+        "sha256": "8a388ecceed408ad9d4e572c911bbc07e6f3733f9370178c2310ca9414200f4a",
+        "status": "complete"
+      },
+      {
+        "name": "run_FP16_resumen_rep3.jsonl.manifiesto.json",
+        "sha256": "02d67322dc0b624a069d257ab59c1b4fae5c42eee26f5bbc7b26fbc00922d2da",
+        "status": "complete"
+      }
+    ],
+    "partials": []
+  },
+  "log_artifacts": [
+    {
+      "name": "analisis.log",
+      "sha256": "c7a2bfa2697643fb05c361ee66c2ea92f91d7d7247eeaf3bade1dbdca1e0431a",
+      "bytes": 4014
+    },
+    {
+      "name": "health_infera-awq.json",
+      "sha256": "8fb6610416978a7c736ad443e201dc258e8260c75516b552b337b27551e4f8ee",
+      "bytes": 470
+    },
+    {
+      "name": "health_infera-fp16.json",
+      "sha256": "4373b93e9ff289461893af2c25c1cf1c1fea6190ac87dad59e0088c75353ee9e",
+      "bytes": 472
+    },
+    {
+      "name": "preflight.log",
+      "sha256": "d1b4d47d665485ffb0cb1d21fb7b1de9576b79ba24924a68e162dc04e2f501b0",
+      "bytes": 9788
+    },
+    {
+      "name": "sesiones.log",
+      "sha256": "544584097dde8043ac519be03fdc8622880d4f75c5a4cfc471ac154aef9db4f2",
+      "bytes": 38367
+    },
+    {
+      "name": "vllm_AWQ_launch1.log",
+      "sha256": "5552d30db5a082d1fdb7ed586f90571b41fb8a159fb5722ce26f3d354063657a",
+      "bytes": 3982561
+    },
+    {
+      "name": "vllm_AWQ_launch4.log",
+      "sha256": "81d02144e5d1daf77e21347d1fe2329dd21ffbfeb47b34d418464fb9e192f165",
+      "bytes": 3982783
+    },
+    {
+      "name": "vllm_AWQ_launch5.log",
+      "sha256": "cc63408817d45b387dcb524f1a5d5fec84be75b87558007b9c53e48786ee0f19",
+      "bytes": 3982563
+    },
+    {
+      "name": "vllm_FP16_launch2.log",
+      "sha256": "438ce94a0dae9ca3c2e8b16e6f9c5ac11a34f4ee4d0dae65a379be823e43a7b9",
+      "bytes": 4001943
+    },
+    {
+      "name": "vllm_FP16_launch3.log",
+      "sha256": "2d493ba25450590042ce4bceb732bd9fea2b748d0d9c01b8ab8ee472a925dfe0",
+      "bytes": 4001723
+    },
+    {
+      "name": "vllm_FP16_launch6.log",
+      "sha256": "593a779c0235a136e155a3f70a41915098ec1f1d0a184521516943b8a603a601",
+      "bytes": 3999113
+    }
+  ],
+  "analysis_artifacts": [
+    {
+      "name": "agregado.csv",
+      "sha256": "a19ba52ff422fa78b96237c9c339c8c7ccd7fb16c4c624d47425bb1e3f1cde80",
+      "bytes": 984
+    },
+    {
+      "name": "efecto_por_tarea.csv",
+      "sha256": "ee4578385ac0e91ad6a5e8aee8f7d0f8e22c19609118b59ec4bfab1395932a40",
+      "bytes": 8928
+    },
+    {
+      "name": "informe.md",
+      "sha256": "f033af7ada2eae98602b23b659e9b9047a8f227d1477b423164fa31f4d956484",
+      "bytes": 3910
+    },
+    {
+      "name": "manifiesto_analisis.json",
+      "sha256": "05f23564bc56c28fa9c23c4bd74176037bd4b8988abc60ae34b6f16e2615b5a6",
+      "bytes": 6379
+    },
+    {
+      "name": "ocupacion_post_intervencion.csv",
+      "sha256": "e5ab1401ad46567762e818731b041a7eb0e15dc98483e9da25095a7e5a571cd0",
+      "bytes": 1681
+    },
+    {
+      "name": "por_sesion.csv",
+      "sha256": "07e05642a1e63b1c9be8b14bf4cc2beeec046398c302217e86b4d42639de0236",
+      "bytes": 4218
+    }
+  ],
+  "analysis_dir": "/workspace/infera_extra_run/infera/results/runs/tres_brazos_20260727T204018Z/analisis"
+}

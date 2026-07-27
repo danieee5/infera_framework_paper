@@ -4,7 +4,7 @@ INFERA es un conjunto reproducible de scripts para medir la energía consumida
 por una GPU durante una conversación incremental con un modelo de lenguaje
 autoalojado.
 
-El experimento compara dos estrategias:
+El conjunto de referencia histórico compara dos estrategias:
 
 - **Historial completo:** cada petición conserva toda la conversación previa.
 - **Compactación periódica:** cuando el prompt supera una regla de longitud,
@@ -13,6 +13,11 @@ El experimento compara dos estrategias:
 Para cada estrategia, INFERA registra energía en joules, potencia, duración,
 tokens de entrada y salida, eventos de compactación y éxito programático de
 las tareas. No es necesario leer el paper para utilizar el repositorio.
+
+La rama experimental `extra` incorpora además un brazo de descarte local que
+retiene los cuatro pares completos más recientes. Su campaña verificada de
+18 sesiones está en
+[`tres_brazos_20260727T204018Z/`](./tres_brazos_20260727T204018Z/).
 
 Proyecto académico de Daniela Mora, Universidad de Especialidades Espíritu
 Santo, Ecuador, 2026.
@@ -48,6 +53,22 @@ huellas de los JSONL y recalcula las cifras, tablas y figuras a partir de esas
 mediciones.
 
 Empieza con la [guía de auditoría](./docs/REPRODUCCION.md).
+
+### Auditar la campaña de tres brazos
+
+La descarga completa conserva 18 JSONL, 18 manifiestos de sesión, preflight,
+logs, trazas NVML y análisis. Puede verificarse y reanalizarse sin GPU:
+
+```bash
+python3 infera/audita_paquete_tres_brazos.py \
+  --campaign tres_brazos_20260727T204018Z \
+  --archive tres_brazos_20260727T204018Z.tar.gz.bin \
+  --checksum tres_brazos_20260727T204018Z.tar.gz.sha256 \
+  --reanalysis /tmp/reanalysis_tres_brazos
+```
+
+Los comandos para generar cuatro figuras PNG/PDF están en
+[`infera/README.md`](./infera/README.md#auditar-la-descarga-y-generar-figuras-sin-gpu).
 
 ## Inicio rápido para una medición propia
 
@@ -114,6 +135,8 @@ requieren adaptar y volver a validar el runner.
   medición con GPU.
 - [`requirements.txt`](./requirements.txt): entorno mínimo para analizar el
   conjunto de referencia sin GPU.
+- [`tres_brazos_20260727T204018Z/`](./tres_brazos_20260727T204018Z/):
+  campaña experimental verificada; no reemplaza los doce raws históricos.
 
 ## Resultado de referencia
 

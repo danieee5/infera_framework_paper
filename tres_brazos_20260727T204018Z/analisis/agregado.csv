@@ -1,0 +1,7 @@
+quant,brazo,nombre,repeticiones_instrumentales,energia_tareas_media_j,energia_mecanismo_media_j,energia_total_media_j,energia_total_min_j,energia_total_max_j,cv_instrumental_pct,energia_sobre_reposo_media_j,score_1_media_tareas,score_1_min_tareas,score_1_max_tareas,puntaje_programatico_medio
+AWQ,completo,historial completo (calibración),3,11171.37,0,11171.37,11149.92,11189.72,0.18,10590.78,27,27,27,0.9799
+AWQ,descarte,recencia ciega por antigüedad,3,9681.3,0.0,9681.3,9661.58,9695.48,0.182,9148.17,24,24,24,0.9416
+AWQ,resumen,resumen del historial,3,10722.77,4017.26,14740.03,14712.26,14765.35,0.181,14001.63,27,27,27,0.9626
+FP16,completo,historial completo (calibración),3,15342.46,0,15342.46,15324.93,15372.42,0.17,14599.96,27,27,27,0.9612
+FP16,descarte,recencia ciega por antigüedad,3,13806.75,0.0,13806.75,13790.23,13825.75,0.13,13106.18,23,23,23,0.9057
+FP16,resumen,resumen del historial,3,15480.11,7005.17,22485.27,22484.67,22486.3,0.004,21460.41,27,27,27,0.9612

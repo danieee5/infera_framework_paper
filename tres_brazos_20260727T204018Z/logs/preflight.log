@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "status": "ready_without_gpu_inference",
+  "tasks": "/workspace/infera_extra_run/infera/config/reference/session_tasks.json",
+  "tasks_sha256": "0ead64c0b2ce17c766d1d4ca36cf723b4f3e15bd3bb5d6af1f733318c23cdc7d",
+  "task_count": 29,
+  "task_ids_sha256": "1b855c70d1741028b4cae65412a76072ea8f4a2483c1e800ee2b84a885d51077",
+  "kb_dir": "/workspace/infera_extra_run/infera/kb",
+  "kb_sha256": "2d148c71e6e61ffe102e47dcd538c0391e5d64dec5661a9b94d6e0348d3a3665",
+  "threshold_tokens": 4500,
+  "pairs_kept": 4,
+  "max_model_len": 8192,
+  "requested_max_tokens": 512,
+  "temperature": 0.0,
+  "seed": 42,
+  "baseline_seconds": 30.0,
+  "post_warmup_settle_seconds": 30.0,
+  "warmup_count": 5,
+  "cooldown_seconds": 120.0,
+  "request_timeout_seconds": 600.0,
+  "server_start_attempts": 2,
+  "first_request_prompt_tokens": {
+    "FP16": 3183,
+    "AWQ": 3183
+  },
+  "tokenizers": {
+    "FP16": {
+      "reference": "/workspace/models/llama3.1-8b-instruct",
+      "resolved_commit": null,
+      "tokenizer_class": "PreTrainedTokenizerFast",
+      "vocab_size": 128256,
+      "backend_sha256": "86099636e3238f26a12bb00de8544154d81430b7c36047edcf8ef5b1413a9b2e",
+      "chat_template_sha256": "e10ca381b1ccc5cf9db52e371f3b6651576caee0a630b452e2816b2d404d4b65",
+      "special_tokens_sha256": "2b1e2c67e141c68c223a7f31b310bf8234683bec9a499f1067970d2a41cfeb16"
+    },
+    "AWQ": {
+      "reference": "/workspace/models/llama3.1-8b-instruct-awq",
+      "resolved_commit": null,
+      "tokenizer_class": "PreTrainedTokenizerFast",
+      "vocab_size": 128256,
+      "backend_sha256": "86099636e3238f26a12bb00de8544154d81430b7c36047edcf8ef5b1413a9b2e",
+      "chat_template_sha256": "e10ca381b1ccc5cf9db52e371f3b6651576caee0a630b452e2816b2d404d4b65",
+      "special_tokens_sha256": "2b1e2c67e141c68c223a7f31b310bf8234683bec9a499f1067970d2a41cfeb16"
+    }
+  },
+  "models": {
+    "FP16": {
+      "reference": "/workspace/models/llama3.1-8b-instruct",
+      "core_config": {
+        "model_type": "llama",
+        "architectures": [
+          "LlamaForCausalLM"
+        ],
+        "vocab_size": 128256,
+        "hidden_size": 4096,
+        "intermediate_size": 14336,
+        "num_hidden_layers": 32,
+        "num_attention_heads": 32,
+        "num_key_value_heads": 8,
+        "max_position_embeddings": 131072,
+        "rope_theta": 500000.0
+      },
+      "quantization_config": null,
+      "inventory": {
+        "file_count": 12,
+        "weight_file_count": 4,
+        "total_bytes": 16071906676,
+        "inventory_sha256": "083cd35a9b3c967843c09a263660bc7289b3f5c5be771e4be7950f1e517f9c4d",
+        "files": [
+          {
+            "path": "config.json",
+            "bytes": 681,
+            "sha256": "691c5168d30094ca5a828abc4d0512c35ae46ec0e688a83a0af042ccb1e50361"
+          },
+          {
+            "path": "generation_config.json",
+            "bytes": 184,
+            "sha256": "189fb0c0d7fd8a527db217c0a60a0e013f0394cd8800f9697a666a9e75e5f7fd"
+          },
+          {
+            "path": "model-00001-of-00004.safetensors",
+            "bytes": 4976698672,
+            "sha256": "2b1879f356aed350030bb40eb45ad362c89d9891096f79a3ab323d3ba5607668"
+          },
+          {
+            "path": "model-00002-of-00004.safetensors",
+            "bytes": 4999802720,
+            "sha256": "09d433f650646834a83c580877bd60c6d1f88f7755305c12576b5c7058f9af15"
+          },
+          {
+            "path": "model-00003-of-00004.safetensors",
+            "bytes": 4915916176,
+            "sha256": "fc1cdddd6bfa91128d6e94ee73d0ce62bfcdb7af29e978ddcab30c66ae9ea7fa"
+          },
+          {
+            "path": "model-00004-of-00004.safetensors",
+            "bytes": 1168138808,
+            "sha256": "92ecfe1a2414458b4821ac8c13cf8cb70aed66b5eea8dc5ad9eeb4ff309d6d7b"
+          },
+          {
+            "path": "model.safetensors.index.json",
+            "bytes": 23950,
+            "sha256": "146776fce3f6db1103aa6f249e65ee5544c5923ce6f971b092eee79aa6e5d37b"
+          },
+          {
+            "path": "original/params.json",
+            "bytes": 199,
+            "sha256": "b15b6b31b2043c0400b028ecc25c8946e21d76ac260e9ac6a357ed8727c8865f"
+          },
+          {
+            "path": "original/tokenizer.model",
+            "bytes": 2183982,
+            "sha256": "82e9d31979e92ab929cd544440f129d9ecd797b69e327f80f17e1c50d5551b55"
+          },
+          {
+            "path": "special_tokens_map.json",
+            "bytes": 296,
+            "sha256": "6f38c73729248f6c127296386e3cdde96e254636cc58b4169d3fd32328d9a8ec"
+          },
+          {
+            "path": "tokenizer.json",
+            "bytes": 9085657,
+            "sha256": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4"
+          },
+          {
+            "path": "tokenizer_config.json",
+            "bytes": 55351,
+            "sha256": "177c7b61e616fecb84c17ce0591acb92c6c4d60e9ac5ababfb940ff23bbcd424"
+          }
+        ]
+      }
+    },
+    "AWQ": {
+      "reference": "/workspace/models/llama3.1-8b-instruct-awq",
+      "core_config": {
+        "model_type": "llama",
+        "architectures": [
+          "LlamaForCausalLM"
+        ],
+        "vocab_size": 128256,
+        "hidden_size": 4096,
+        "intermediate_size": 14336,
+        "num_hidden_layers": 32,
+        "num_attention_heads": 32,
+        "num_key_value_heads": 8,
+        "max_position_embeddings": 131072,
+        "rope_theta": 500000.0
+      },
+      "quantization_config": {
+        "bits": 4,
+        "group_size": 128,
+        "modules_to_not_convert": null,
+        "quant_method": "awq",
+        "version": "gemm",
+        "zero_point": true
+      },
+      "inventory": {
+        "file_count": 8,
+        "weight_file_count": 2,
+        "total_bytes": 5737144414,
+        "inventory_sha256": "64b3330e4f75b1afcc8b3642280b8e8c0646d6e64e3bd7d942424e366a123f91",
+        "files": [
+          {
+            "path": "config.json",
+            "bytes": 865,
+            "sha256": "087faaafff3eac4de24a2a97d1ead33e95a2bfc5dcea809e3c6c3e3a0d525db9"
+          },
+          {
+            "path": "generation_config.json",
+            "bytes": 189,
+            "sha256": "65a4ef2b5826e4440eac839184e0059e5753708a0a6eb630c9bb69d29ada43e0"
+          },
+          {
+            "path": "model-00001-of-00002.safetensors",
+            "bytes": 4677265296,
+            "sha256": "e152d461dbe23f8e7606edbd1cc859a2cdc85a46766d8cb6a629eb88832c5718"
+          },
+          {
+            "path": "model-00002-of-00002.safetensors",
+            "bytes": 1050673280,
+            "sha256": "3e9a36ad418b0cd9b253f65771552d7dc05cf1abf1170b94de4b4d546aac255d"
+          },
+          {
+            "path": "model.safetensors.index.json",
+            "bytes": 63480,
+            "sha256": "57f0786ae70f875d7d4b12b308f078f7e443478c6d60544bbbe311de3bd4ce8a"
+          },
+          {
+            "path": "special_tokens_map.json",
+            "bytes": 295,
+            "sha256": "8482e6b67fa8244c2c5265ba4e9bc0f1fbfd150b140d6cf86722d5a37ac81e25"
+          },
+          {
+            "path": "tokenizer.json",
+            "bytes": 9085658,
+            "sha256": "76e48799b099d43365bd24ccd8ecc5aedac831718da780552f03b0a6eb4412aa"
+          },
+          {
+            "path": "tokenizer_config.json",
+            "bytes": 55351,
+            "sha256": "177c7b61e616fecb84c17ce0591acb92c6c4d60e9ac5ababfb940ff23bbcd424"
+          }
+        ]
+      }
+    }
+  },
+  "package_versions": {
+    "torch": "2.3.1+cu121",
+    "vllm": "0.5.3",
+    "transformers": "4.43.3",
+    "tokenizers": "0.19.1",
+    "requests": "2.32.3",
+    "nvidia-ml-py": "12.560.30"
+  },
+  "torch_cuda_version": "12.1",
+  "runtime_environment": {
+    "python_version": "3.10.12 (main, Jun 22 2026, 18:55:27) [GCC 11.4.0]",
+    "python_executable": "/workspace/infera_runtime_extra/venv/bin/python",
+    "platform": "Linux-6.8.0-107-generic-x86_64-with-glibc2.35",
+    "machine": "x86_64",
+    "git": {
+      "available": true,
+      "commit": "8f28804a0adb8f611e985098305d8778d2e3c0d5",
+      "tracked_dirty": false
+    },
+    "cuda_device": {
+      "name": "NVIDIA GeForce RTX 4090",
+      "total_memory_bytes": 25250627584,
+      "compute_capability": [
+        8,
+        9
+      ],
+      "multiprocessor_count": 128
+    }
+  },
+  "code_sha256": {
+    "infera_session_runner.py": "400d06f4920501a9f8ea6ffd0a68d83db7238f038493c33c8b0d3e24efbcb4d0",
+    "gpu_power_monitor.py": "e270553ea1a814fc98fc273bc92140aaafd3b92c7c50fa59a0670ec9fe86fea1",
+    "infera_compaction.py": "90872f981d59480b9755d51e2faffef5dca5c4afcda515b2464fbfc818780f1c",
+    "infera_quality.py": "dd44b82347a60ca389ab550a95312e886543e1a4b56348cf807e5082ad1864a5",
+    "analiza_tres_brazos.py": "be9766642295ba441883c78e3d429fc14c4e12de19aec1281b26221188693f94",
+    "preflight_campana_tres_brazos.py": "5d0b2300c8c62cef8135580eaa12dbcaae68f8f55b4bd7376ca3d531b2acb468",
+    "escribe_manifiesto_campana.py": "ee6810c44818c1f125b27b639dd2133a50addc0dc2c88bc03b401585f6772071",
+    "run_campana_tres_brazos.sh": "d44bd0fcab33360084cbd5793b6965564da3fb911fdbbd3ac5e46de2c05bd085",
+    "reanaliza_campana_tres_brazos.sh": "723190789d8baa4e770618906cd3869acb2d434cc299c0718c26becaf53dadd9"
+  },
+  "runtime_guards": {
+    "pre_request_token_budget": true,
+    "usage_must_equal_preflight": true,
+    "all_29_tasks_required": true,
+    "managed_arm_must_intervene": true,
+    "post_intervention_must_fall_below_threshold": true,
+    "nvml_required": true,
+    "raw_nvml_trace_required": true,
+    "thermal_clock_utilization_trace_required": true,
+    "continuous_compute_process_check": true
+  },
+  "prefix_caching_enabled": false,
+  "uncertainty": "Los prompts posteriores dependen de outputs aún no generados. No se prueba su ocupación ex ante; el runner vuelve a contar y aborta antes de cada petición."
+}
