@@ -39,14 +39,16 @@ if [ ! -d "$VENV" ]; then
 fi
 # shellcheck disable=SC1091
 source "$VENV/bin/activate"
-python -m pip install --upgrade pip
+python -m pip install --no-cache-dir --upgrade pip
 
 # ---------------------------------------------------------------------------
 # 2. Dependencias fijadas para el entorno de referencia.
 #    torch debe instalarse con el indice cu121 ANTES que vLLM.
 # ---------------------------------------------------------------------------
-python -m pip install torch==2.3.1 --index-url https://download.pytorch.org/whl/cu121
-python -m pip install -r "${REPO_ROOT}/requirements-gpu.txt"
+python -m pip install --no-cache-dir \
+  torch==2.3.1 \
+  --index-url https://download.pytorch.org/whl/cu121
+python -m pip install --no-cache-dir -r "${REPO_ROOT}/requirements-gpu.txt"
 
 # NOTA: NO instalamos el paquete `autoawq`. Solo se necesita para CUANTIZAR
 # modelos uno mismo; para SERVIR un modelo AWQ ya cuantizado, vLLM trae soporte
@@ -61,7 +63,7 @@ python -m pip install -r "${REPO_ROOT}/requirements-gpu.txt"
 # (solo dist-info, sin .py). vLLM no usa gramaticas de aeropuertos -> stub vacio.
 # ---------------------------------------------------------------------------
 echo "Aplicando fix de pyairports..."
-python -m pip install "pyairports==0.0.1" -q 2>/dev/null || true
+python -m pip install --no-cache-dir "pyairports==0.0.1" -q 2>/dev/null || true
 SITE=$(python3 -c "import site; print(site.getsitepackages()[0])")
 mkdir -p "$SITE/pyairports"
 
