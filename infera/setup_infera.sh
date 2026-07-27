@@ -9,7 +9,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 INFERA_RUNTIME="${INFERA_RUNTIME:-${SCRIPT_DIR}/.runtime}"
 
-python3 -c 'import sys; raise SystemExit(0 if sys.version_info[:2] == (3, 10) else 1)' || {
+if [[ -z "${PYTHON_BIN:-}" ]]; then
+  if command -v python3.10 >/dev/null 2>&1; then
+    PYTHON_BIN="python3.10"
+  else
+    PYTHON_BIN="python3"
+  fi
+fi
+
+"$PYTHON_BIN" -c 'import sys; raise SystemExit(0 if sys.version_info[:2] == (3, 10) else 1)' || {
   echo "Se exige Python 3.10 para el stack vLLM 0.5.3" >&2
   exit 2
 }
@@ -27,7 +35,7 @@ mkdir -p "$HF_HOME"
 # ---------------------------------------------------------------------------
 VENV="${INFERA_VENV:-${INFERA_RUNTIME}/venv}"
 if [ ! -d "$VENV" ]; then
-  python3 -m venv "$VENV"
+  "$PYTHON_BIN" -m venv "$VENV"
 fi
 # shellcheck disable=SC1091
 source "$VENV/bin/activate"
