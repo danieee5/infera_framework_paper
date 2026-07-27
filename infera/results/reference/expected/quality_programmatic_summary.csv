@@ -1,0 +1,5 @@
+quant,arm,n_reps,stored_quality_mean,stored_quality_sd,auditability
+AWQ,naive,3,0.9799,0.0,Descriptivo historico no reauditable: los raws principales no conservan respuestas ni handoffs.
+AWQ,compaction,3,0.9626,0.0,Descriptivo historico no reauditable: los raws principales no conservan respuestas ni handoffs.
+FP16,naive,3,0.9612,0.0,Descriptivo historico no reauditable: los raws principales no conservan respuestas ni handoffs.
+FP16,compaction,3,0.9612,0.0,Descriptivo historico no reauditable: los raws principales no conservan respuestas ni handoffs.

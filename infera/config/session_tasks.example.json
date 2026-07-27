@@ -1,0 +1,41 @@
+{
+  "session_id": "mi_sesion_incremental",
+  "description": "Ejemplo mínimo. Amplía las tareas según tu caso y define reglas comprobables.",
+  "decoding": {
+    "temperature": 0.0,
+    "max_tokens": 256,
+    "seed": 42
+  },
+  "tasks": [
+    {
+      "id": "T01",
+      "type": "FACT",
+      "prompt": "¿Quién es la persona responsable del proceso descrito en la base?",
+      "depends_on": [],
+      "verify": {
+        "contains_all": ["NOMBRE ESPERADO"],
+        "forbidden": ["RESPUESTA INCORRECTA FRECUENTE"]
+      }
+    },
+    {
+      "id": "T02",
+      "type": "SUMMARIZE",
+      "prompt": "Resume en dos oraciones la decisión tomada hasta este punto.",
+      "depends_on": ["T01"],
+      "verify": {
+        "contains_any": [
+          ["término esperado", "variante aceptada"]
+        ]
+      }
+    },
+    {
+      "id": "T03",
+      "type": "RECALL",
+      "prompt": "Recupera el dato solicitado en la primera tarea.",
+      "depends_on": ["T01"],
+      "verify": {
+        "contains_all": ["NOMBRE ESPERADO"]
+      }
+    }
+  ]
+}

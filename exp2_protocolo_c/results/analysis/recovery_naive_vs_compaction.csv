@@ -1,5 +1,0 @@
-quant,arm,energia_total_J_media,calidad_media,impuesto_compactacion_J,n_reps
-AWQ,naive,33402.73,0.939,0.0,3
-AWQ,compaction,25795.98,0.976,6240.55,3
-FP16,naive,48481.75,0.958,0.0,3
-FP16,compaction,40036.62,0.972,11129.81,3

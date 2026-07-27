@@ -1,0 +1,194 @@
+{
+  "schema_version": 3,
+  "source_directory": "results/reference/raw",
+  "declared_scope": {
+    "session": "v3",
+    "quants": [
+      "AWQ",
+      "FP16"
+    ],
+    "arms": [
+      "naive",
+      "compaction"
+    ],
+    "reps": [
+      1,
+      2,
+      3
+    ],
+    "expected_tasks_per_session": 29,
+    "expected_compactions_per_compact_session": 3
+  },
+  "source_files": [
+    {
+      "path": "results/reference/raw/run_v3_AWQ_naive_rep1.jsonl",
+      "name": "run_v3_AWQ_naive_rep1.jsonl",
+      "sha256": "01c031deb6544db5be6d88f8828cfbb61d816f99f3bd2c4790ef3a8c333b7f8d",
+      "bytes": 16332,
+      "rows": 29,
+      "contains_prompt_text": false,
+      "contains_response_text": false
+    },
+    {
+      "path": "results/reference/raw/run_v3_AWQ_naive_rep2.jsonl",
+      "name": "run_v3_AWQ_naive_rep2.jsonl",
+      "sha256": "9589f6684f35468d0c94e1b65970ef96abaad9e51142cc977ffefb2fc7e0cf8b",
+      "bytes": 16346,
+      "rows": 29,
+      "contains_prompt_text": false,
+      "contains_response_text": false
+    },
+    {
+      "path": "results/reference/raw/run_v3_AWQ_naive_rep3.jsonl",
+      "name": "run_v3_AWQ_naive_rep3.jsonl",
+      "sha256": "ae029c1ced10ef16c35778e06d82a784031697654a73b09099c283b76eaed3be",
+      "bytes": 16334,
+      "rows": 29,
+      "contains_prompt_text": false,
+      "contains_response_text": false
+    },
+    {
+      "path": "results/reference/raw/run_v3_AWQ_compaction_rep1.jsonl",
+      "name": "run_v3_AWQ_compaction_rep1.jsonl",
+      "sha256": "14abed44c5e5d5f1bee85fbba15692b1b583f4772bdf54bfd186d0d4210c2878",
+      "bytes": 18304,
+      "rows": 32,
+      "contains_prompt_text": false,
+      "contains_response_text": false
+    },
+    {
+      "path": "results/reference/raw/run_v3_AWQ_compaction_rep2.jsonl",
+      "name": "run_v3_AWQ_compaction_rep2.jsonl",
+      "sha256": "e34b8fc2c3c60a980ae171474912fc0a74de1e4be195358894b4488709d68601",
+      "bytes": 18307,
+      "rows": 32,
+      "contains_prompt_text": false,
+      "contains_response_text": false
+    },
+    {
+      "path": "results/reference/raw/run_v3_AWQ_compaction_rep3.jsonl",
+      "name": "run_v3_AWQ_compaction_rep3.jsonl",
+      "sha256": "288d7f1746c25536ee9642998a7760ee6434d01bf655968a5d8d3253e200e9d5",
+      "bytes": 18300,
+      "rows": 32,
+      "contains_prompt_text": false,
+      "contains_response_text": false
+    },
+    {
+      "path": "results/reference/raw/run_v3_FP16_naive_rep1.jsonl",
+      "name": "run_v3_FP16_naive_rep1.jsonl",
+      "sha256": "dbea564bfb2e71b334de9d4871b304162d7b1820dc3f178a4fdb24809a08d1c3",
+      "bytes": 16400,
+      "rows": 29,
+      "contains_prompt_text": false,
+      "contains_response_text": false
+    },
+    {
+      "path": "results/reference/raw/run_v3_FP16_naive_rep2.jsonl",
+      "name": "run_v3_FP16_naive_rep2.jsonl",
+      "sha256": "9b2b553a9a1c23c9587b90bc98cb087b516de6ed63f19ae3502ec50b5cfc8f59",
+      "bytes": 16391,
+      "rows": 29,
+      "contains_prompt_text": false,
+      "contains_response_text": false
+    },
+    {
+      "path": "results/reference/raw/run_v3_FP16_naive_rep3.jsonl",
+      "name": "run_v3_FP16_naive_rep3.jsonl",
+      "sha256": "4ebb36c4e0b70c0e574d0a352c829636ffb647eac492d6a1b4a209a88fa950d9",
+      "bytes": 16397,
+      "rows": 29,
+      "contains_prompt_text": false,
+      "contains_response_text": false
+    },
+    {
+      "path": "results/reference/raw/run_v3_FP16_compaction_rep1.jsonl",
+      "name": "run_v3_FP16_compaction_rep1.jsonl",
+      "sha256": "25f8f0036b232e47348d555f6598efc4145b17eeb66c49ab3906339c2b2e67ff",
+      "bytes": 18365,
+      "rows": 32,
+      "contains_prompt_text": false,
+      "contains_response_text": false
+    },
+    {
+      "path": "results/reference/raw/run_v3_FP16_compaction_rep2.jsonl",
+      "name": "run_v3_FP16_compaction_rep2.jsonl",
+      "sha256": "62e9f81d757af63a87acee33f6a2903d7cf4a95640ef54536455d3e49cf65ca6",
+      "bytes": 18361,
+      "rows": 32,
+      "contains_prompt_text": false,
+      "contains_response_text": false
+    },
+    {
+      "path": "results/reference/raw/run_v3_FP16_compaction_rep3.jsonl",
+      "name": "run_v3_FP16_compaction_rep3.jsonl",
+      "sha256": "473f6c64c4208c1c34d5e65dc106758e43024fb32dd50f35164e3941f69a53ff",
+      "bytes": 18360,
+      "rows": 32,
+      "contains_prompt_text": false,
+      "contains_response_text": false
+    }
+  ],
+  "validation": {
+    "ok": true,
+    "errors": [],
+    "warnings": [
+      "Los raws declarados no contienen response_text; la calidad almacenada no puede auditarse manualmente desde este conjunto.",
+      "Los raws declarados no contienen prompt_text; los prompts deben reconstruirse desde la configuración de tareas."
+    ],
+    "rows": 366,
+    "runs": 12,
+    "contains_prompt_text": false,
+    "contains_response_text": false,
+    "ordinary_task_sequence": [
+      "T01",
+      "T02",
+      "SONDA_A",
+      "T03",
+      "T04",
+      "T05",
+      "T06",
+      "SONDA_B",
+      "T07",
+      "SONDA_D",
+      "FACT_M1",
+      "SONDA_E",
+      "FACT_M2",
+      "SONDA_F",
+      "T08",
+      "SONDA_G",
+      "FACT_M3",
+      "SONDA_H",
+      "T09",
+      "SONDA_I",
+      "T10",
+      "T11",
+      "SONDA_J",
+      "SONDA_C",
+      "T12",
+      "T13",
+      "T14",
+      "T15",
+      "T16"
+    ]
+  },
+  "derived_files": [
+    "integrity_provenance.csv",
+    "normalized_rows.csv",
+    "per_run_summary.csv",
+    "aggregate_summary.csv",
+    "compaction_accounting.csv",
+    "cycle_accounting.csv",
+    "cumulative_by_task.csv",
+    "cumulative_curve_mean.csv",
+    "paired_task_effects.csv",
+    "compaction_events.csv",
+    "handoff_summary.csv",
+    "token_summary.csv",
+    "quality_programmatic_summary.csv",
+    "figura_delta_energia_acumulada.png",
+    "figura_contabilidad_energia.png",
+    "figura_tokens_por_politica.png",
+    "analysis_summary.md"
+  ]
+}

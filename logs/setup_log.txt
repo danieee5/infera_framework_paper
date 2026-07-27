@@ -1,69 +1,0 @@
-[14:35:11] === PASO 0: Verificaciones previas ===
-[14:35:12] ✓ GPU: NVIDIA GeForce RTX 4090 | VRAM: 24564 MiB
-scripts/setup_runpod.sh: line 63: [[: |: syntax error: operand expected (error token is "|")
-[14:35:12] ✓ CUDA: |
-[14:35:12] ✓ Container disk: 80GB libres
-[14:35:12] === PASO 1: Creando venv en /workspace/venv ===
-[14:36:25] ✓ venv creado
-[14:36:25] ✓ venv activo: /workspace/venv/bin/python3
-[14:36:25] === PASO 2: Instalando dependencias (~15 min) ===
-[14:38:07] ✓ pip/setuptools/wheel actualizados
-[14:38:51] ✓ huggingface-hub==0.24.0
-[14:38:51] Instalando vLLM 0.5.3 (~3 GB de wheels)...
-[15:12:13] ✓ vLLM==0.5.3
-Files removed: 759 (3550.9 MB)
-Directories removed: 5
-[15:12:17] ✓ pip cache limpiado
-[15:12:22] ✓ outlines==0.0.46
-[15:12:22] Aplicando fix de pyairports...
-[15:13:02] ✓ pyairports + outlines.fsm OK
-[15:17:00] ✓ Dependencias del benchmark instaladas
-[15:17:00] === PASO 3: Verificando imports ===
-  vllm — OK
-  outlines.fsm — OK
-  pyairports — OK
-  pynvml+GPU — OK
-  httpx async — OK
-  transformers — OK
-  torch+CUDA — OK
-[15:18:32] ✓ Todos los imports verificados
-[15:18:32] === PASO 4: Descargando modelos ===
-[15:18:32] Descargando FP16 (~16 GB)...
-Fetching 14 files:   0%|                                                   | 0/14 [00:00<?, ?it/s]/workspace/venv/lib/python3.11/site-packages/huggingface_hub/file_download.py:986: UserWarning: `local_dir_use_symlinks` parameter is deprecated and will be ignored. The process to download files to a local folder has been updated and do not rely on symlinks anymore. You only need to pass a destination folder as`local_dir`.
-For more details, check out https://huggingface.co/docs/huggingface_hub/main/en/guides/download#download-files-to-local-folder.
-  warnings.warn(
-Fetching 14 files:   7%|███                                        | 1/14 [00:00<00:07,  1.67it/s]Fetching 14 files:  14%|██████▏                                    | 2/14 [00:01<00:06,  1.83it/s]Fetching 14 files:  21%|█████████▏                                 | 3/14 [00:01<00:05,  1.88it/s]Fetching 14 files:  29%|████████████▎                              | 4/14 [00:02<00:05,  1.90it/s]Fetching 14 files:  36%|███████████████▎                           | 5/14 [00:02<00:04,  1.95it/s]Fetching 14 files:  43%|██████████████████▍                        | 6/14 [00:03<00:04,  1.97it/s]Fetching 14 files:  50%|█████████████████████▌                     | 7/14 [00:09<00:16,  2.43s/it]Fetching 14 files:  57%|████████████████████████▌                  | 8/14 [00:13<00:18,  3.03s/it]Fetching 14 files:  64%|███████████████████████████▋               | 9/14 [00:17<00:16,  3.35s/it]Fetching 14 files:  71%|██████████████████████████████            | 10/14 [00:19<00:11,  2.85s/it]Fetching 14 files:  79%|█████████████████████████████████         | 11/14 [00:20<00:06,  2.13s/it]Fetching 14 files:  86%|████████████████████████████████████      | 12/14 [00:20<00:03,  1.64s/it]Fetching 14 files:  93%|███████████████████████████████████████   | 13/14 [00:21<00:01,  1.45s/it]Fetching 14 files: 100%|██████████████████████████████████████████| 14/14 [00:22<00:00,  1.17s/it]Fetching 14 files: 100%|██████████████████████████████████████████| 14/14 [00:22<00:00,  1.58s/it]
-FP16 OK
-[15:18:59] ✓ FP16 descargado: 15G
-[15:18:59] Descargando AWQ (~5.7 GB)...
-Fetching 12 files:   0%|                                                   | 0/12 [00:00<?, ?it/s]/workspace/venv/lib/python3.11/site-packages/huggingface_hub/file_download.py:986: UserWarning: `local_dir_use_symlinks` parameter is deprecated and will be ignored. The process to download files to a local folder has been updated and do not rely on symlinks anymore. You only need to pass a destination folder as`local_dir`.
-For more details, check out https://huggingface.co/docs/huggingface_hub/main/en/guides/download#download-files-to-local-folder.
-  warnings.warn(
-Fetching 12 files:   8%|███▌                                       | 1/12 [00:00<00:05,  1.86it/s]Fetching 12 files:  17%|███████▏                                   | 2/12 [00:00<00:04,  2.11it/s]Fetching 12 files:  25%|██████████▊                                | 3/12 [00:01<00:04,  1.97it/s]Fetching 12 files:  33%|██████████████▎                            | 4/12 [00:01<00:03,  2.14it/s]Fetching 12 files:  42%|█████████████████▉                         | 5/12 [00:02<00:03,  2.18it/s]Fetching 12 files:  50%|█████████████████████▌                     | 6/12 [00:02<00:02,  2.20it/s]Fetching 12 files:  58%|█████████████████████████                  | 7/12 [00:08<00:10,  2.18s/it]Fetching 12 files:  67%|████████████████████████████▋              | 8/12 [00:10<00:08,  2.12s/it]Fetching 12 files:  75%|████████████████████████████████▎          | 9/12 [00:10<00:04,  1.59s/it]Fetching 12 files:  83%|███████████████████████████████████       | 10/12 [00:11<00:02,  1.23s/it]Fetching 12 files:  92%|██████████████████████████████████████▌   | 11/12 [00:11<00:01,  1.02s/it]Fetching 12 files: 100%|██████████████████████████████████████████| 12/12 [00:12<00:00,  1.20it/s]Fetching 12 files: 100%|██████████████████████████████████████████| 12/12 [00:12<00:00,  1.03s/it]
-AWQ OK
-[15:19:15] ✓ AWQ descargado: 5.4G
-[15:19:15] ✓ Container disk: 21GB usados, 60GB libres
-[15:19:16] === PASO 5: Configurando scripts de lanzamiento ===
-[15:19:16] ✓   start_vllm_fp16.sh actualizado
-[15:19:16] ✓   start_vllm_int8.sh actualizado
-[15:19:16] ✓   start_vllm_awq.sh actualizado
-[15:19:16] === PASO 6: Generando reproducibility.json ===
-awk: 1: unexpected character '\'
-Guardado: /workspace/infera/results/reproducibility.json
-
-════════════════════════════════════════════════════════════
- SETUP COMPLETADO
-════════════════════════════════════════════════════════════
-
- Activar venv en cada terminal:
-   source /workspace/venv/bin/activate
-
- Modelos en:
-   FP16: /models/llama3.1-8b-instruct
-   AWQ:  /models/llama3.1-8b-instruct-awq
-
- Próximos pasos:
-   python scripts/build_prompt_dataset.py --model-dir /models/llama3.1-8b-instruct --verify-only
-   bash scripts/start_vllm_fp16.sh
-   python scripts/benchmark_runner.py --quantization fp16 --pilot
-════════════════════════════════════════════════════════════

@@ -1,172 +1,141 @@
-# LLM Inference Energy Benchmark
+# INFERA
 
-**A reproducible framework for evaluating performance/energy trade-offs in Transformer-based language model inference**
+INFERA es un conjunto reproducible de scripts para medir la energía consumida
+por una GPU durante una conversación incremental con un modelo de lenguaje
+autoalojado.
 
-*Undergraduate Paper — Universidad de Especialidades Espíritu Santo (UEES), Ecuador, 2026*
-*Author: Daniela Mora*
+El experimento compara dos estrategias:
 
----
+- **Historial completo:** cada petición conserva toda la conversación previa.
+- **Compactación periódica:** cuando el prompt supera una regla de longitud,
+  el modelo genera un resumen y continúa desde ese estado reducido.
 
-## Motivation
+Para cada estrategia, INFERA registra energía en joules, potencia, duración,
+tokens de entrada y salida, eventos de compactación y éxito programático de
+las tareas. No es necesario leer el paper para utilizar el repositorio.
 
-Every time a practitioner deploys a large language model, they face a decision that current benchmarks rarely help answer: **which configuration of quantization, batch size, and context length actually minimizes energy consumption per token — on the hardware I have available?**
+Proyecto académico de Daniela Mora, Universidad de Especialidades Espíritu
+Santo, Ecuador, 2026.
 
-Existing benchmarks (MLPerf Power, ML.ENERGY) target datacenter hardware and assume high-concurrency workloads. Tools like MELODI measure energy but without concurrent requests. None of them characterize the behavior on consumer-grade GPUs (RTX 3090/4090) under the workload patterns of real enterprise deployments: chatbots, memory-augmented assistants, and document analysis.
+## Qué puedes hacer
 
-This framework fills that gap. It runs a fully factorial experiment across four configuration variables, measures real energy consumption via NVML hardware counters, and produces results a practitioner can act on: *"for my use case, INT4 AWQ at batch size 4 reduces energy by X% with Y% throughput cost."*
+### Medir tu propia sesión
 
----
+Esta es la ruta principal. Puedes sustituir la base de conocimiento, las
+tareas, los modelos, la cantidad de réplicas y la regla de compactación.
+Necesitas Linux, una GPU NVIDIA dedicada, CUDA, NVML y dos representaciones
+compatibles del modelo que quieras comparar.
 
-## What this framework measures
+El flujo es:
 
-Four independent variables, fully crossed:
+```text
+configuración + base de conocimiento
+              ↓
+       ejecución en GPU
+              ↓
+     archivos JSONL crudos
+              ↓
+      tablas + figuras + informe
+```
 
-| Variable | Levels | Description |
-|----------|--------|-------------|
-| **VI1** Quantization | FP16 · INT8 W8A16 · INT4 AWQ | Numerical precision of model weights |
-| **VI2** Batch size | 1 · 4 · 8 | Concurrent requests per inference call |
-| **VI3** Output length | 64 · 256 · 512 tokens | Maximum generated tokens per request |
-| **VI4** Effective contextual load | ~256 · ~1024 · ~4096 tokens | Total input tokens (system + context + history + question) |
+Empieza con la [guía desde cero](./infera/GUIA_DESDE_CERO.md).
 
-**3 × 3 × 3 × 3 = 81 configurations × 3 repetitions = 243 runs**
+### Auditar el estudio publicado
 
-Dependent variables measured per run:
+El repositorio incluye, como conjunto de referencia, las doce sesiones
+utilizadas en el paper. Esta ruta no vuelve a ejecutar el modelo: verifica las
+huellas de los JSONL y recalcula las cifras, tablas y figuras a partir de esas
+mediciones.
 
-- `energy_j` — Joules consumed (NVML trapezoidal integration)
-- `j_per_token` — Energy efficiency: joules per generated token
-- `throughput_tok_s` — Generated tokens per second
-- `tpot_ms` — Time Per Output Token (ms)
-- `vram_peak_mb` — Peak VRAM usage during inference
-- `status` — `success` | `oom` | `timeout` (OOM is a valid experimental result)
+Empieza con la [guía de auditoría](./docs/REPRODUCCION.md).
 
----
+## Inicio rápido para una medición propia
 
-## Quick start
+Desde la raíz del repositorio:
 
 ```bash
-git clone https://github.com/danieee5/titan_framework_paper.git
-cd llm-inference-energy-benchmark
-
-# 1. Add your own context files (see docs/context_guide.md)
-# The included files are placeholders — replace them with your domain
-
-# 2. Set up the environment (RunPod RTX 4090 or equivalent)
-export HF_TOKEN=hf_...   # HuggingFace token with Meta-LLaMA access
-bash scripts/setup_runpod.sh
-
-# 3. Build the prompt corpus
-python scripts/build_prompt_dataset.py --verify-only
-python scripts/build_prompt_dataset.py
-
-# 4. [Terminal 2] Start vLLM server
-bash scripts/start_vllm_fp16.sh
-
-# 5. [Terminal 1] Run pilot (9 configs, ~15 min)
-python scripts/benchmark_runner.py --quantization fp16 --pilot
-
-# 6. Full benchmark (one command per quantization level)
-python scripts/benchmark_runner.py --quantization fp16
-# swap server → int8_w8a16, then:
-python scripts/benchmark_runner.py --quantization int8_w8a16
-# swap server → int4_awq, then:
-python scripts/benchmark_runner.py --quantization int4_awq
+cd infera
+cp config/experiment.env.example config/experiment.env
+cp config/session_tasks.example.json config/mi_sesion.json
 ```
 
----
+Después:
 
-## Repository structure
+1. Edita `config/mi_sesion.json` con tus tareas y reglas de validación.
+2. Sustituye o adapta la base ficticia de `kb/`.
+3. Edita `config/experiment.env` con tus modelos, etiqueta y parámetros.
+4. Valida la configuración con el tokenizador real.
+5. Ejecuta primero una prueba de humo.
+6. Ejecuta la corrida completa y revisa `results/runs/`.
 
-```
-.
-├── README.md                          ← You are here
-├── requirements.txt                   ← Pinned dependencies
-│
-├── scripts/
-│   ├── benchmark_runner.py            ← Main runner: 81 configs × 3 reps
-│   ├── build_prompt_dataset.py        ← Corpus builder with real tokenization
-│   ├── gpu_power_monitor.py           ← NVML energy + VRAM measurement
-│   ├── generate_reproducibility_info.py ← Environment metadata snapshot
-│   ├── setup_runpod.sh                ← Full RunPod environment setup
-│   ├── start_vllm_fp16.sh             ← vLLM server: FP16
-│   ├── start_vllm_int8.sh             ← vLLM server: INT8 W8A16
-│   └── start_vllm_awq.sh              ← vLLM server: INT4 AWQ
-│
-├── data/
-│   ├── context/
-│   │   ├── company_profile.md         ← [REPLACE] Short company/system description
-│   │   ├── company_policies.md        ← [REPLACE] FAQ / policies document
-│   │   ├── sample_contract.md         ← [REPLACE] Long document for Case C
-│   │   └── internal_faq.md            ← [REPLACE] Additional context
-│   ├── conversations/
-│   │   └── conversation_histories.jsonl ← [REPLACE] Conversation histories for Case B
-│   └── prompts/
-│       └── prompt_corpus.jsonl        ← Generated by build_prompt_dataset.py
-│
-├── results/                           ← Generated during benchmark
-│   ├── reproducibility.json           ← Environment snapshot (auto-generated)
-│   ├── fp16_<timestamp>/
-│   ├── int8_w8a16_<timestamp>/
-│   └── int4_awq_<timestamp>/
-│
-└── docs/
-    ├── context_guide.md               ← How to replace context files
-    ├── runpod_guide.md                ← Step-by-step RunPod execution guide
-    └── methodology.md                 ← Measurement protocol and design decisions
-```
+Los comandos completos y las comprobaciones están en
+[`infera/GUIA_DESDE_CERO.md`](./infera/GUIA_DESDE_CERO.md).
 
----
+## Qué genera una corrida
 
-## Hardware and software requirements
+Cada combinación de representación, estrategia y réplica produce un JSONL.
+Al finalizar, `analyze_results.py` genera:
 
-**Minimum hardware:** NVIDIA GPU with ≥ 24 GB VRAM (RTX 4090 or equivalent)
-**Required:** Dedicated GPU instance — NVML measures total GPU power; shared instances contaminate measurements
+- tablas normalizadas por sesión y tarea;
+- totales de energía por condición;
+- contabilidad del costo de los resúmenes;
+- diferencia acumulada entre estrategias;
+- tokens de entrada y salida;
+- puntaje programático;
+- tres figuras PNG;
+- un informe legible y un manifiesto de procedencia.
 
-**Tested configuration:**
-- GPU: NVIDIA RTX 4090 (24 GB VRAM) — RunPod dedicated instance
-- CUDA: 12.1
-- Driver: 535.x
-- Python: 3.10
+Consulta [la guía de salidas](./docs/SALIDAS.md) para identificar cada archivo.
 
-See `requirements.txt` for pinned software versions.
+## Alcance configurable
 
----
+Sin modificar el código puedes cambiar:
 
-## Replacing the context files
+- rutas o identificadores de los modelos FP16 y AWQ;
+- base de conocimiento;
+- secuencia y cantidad de tareas;
+- reglas programáticas de verificación;
+- cantidad de réplicas;
+- presupuesto de contexto;
+- longitud máxima de salida;
+- regla de activación de la compactación.
 
-This framework ships with placeholder context files representing a fictional Ecuadorian tech company (TechSolutions Ecuador). **These files must be replaced** with your own domain content before running.
+El código compara historial completo contra compactación periódica activada
+por longitud. RAG, memoria externa, otro compresor o una política distinta
+requieren adaptar y volver a validar el runner.
 
-See `docs/context_guide.md` for token budget constraints and replacement instructions.
+## Organización
 
-**Short version:**
-- `company_profile.md` + `company_policies.md` → together ~400 tokens (Case A/B context)
-- `sample_contract.md` + `internal_faq.md` → together ~3800–4000 tokens (Case C document)
-- `conversation_histories.jsonl` → 30+ JSON objects with `turns`, `new_question`, `scenario_tag`
+- [`infera/`](./infera/): código, configuración, base ficticia, ejecución,
+  análisis y resultados de referencia.
+- [`docs/`](./docs/): instalación, configuración, reproducción, salidas,
+  limitaciones y mapa para el anexo.
+- [`requirements-gpu.txt`](./requirements-gpu.txt): entorno para ejecutar la
+  medición con GPU.
+- [`requirements.txt`](./requirements.txt): entorno mínimo para analizar el
+  conjunto de referencia sin GPU.
 
-The prompt builder validates token counts automatically. Prompts outside ±15% of target are flagged but not discarded — they are recorded with their real measured token count.
+## Resultado de referencia
 
----
+El estudio incluido comparó Llama 3.1 8B Instruct bajo FP16 y AWQ en una RTX
+4090. Se ejecutaron tres réplicas de historial completo y compactación para
+cada representación, con 29 tareas por sesión.
 
-## Language note
+En esa configuración, la política de tres compactaciones no recuperó la
+energía empleada para producir los resúmenes dentro del horizonte observado.
+La conclusión no implica que compactar siempre sea ineficiente ni identifica
+un umbral universal.
 
-The included context files are in Spanish. The measurement methodology is language-agnostic: energy consumption depends on token count, not language semantics. However, the LLaMA 3.1 tokenizer is less token-efficient for Spanish than English (~15–20% more tokens for equivalent content), which affects VI4 absolute levels. If you replace context files with English content, re-validate token counts with `build_prompt_dataset.py --verify-only`.
+## Documentación
 
----
+- [Instalación](./docs/INSTALACION.md)
+- [Guía desde cero](./infera/GUIA_DESDE_CERO.md)
+- [Configuración](./docs/CONFIGURACION.md)
+- [Auditar el conjunto de referencia](./docs/REPRODUCCION.md)
+- [Archivos de salida](./docs/SALIDAS.md)
+- [Limitaciones](./docs/LIMITACIONES.md)
+- [Mapa para el anexo](./docs/ANEXO_REPOSITORIO.md)
 
-## Citing this work
-
-```bibtex
-@mastersthesis{mora2026llminference,
-  author  = {Mora Guevara, [Nombre]},
-  title   = {A Reproducible Framework for Evaluating Performance/Energy 
-             Trade-offs in Transformer-based Language Model Inference},
-  school  = {Universidad de Especialidades Espíritu Santo},
-  year    = {2026},
-  address = {Samborondón, Ecuador}
-}
-```
-
----
-
-## License
-
-MIT License. Context files in `data/context/` are fictional and provided as structural placeholders only.
+El repositorio todavía no declara una licencia de reutilización ni una forma
+de citación definitiva. Esos archivos deben añadirse después de confirmar las
+condiciones institucionales y los metadatos finales.
