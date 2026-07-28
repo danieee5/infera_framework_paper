@@ -4,55 +4,43 @@
 
 El runner escribe un objeto JSON por línea. Los campos principales son:
 
-- `run_id`: representación, estrategia y réplica.
+- `run_id`: representación, política y repetición.
 - `task_id`, `task_index`, `task_type`: evento y posición.
 - `accumulated_prompt_tokens`: tokens de entrada informados por vLLM.
 - `completion_tokens`: tokens de salida.
 - `energy_j`: energía integrada en la ventana NVML.
 - `cumulative_energy_j`: energía acumulada de la sesión.
-- `is_compaction`: distingue tarea ordinaria y resumen.
+- `is_compaction`: distingue tarea ordinaria y llamada de resumen.
 - `quality`: puntaje programático.
 - `status`, `error`: resultado de la petición.
-- `nvml_available`, `nvml_samples`: controles de instrumentación.
-- `prompt_text`, `response_text`: textos preservados por el runner actual.
+- `nvml_available`, `nvml_samples`, `nvml_trace`: controles y muestras de
+  instrumentación.
+- `prompt_text`, `response_text`, `finish_reason`: textos completos y cierre
+  de la generación.
 
-Los doce JSONL del conjunto de referencia se produjeron antes de incorporar
-los dos últimos campos.
+Los 18 JSONL vigentes conservan respuestas, tokens, tiempos y la traza NVML
+de cada llamada.
 
-## Análisis de una corrida
+## Análisis del experimento principal
 
-`analyze_results.py` produce:
+`analiza_tres_brazos.py` produce dentro de `analisis/`:
 
-- `integrity_provenance.csv`;
-- `normalized_rows.csv`;
-- `per_run_summary.csv`;
-- `aggregate_summary.csv`;
-- `compaction_accounting.csv`;
-- `cycle_accounting.csv`;
-- `cumulative_by_task.csv`;
-- `cumulative_curve_mean.csv`;
-- `paired_task_effects.csv`;
-- `compaction_events.csv`;
-- `handoff_summary.csv`;
-- `token_summary.csv`;
-- `quality_programmatic_summary.csv`;
-- `figura_delta_energia_acumulada.png`;
-- `figura_contabilidad_energia.png`;
-- `figura_tokens_por_politica.png`;
-- `analysis_summary.md`;
-- `manifest.json`.
+- `agregado.csv`: seis condiciones y sus totales medios;
+- `por_sesion.csv`: las 18 sesiones;
+- `efecto_por_tarea.csv`: energía, tokens y score por tarea;
+- `ocupacion_post_intervencion.csv`: estado después de resumen o descarte;
+- `informe.md`: síntesis legible;
+- `manifiesto_analisis.json`: procedencia, hashes y controles.
 
-`manifest.json` registra archivos leídos, huellas, alcance declarado, errores
-y advertencias.
+Para los resultados vigentes, revisa:
 
-## Qué archivo revisar
+- totales y energía sobre baseline: `agregado.csv`;
+- estabilidad instrumental: `por_sesion.csv`;
+- diferencias a lo largo de la trayectoria: `efecto_por_tarea.csv`;
+- cuándo y cómo intervino cada política:
+  `ocupacion_post_intervencion.csv`;
+- procedencia: `manifiesto_analisis.json`.
 
-- Totales por condición: `aggregate_summary.csv`.
-- Costo de los resúmenes: `compaction_accounting.csv`.
-- Punto de equilibrio: `cumulative_by_task.csv` y `cycle_accounting.csv`.
-- Tokens: `token_summary.csv`.
-- Procedencia: `manifest.json` e `integrity_provenance.csv`.
-- Explicación breve: `analysis_summary.md`.
-
-Las nuevas corridas se guardan en `infera/results/runs/`. El conjunto publicado
-está separado en `infera/results/reference/`.
+Las corridas nuevas se guardan en `infera/results/runs/`. La evidencia
+publicada se encuentra únicamente en
+`experimentos/experimento_principal/evidencia/`.

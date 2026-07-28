@@ -39,11 +39,21 @@ infera/.runtime/
 infera/results/runs/*
 !infera/results/runs/.gitkeep
 
+# Evidencia anterior, separada del experimento principal vigente
+infera/results/reference/
+tres_brazos_*/
+tres_brazos_*.tar.gz*
+
+# Los logs originales sí son evidencia declarada del experimento principal.
+!experimentos/experimento_principal/evidencia/logs/
+!experimentos/experimento_principal/evidencia/logs/*.log
+
 # Archivos temporales de Microsoft Word
 ~$*
 
 # Manuscritos académicos locales; el repositorio público contiene el código.
-resultados_infera_*.docx
+*.docx
+*.docm
 
 .infera-private/
 findings.md

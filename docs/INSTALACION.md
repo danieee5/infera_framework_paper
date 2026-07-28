@@ -36,26 +36,29 @@ para servir un checkpoint compatible ya construido.
 nvidia-smi
 python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 python -c "import pynvml; pynvml.nvmlInit(); print('NVML OK')"
-python config/validate_configuration.py
+python -m unittest tests.test_tres_brazos
 ```
 
-El runner cancela si NVML no puede inicializarse. No publiques como válida una
-corrida con energía igual a cero.
+El preflight final se ejecuta dentro del launcher y cancela antes de inferir
+si la configuración, el presupuesto o la telemetría no cumplen. No publiques
+como válida una corrida con energía igual a cero.
 
-## Analizar el conjunto de referencia sin GPU
+## Auditar el experimento principal sin GPU
 
 Si solo quieres comprobar las cifras y figuras publicadas:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-cd infera
-python analyze_results.py
+python3 infera/audita_paquete_tres_brazos.py \
+  --campaign experimentos/experimento_principal/evidencia \
+  --archive experimentos/experimento_principal/paquete_preservado/experimento_principal_evidencia.tar.gz.bin \
+  --checksum experimentos/experimento_principal/paquete_preservado/experimento_principal_evidencia.tar.gz.sha256 \
+  --reanalysis /tmp/infera_reanalysis
 ```
 
-Esta instalación no descarga modelos ni necesita CUDA.
+La auditoría no descarga modelos ni necesita CUDA. Instala
+`requirements.txt` únicamente si también regenerarás las figuras.
 
 ## Credenciales
 

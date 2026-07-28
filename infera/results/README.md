@@ -5,8 +5,8 @@ genere cada usuario.
 
 ## `runs/`
 
-Es el destino de las corridas nuevas. `overnight.sh` crea una subcarpeta
-fechada y guarda allí:
+Es el destino de las corridas nuevas.
+`run_campana_tres_brazos.sh` crea una subcarpeta fechada y guarda allí:
 
 - un JSONL por representación, estrategia y réplica;
 - registros del servidor y del launcher;
@@ -15,19 +15,20 @@ fechada y guarda allí:
 Git ignora el contenido de `runs/`, excepto `.gitkeep`, para evitar publicar
 accidentalmente mediciones, respuestas o bases propias.
 
-## `reference/`
+La campaña de tres brazos crea una carpeta `tres_brazos_<UTC>` con `raw/`,
+`logs/`, `preflight.json`, `manifiesto_campana.json` y `analisis/`. Debe
+descargarse completa: las trazas NVML primarias están en cada JSONL y en los
+manifiestos de sesión, y los logs de vLLM son parte del diagnóstico. No copies
+una corrida nueva dentro de `reference/`.
 
-Es un ejemplo completo y auditable construido con las mediciones del paper.
-No es el destino de una corrida nueva.
+## Evidencia publicada
 
-- `reference/raw/`: doce JSONL y sus huellas SHA-256.
-- `reference/expected/`: resultados que `analyze_results.py` debe regenerar.
+Los resultados del paper no se copian en `runs/`. La única ruta pública
+vigente es:
 
-Una persona puede usarlo para comprobar el analizador sin disponer de GPU:
-
-```bash
-python analyze_results.py
+```text
+../../experimentos/experimento_principal/evidencia/
 ```
 
-Los nombres `v3` conservados dentro de los archivos son identificadores de la
-corrida original; no representan una versión que el usuario deba conocer.
+El conjunto anterior bajo `results/reference/` fue archivado para impedir que
+sus 12 sesiones se mezclen con las 18 sesiones finales.

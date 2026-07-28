@@ -9,6 +9,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 INFERA_RUNTIME="${INFERA_RUNTIME:-${SCRIPT_DIR}/.runtime}"
 
+if [[ -z "${PYTHON_BIN:-}" ]]; then
+  if command -v python3.10 >/dev/null 2>&1; then
+    PYTHON_BIN="python3.10"
+  else
+    PYTHON_BIN="python3"
+  fi
+fi
+
+"$PYTHON_BIN" -c 'import sys; raise SystemExit(0 if sys.version_info[:2] == (3, 10) else 1)' || {
+  echo "Se exige Python 3.10 para el stack vLLM 0.5.3" >&2
+  exit 2
+}
+
 # ---------------------------------------------------------------------------
 # 0. Caché y entorno. Para un volumen persistente, define INFERA_RUNTIME antes
 #    de ejecutar este script.
@@ -22,18 +35,20 @@ mkdir -p "$HF_HOME"
 # ---------------------------------------------------------------------------
 VENV="${INFERA_VENV:-${INFERA_RUNTIME}/venv}"
 if [ ! -d "$VENV" ]; then
-  python3 -m venv "$VENV"
+  "$PYTHON_BIN" -m venv "$VENV"
 fi
 # shellcheck disable=SC1091
 source "$VENV/bin/activate"
-python -m pip install --upgrade pip
+python -m pip install --no-cache-dir --upgrade pip
 
 # ---------------------------------------------------------------------------
 # 2. Dependencias fijadas para el entorno de referencia.
 #    torch debe instalarse con el indice cu121 ANTES que vLLM.
 # ---------------------------------------------------------------------------
-python -m pip install torch==2.3.1 --index-url https://download.pytorch.org/whl/cu121
-python -m pip install -r "${REPO_ROOT}/requirements-gpu.txt"
+python -m pip install --no-cache-dir \
+  torch==2.3.1 \
+  --index-url https://download.pytorch.org/whl/cu121
+python -m pip install --no-cache-dir -r "${REPO_ROOT}/requirements-gpu.txt"
 
 # NOTA: NO instalamos el paquete `autoawq`. Solo se necesita para CUANTIZAR
 # modelos uno mismo; para SERVIR un modelo AWQ ya cuantizado, vLLM trae soporte
@@ -48,7 +63,7 @@ python -m pip install -r "${REPO_ROOT}/requirements-gpu.txt"
 # (solo dist-info, sin .py). vLLM no usa gramaticas de aeropuertos -> stub vacio.
 # ---------------------------------------------------------------------------
 echo "Aplicando fix de pyairports..."
-python -m pip install "pyairports==0.0.1" -q 2>/dev/null || true
+python -m pip install --no-cache-dir "pyairports==0.0.1" -q 2>/dev/null || true
 SITE=$(python3 -c "import site; print(site.getsitepackages()[0])")
 mkdir -p "$SITE/pyairports"
 
@@ -80,13 +95,21 @@ echo
 echo "[OK] Entorno listo en $VENV"
 echo "[OK] HF cache en $HF_HOME"
 python - <<'PY'
-import torch, vllm
-print("torch:", torch.__version__, "| CUDA:", torch.version.cuda, "| GPU:", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "N/A")
-print("vllm :", vllm.__version__)
+import pynvml
+import torch
+import vllm
+
+assert torch.cuda.is_available(), "PyTorch no ve CUDA"
+assert torch.cuda.device_count() == 1, "se exige exactamente una GPU CUDA"
+pynvml.nvmlInit()
 try:
-    import pynvml; pynvml.nvmlInit(); print("NVML : OK")
-except Exception as e:
-    print("NVML : FALLO ->", e)
+    handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+    pynvml.nvmlDeviceGetPowerUsage(handle)
+finally:
+    pynvml.nvmlShutdown()
+print("torch:", torch.__version__, "| CUDA:", torch.version.cuda, "| GPU:", torch.cuda.get_device_name(0))
+print("vllm :", vllm.__version__)
+print("NVML : OK")
 PY
 
 cat <<'NOTE'
@@ -110,7 +133,8 @@ python -m vllm.entrypoints.openai.api_server \
   --quantization bitsandbytes --load-format bitsandbytes \
   --max-model-len 8192 --port 8000
 
-Configura las rutas reales en config/experiment.env antes de ejecutar
-overnight.sh. Los valores /models/... de arriba son solo ejemplos.
+Configura las rutas reales en config/experiment.env. Para la campaña final de
+tres brazos ejecuta run_campana_tres_brazos.sh; los valores /models/... son
+solo ejemplos.
 ------------------------------------------------------------------
 NOTE
