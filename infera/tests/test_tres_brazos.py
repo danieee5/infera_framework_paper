@@ -4,6 +4,7 @@ import json
 import re
 import subprocess
 import sys
+import tarfile
 import tempfile
 import unittest
 from contextlib import redirect_stdout
@@ -17,6 +18,7 @@ INFERA_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(INFERA_ROOT))
 
 import analiza_tres_brazos as analyzer  # noqa: E402
+import audita_paquete_tres_brazos as package_auditor  # noqa: E402
 import escribe_manifiesto_campana as campaign_manifest  # noqa: E402
 import infera_session_runner as runner  # noqa: E402
 from escribe_manifiesto_campana import flattened_schedule  # noqa: E402
@@ -1034,6 +1036,30 @@ class CampaignManifestTests(unittest.TestCase):
             document = json.loads(manifest.read_text(encoding="utf-8"))
             self.assertEqual(document["status"], "preflight_failed")
             self.assertFalse(document["preflight_exists"])
+
+
+class PackageAuditTests(unittest.TestCase):
+    def test_archive_root_can_differ_from_public_campaign_name(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            campaign = root / "evidencia"
+            raw = campaign / "raw"
+            raw.mkdir(parents=True)
+            (raw / "run.jsonl").write_text('{"ok": true}\n', encoding="utf-8")
+            archive_path = root / "paquete.tar.gz"
+            with tarfile.open(archive_path, "w:gz") as archive:
+                archive.add(campaign, arcname="tres_brazos_20260727T204018Z")
+
+            report = package_auditor.verify_archive_contents(
+                archive_path,
+                campaign,
+            )
+
+            self.assertTrue(report["matches_campaign_directory"])
+            self.assertEqual(
+                report["archive_root"],
+                "tres_brazos_20260727T204018Z",
+            )
 
 
 if __name__ == "__main__":

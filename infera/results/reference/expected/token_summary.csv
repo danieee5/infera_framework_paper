@@ -1,5 +1,0 @@
-quant,arm,n_reps,ordinary_prompt_tokens_mean,ordinary_completion_tokens_mean,handoff_prompt_tokens_mean,handoff_completion_tokens_mean,all_prompt_tokens_mean,all_completion_tokens_mean
-AWQ,compaction,3,115279.0,1964.0,14118.0,1316.0,129397.0,3280.0
-AWQ,naive,3,144578.0,1588.0,0.0,0.0,144578.0,1588.0
-FP16,compaction,3,113748.0,1971.0,14068.0,1209.0,127816.0,3180.0
-FP16,naive,3,146109.0,1669.0,0.0,0.0,146109.0,1669.0

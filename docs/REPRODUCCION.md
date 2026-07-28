@@ -1,78 +1,120 @@
-# Auditar los resultados publicados
+# Auditar el experimento publicado
 
-Esta ruta está destinada a revisores que quieren comprobar los cálculos del
-paper sin alquilar una GPU.
+Esta ruta está destinada a quien desea comprobar datos y cálculos del paper
+sin alquilar una GPU. No reconstruye ni simula las mediciones físicas: parte
+de las trazas NVML persistidas en los JSONL.
 
-Los JSONL ya contienen las mediciones físicas. El análisis no los reconstruye
-ni simula: vuelve a calcular tablas, totales y figuras desde esos datos.
+## 1. Requisitos
 
-## 1. Instalar el analizador
+La auditoría y la reanálisis utilizan Python 3.10 o superior y la biblioteca
+estándar. Desde la raíz del repositorio:
 
-Desde la raíz:
+```bash
+python3 --version
+```
+
+Matplotlib solo es necesario para regenerar las figuras.
+
+## 2. Identificar las 18 sesiones
+
+Los crudos están en:
+
+```text
+experimentos/experimento_principal/evidencia/raw/
+```
+
+Debe haber seis condiciones y tres repeticiones instrumentales:
+
+```text
+AWQ  × completo, resumen, descarte × rep1, rep2, rep3
+FP16 × completo, resumen, descarte × rep1, rep2, rep3
+```
+
+Cada JSONL tiene un manifiesto de sesión asociado. No mezcles archivos de otra
+corrida en esta carpeta.
+
+## 3. Ejecutar la auditoría completa
+
+Utiliza una ruta de reanálisis que todavía no exista:
+
+```bash
+python3 infera/audita_paquete_tres_brazos.py \
+  --campaign experimentos/experimento_principal/evidencia \
+  --archive experimentos/experimento_principal/paquete_preservado/experimento_principal_evidencia.tar.gz.bin \
+  --checksum experimentos/experimento_principal/paquete_preservado/experimento_principal_evidencia.tar.gz.sha256 \
+  --reanalysis /tmp/infera_reanalysis
+```
+
+La salida aceptada debe incluir:
+
+```json
+{
+  "ok": true,
+  "status": "complete",
+  "exit_code": 0,
+  "artifacts_checked": {
+    "raws": 18,
+    "session_manifests": 18,
+    "analysis": 6,
+    "logs": 11
+  },
+  "tasks": 29,
+  "sessions": 18,
+  "partials": 0,
+  "reanalysis_matches_download": true
+}
+```
+
+## 4. Qué comprueba
+
+El auditor:
+
+- verifica el SHA-256 y tamaño de cada artefacto declarado;
+- exige finalización exitosa, 18 sesiones y cero archivos parciales;
+- comprueba el escenario de 29 tareas y la base sintética;
+- valida los manifiestos y las trazas NVML;
+- confirma que el paquete preservado coincide archivo por archivo con
+  `evidencia/`;
+- reubica copias temporales de preflight, manifiesto y raws;
+- reintegra cada traza por la regla trapezoidal;
+- vuelve a producir los cinco resultados sustantivos y exige igualdad byte a
+  byte con la descarga.
+
+La carpeta pública se llama `evidencia`, mientras el tar conserva su
+identificador original con marca temporal. El nombre externo no interviene en
+la identidad de los 56 archivos relativos.
+
+## 5. Qué no comprueba
+
+La auditoría no demuestra:
+
+- que los joules sean universales para otras GPU o versiones;
+- que tres pasadas sean réplicas independientes de calidad;
+- que el disparador de 4.500 tokens o `K=4` sean óptimos;
+- que el puntaje programático equivalga a evaluación humana;
+- que una política sea superior fuera de las 29 tareas observadas.
+
+## 6. Regenerar figuras
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
-cd infera
+python3 infera/figuras_tres_brazos.py \
+  --campaign experimentos/experimento_principal/evidencia \
+  --output /tmp/infera_figuras
 ```
 
-## 2. Verificar las mediciones
+El comando crea cuatro PNG, cuatro PDF y
+`manifiesto_figuras.json`. Este manifiesto registra hashes de fuentes y
+derivados. La salida falla si el directorio ya existe para evitar
+sobrescrituras silenciosas.
 
-```bash
-cd results/reference/raw
-shasum -a 256 -c SHA256SUMS
-cd ../../..
-```
+## 7. Repetir la medición física
 
-Los doce archivos deben indicar `OK`.
+Volver a medir requiere GPU y constituye una corrida nueva. Consulta
+[Instalación](./INSTALACION.md), [Configuración](./CONFIGURACION.md) y la
+[guía del runner](../infera/README.md).
 
-## 3. Regenerar
-
-```bash
-python analyze_results.py
-```
-
-La consola debe informar:
-
-```json
-{
-  "ok": true,
-  "rows": 366,
-  "runs": 12,
-  "out": "results/reference/expected"
-}
-```
-
-El programa genera integridad, filas normalizadas, resúmenes por corrida y
-condición, contabilidad de resúmenes, ciclos, diferencia acumulada, tokens,
-puntaje programático, tres figuras, un informe y un manifiesto.
-
-## Resultados principales esperados
-
-- AWQ con historial completo: 11.583,78 J.
-- AWQ con compactación: 15.051,62 J.
-- Diferencia AWQ: +3.467,84 J.
-- FP16 con historial completo: 15.671,55 J.
-- FP16 con compactación: 22.762,85 J.
-- Diferencia FP16: +7.091,30 J.
-
-## Auditoría aislada
-
-Para no reemplazar la copia esperada:
-
-```bash
-python analyze_results.py \
-  --source results/reference/raw \
-  --out /tmp/infera_reference_audit
-```
-
-Después puedes comparar esa carpeta con `results/reference/expected/`.
-
-## Repetir el experimento físico
-
-Repetir el modelo en GPU es otra tarea. Consulta
-[`../infera/GUIA_DESDE_CERO.md`](../infera/GUIA_DESDE_CERO.md).
-
-No se espera igualdad exacta de joules si cambian GPU, controladores,
-temperatura, versión de vLLM, checkpoints o procesos concurrentes.
+No se espera igualdad exacta de joules si cambian GPU, controlador,
+temperatura, checkpoints, vLLM o procesos concurrentes.

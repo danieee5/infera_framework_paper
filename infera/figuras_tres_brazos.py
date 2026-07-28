@@ -10,6 +10,7 @@ import json
 import os
 import shutil
 import statistics as st
+import sys
 import uuid
 from collections import defaultdict
 from pathlib import Path
@@ -31,6 +32,7 @@ COLORS = {
     "completo": "#457B9D",
     "mechanism": "#F4A261",
 }
+REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
 def sha256_file(path: Path) -> str:
@@ -349,7 +351,18 @@ def figure_programmatic_score(
     plt.close(fig)
 
 
-def write_manifest(directory: Path, campaign: Path) -> None:
+def public_source_path(campaign: Path) -> str:
+    try:
+        return campaign.relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        return str(campaign)
+
+
+def write_manifest(
+    directory: Path,
+    campaign: Path,
+    software: dict[str, str],
+) -> None:
     artifacts = []
     for path in sorted(directory.iterdir()):
         if path.name == "manifiesto_figuras.json":
@@ -363,7 +376,12 @@ def write_manifest(directory: Path, campaign: Path) -> None:
         )
     value = {
         "schema_version": 1,
-        "campaign": str(campaign),
+        "campaign": public_source_path(campaign),
+        "generator": {
+            "path": "infera/figuras_tres_brazos.py",
+            "sha256": sha256_file(Path(__file__)),
+            **software,
+        },
         "source_analysis_manifest_sha256": sha256_file(
             campaign / "analisis/manifiesto_analisis.json"
         ),
@@ -413,7 +431,14 @@ def generate(campaign: Path, output: Path) -> None:
         figure_cumulative(plt, sessions, temporary)
         figure_occupancy(plt, sessions, temporary)
         figure_programmatic_score(plt, sessions, temporary)
-        write_manifest(temporary, campaign)
+        write_manifest(
+            temporary,
+            campaign,
+            {
+                "python": sys.version.split()[0],
+                "matplotlib": matplotlib.__version__,
+            },
+        )
         os.rename(temporary, output)
     except BaseException:
         shutil.rmtree(temporary, ignore_errors=True)

@@ -1,5 +1,0 @@
-quant,arm,n_reps,total_energy_mean_j,total_energy_sd_j,ordinary_energy_mean_j,compaction_tax_mean_j,stored_quality_mean
-AWQ,compaction,3,15051.6183,2.7652,11089.7709,3961.8474,0.9626
-AWQ,naive,3,11583.7803,30.5253,11583.7803,0.0,0.9799
-FP16,compaction,3,22762.8516,23.9748,15818.2489,6944.6026,0.9612
-FP16,naive,3,15671.5534,12.1695,15671.5534,0.0,0.9612

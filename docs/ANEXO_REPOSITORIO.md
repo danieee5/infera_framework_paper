@@ -4,68 +4,81 @@
 
 El repositorio permite:
 
-1. configurar y ejecutar una medición propia en una GPU NVIDIA;
-2. transformar los JSONL obtenidos en tablas, figuras e informe;
-3. auditar, sin GPU, las mediciones utilizadas en el paper.
+1. auditar los 18 registros utilizados en el paper sin GPU;
+2. regenerar tablas y figuras a partir de esos registros;
+3. repetir el procedimiento físico como una corrida nueva.
 
-## Flujo de una medición
+## Flujo
 
 ```text
-configuración de tareas + base de conocimiento
-                    ↓
-       infera_session_runner.py
-                    ↓
-          JSONL por cada sesión
-                    ↓
-          analyze_results.py
-                    ↓
-       tablas + figuras + manifiesto
+escenario + base sintética + configuración congelada
+                         ↓
+             infera_session_runner.py
+                         ↓
+       18 JSONL + 18 manifiestos + logs
+                         ↓
+              analiza_tres_brazos.py
+                         ↓
+       tablas + informe + manifiesto de análisis
+                         ↓
+              figuras_tres_brazos.py
+                         ↓
+           PNG + PDF + manifiesto de figuras
 ```
 
-La medición física ocurre en el runner. El analizador trabaja sobre los JSONL;
-no inventa ni simula energía.
+La medición física ocurre en el runner. Analizador y generador de figuras
+trabajan sobre registros persistidos; no inventan ni simulan energía.
 
 ## Componentes públicos
 
-- `infera/config/`: plantillas, validación y configuración de referencia.
-- `infera/kb/`: base ficticia de ejemplo.
-- `infera/*.py`: medición, compactación, calidad y análisis.
-- `infera/results/runs/`: destino local de nuevas corridas.
-- `infera/results/reference/raw/`: mediciones publicadas.
-- `infera/results/reference/expected/`: productos que deben regenerarse.
-- `docs/`: instalación, configuración, salidas y límites.
+- `experimentos/experimento_principal/evidencia/`: registros originales y
+  resultados derivados.
+- `experimentos/experimento_principal/paquete_preservado/`: contenedor exacto
+  y checksum externo.
+- `experimentos/experimento_principal/figuras/`: derivados visuales
+  regenerables.
+- `infera/`: instrumentación, políticas, análisis, auditor y pruebas.
+- `infera/config/reference/`: escenario y configuración de referencia.
+- `infera/kb/`: base sintética utilizada.
+- `docs/`: instalación, reproducción, configuración, salidas y límites.
 
-## Conjunto de referencia
-
-Incluye doce sesiones:
+## Diseño publicado
 
 ```text
-2 representaciones × 2 estrategias × 3 réplicas
+3 políticas × 2 representaciones × 3 repeticiones instrumentales
+= 18 sesiones de 29 tareas
 ```
 
-Los brazos comparten 29 tareas. Las sesiones compactadas incluyen tres
-llamadas adicionales de resumen.
+Los nombres `completo`, `resumen` y `descarte` aparecen en cada JSONL. `rep1`,
+`rep2` y `rep3` describen pasadas instrumentales, no casos de calidad
+independientes.
 
 ## Comando de auditoría
 
+Desde la raíz:
+
 ```bash
-cd infera
-shasum -a 256 -c results/reference/raw/SHA256SUMS
-python analyze_results.py
+python3 infera/audita_paquete_tres_brazos.py \
+  --campaign experimentos/experimento_principal/evidencia \
+  --archive experimentos/experimento_principal/paquete_preservado/experimento_principal_evidencia.tar.gz.bin \
+  --checksum experimentos/experimento_principal/paquete_preservado/experimento_principal_evidencia.tar.gz.sha256 \
+  --reanalysis /tmp/infera_reanalysis
 ```
 
-El resultado esperado es 12 sesiones, 366 filas y validación correcta.
+El resultado esperado declara 18 sesiones, 29 tareas, cero parciales,
+integridad válida y reanálisis idéntica.
 
 ## Controles de una corrida nueva
 
-- archivo de configuración explícito;
-- validación de tareas y presupuesto;
-- salida protegida contra sobrescritura;
-- cancelación si NVML no está disponible;
-- respuestas conservadas en las nuevas mediciones;
-- huellas y manifiesto;
-- análisis automático de tablas y figuras;
-- documentación de parámetros y límites.
+- configuración explícita y salida protegida contra sobrescritura;
+- tareas, base, tokenizadores, software y hashes congelados;
+- presupuesto real contado con plantilla de chat;
+- NVML obligatorio y energía positiva;
+- proceso GPU exclusivo y telemetría completa;
+- respuestas, razones de cierre, tiempos, tokens y trazas persistidos;
+- orden contrabalanceado;
+- manifiestos por sesión y por experimento;
+- publicación solo con 18 sesiones completas.
 
 La numeración y el nombre del anexo deben corresponder con la versión final del
 manuscrito.

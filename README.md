@@ -1,164 +1,117 @@
 # INFERA
 
-INFERA es un conjunto reproducible de scripts para medir la energía consumida
-por una GPU durante una conversación incremental con un modelo de lenguaje
-autoalojado.
+INFERA es un procedimiento reproducible para caracterizar la energía de una
+GPU durante conversaciones incrementales con un modelo de lenguaje
+autoalojado. Registra potencia, duración, tokens, respuestas, intervenciones
+sobre el historial y cumplimiento programático de las tareas.
 
-El conjunto de referencia histórico compara dos estrategias:
+El repositorio permite dos recorridos:
 
-- **Historial completo:** cada petición conserva toda la conversación previa.
-- **Compactación periódica:** cuando el prompt supera una regla de longitud,
-  el modelo genera un resumen y continúa desde ese estado reducido.
-
-Para cada estrategia, INFERA registra energía en joules, potencia, duración,
-tokens de entrada y salida, eventos de compactación y éxito programático de
-las tareas. No es necesario leer el paper para utilizar el repositorio.
-
-La rama experimental `extra` incorpora además un brazo de descarte local que
-retiene los cuatro pares completos más recientes. Su campaña verificada de
-18 sesiones está en
-[`tres_brazos_20260727T204018Z/`](./tres_brazos_20260727T204018Z/).
+1. auditar sin GPU el experimento publicado;
+2. repetir o adaptar la medición física en una GPU NVIDIA.
 
 Proyecto académico de Daniela Mora, Universidad de Especialidades Espíritu
 Santo, Ecuador, 2026.
 
-## Qué puedes hacer
+## Experimento principal
 
-### Medir tu propia sesión
+El estudio empleó un diseño factorial completo `3 × 2`:
 
-Esta es la ruta principal. Puedes sustituir la base de conocimiento, las
-tareas, los modelos, la cantidad de réplicas y la regla de compactación.
-Necesitas Linux, una GPU NVIDIA dedicada, CUDA, NVML y dos representaciones
-compatibles del modelo que quieras comparar.
+- política de historial: `completo`, `resumen` y `descarte`;
+- representación numérica: `AWQ` y `FP16`;
+- tres repeticiones instrumentales por condición.
 
-El flujo es:
+Cada sesión recorrió las mismas 29 tareas. Las tres pasadas comprobaron
+estabilidad local del instrumento sobre una trayectoria fija; no son réplicas
+independientes de calidad.
+
+La evidencia está en
+[`experimentos/experimento_principal/`](./experimentos/experimento_principal/).
+Los nombres de los crudos siguen esta forma:
 
 ```text
-configuración + base de conocimiento
-              ↓
-       ejecución en GPU
-              ↓
-     archivos JSONL crudos
-              ↓
-      tablas + figuras + informe
+run_<representación>_<política>_rep<número>.jsonl
 ```
 
-Empieza con la [guía desde cero](./infera/GUIA_DESDE_CERO.md).
+Por ejemplo, `run_AWQ_resumen_rep2.jsonl` es la segunda repetición
+instrumental de la condición AWQ con resumen.
 
-### Auditar el estudio publicado
+## Auditar los resultados sin GPU
 
-El repositorio incluye, como conjunto de referencia, las doce sesiones
-utilizadas en el paper. Esta ruta no vuelve a ejecutar el modelo: verifica las
-huellas de los JSONL y recalcula las cifras, tablas y figuras a partir de esas
-mediciones.
-
-Empieza con la [guía de auditoría](./docs/REPRODUCCION.md).
-
-### Auditar la campaña de tres brazos
-
-La descarga completa conserva 18 JSONL, 18 manifiestos de sesión, preflight,
-logs, trazas NVML y análisis. Puede verificarse y reanalizarse sin GPU:
+La auditoría verifica hashes, tamaños, conteos, finalización, ausencia de
+parciales, equivalencia con el paquete preservado y reanálisis de los
+resultados:
 
 ```bash
 python3 infera/audita_paquete_tres_brazos.py \
-  --campaign tres_brazos_20260727T204018Z \
-  --archive tres_brazos_20260727T204018Z.tar.gz.bin \
-  --checksum tres_brazos_20260727T204018Z.tar.gz.sha256 \
-  --reanalysis /tmp/reanalysis_tres_brazos
+  --campaign experimentos/experimento_principal/evidencia \
+  --archive experimentos/experimento_principal/paquete_preservado/experimento_principal_evidencia.tar.gz.bin \
+  --checksum experimentos/experimento_principal/paquete_preservado/experimento_principal_evidencia.tar.gz.sha256 \
+  --reanalysis /tmp/infera_reanalysis
 ```
 
-Los comandos para generar cuatro figuras PNG/PDF están en
-[`infera/README.md`](./infera/README.md#auditar-la-descarga-y-generar-figuras-sin-gpu).
+La salida válida informa `ok: true`, 18 sesiones, 29 tareas por sesión, cero
+parciales y `reanalysis_matches_download: true`. Este recorrido utiliza CPU y
+la biblioteca estándar de Python.
 
-## Inicio rápido para una medición propia
+Los detalles y controles están en la
+[guía de reproducción](./docs/REPRODUCCION.md).
 
-Desde la raíz del repositorio:
+## Regenerar las figuras
+
+Instala el entorno de análisis y genera los derivados en una ruta nueva:
 
 ```bash
-cd infera
-cp config/experiment.env.example config/experiment.env
-cp config/session_tasks.example.json config/mi_sesion.json
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python3 infera/figuras_tres_brazos.py \
+  --campaign experimentos/experimento_principal/evidencia \
+  --output /tmp/infera_figuras
 ```
 
-Después:
+Las figuras ya generadas y su manifiesto están en
+[`experimentos/experimento_principal/figuras/`](./experimentos/experimento_principal/figuras/).
 
-1. Edita `config/mi_sesion.json` con tus tareas y reglas de validación.
-2. Sustituye o adapta la base ficticia de `kb/`.
-3. Edita `config/experiment.env` con tus modelos, etiqueta y parámetros.
-4. Valida la configuración con el tokenizador real.
-5. Ejecuta primero una prueba de humo.
-6. Ejecuta la corrida completa y revisa `results/runs/`.
+## Repetir la medición física
 
-Los comandos completos y las comprobaciones están en
-[`infera/GUIA_DESDE_CERO.md`](./infera/GUIA_DESDE_CERO.md).
+Una repetición física requiere Linux, Python 3.10, CUDA, NVML, una GPU NVIDIA
+dedicada y los dos checkpoints declarados. Desde `infera/`:
 
-## Qué genera una corrida
+```bash
+python -m unittest tests.test_tres_brazos
+cp config/reference/experiment.env.example config/experiment.env
+# Edita únicamente las rutas de FP16_MODEL y AWQ_MODEL.
+bash run_campana_tres_brazos.sh
+```
 
-Cada combinación de representación, estrategia y réplica produce un JSONL.
-Al finalizar, `analyze_results.py` genera:
+Antes de inferir, el launcher valida escenario, tokenizadores, presupuesto,
+versiones, GPU exclusiva y telemetría. Una GPU, checkpoint o versión diferente
+produce una nueva caracterización y no tiene por qué repetir los joules de la
+RTX 4090.
 
-- tablas normalizadas por sesión y tarea;
-- totales de energía por condición;
-- contabilidad del costo de los resúmenes;
-- diferencia acumulada entre estrategias;
-- tokens de entrada y salida;
-- puntaje programático;
-- tres figuras PNG;
-- un informe legible y un manifiesto de procedencia.
-
-Consulta [la guía de salidas](./docs/SALIDAS.md) para identificar cada archivo.
-
-## Alcance configurable
-
-Sin modificar el código puedes cambiar:
-
-- rutas o identificadores de los modelos FP16 y AWQ;
-- base de conocimiento;
-- secuencia y cantidad de tareas;
-- reglas programáticas de verificación;
-- cantidad de réplicas;
-- presupuesto de contexto;
-- longitud máxima de salida;
-- regla de activación de la compactación.
-
-El código compara historial completo contra compactación periódica activada
-por longitud. RAG, memoria externa, otro compresor o una política distinta
-requieren adaptar y volver a validar el runner.
+Consulta [la guía de ejecución](./infera/README.md) antes de utilizar GPU.
 
 ## Organización
 
-- [`infera/`](./infera/): código, configuración, base ficticia, ejecución,
-  análisis y resultados de referencia.
-- [`docs/`](./docs/): instalación, configuración, reproducción, salidas,
-  limitaciones y mapa para el anexo.
-- [`requirements-gpu.txt`](./requirements-gpu.txt): entorno para ejecutar la
-  medición con GPU.
-- [`requirements.txt`](./requirements.txt): entorno mínimo para analizar el
-  conjunto de referencia sin GPU.
-- [`tres_brazos_20260727T204018Z/`](./tres_brazos_20260727T204018Z/):
-  campaña experimental verificada; no reemplaza los doce raws históricos.
+- [`experimentos/`](./experimentos/): experimento vigente y mapa de evidencia.
+- [`infera/`](./infera/): instrumentación, runner, políticas, controles,
+  análisis y pruebas.
+- [`docs/`](./docs/): reproducción, configuración, salidas y limitaciones.
+- [`requirements.txt`](./requirements.txt): análisis y figuras sin GPU.
+- [`requirements-gpu.txt`](./requirements-gpu.txt): stack físico validado.
 
-## Resultado de referencia
+El conjunto anterior de dos políticas no forma parte de la evidencia vigente.
+Se conserva en la historia Git, separado del experimento principal, para
+evitar que sus 12 sesiones se mezclen con las 18 sesiones finales.
 
-El estudio incluido comparó Llama 3.1 8B Instruct bajo FP16 y AWQ en una RTX
-4090. Se ejecutaron tres réplicas de historial completo y compactación para
-cada representación, con 29 tareas por sesión.
+## Alcance
 
-En esa configuración, la política de tres compactaciones no recuperó la
-energía empleada para producir los resúmenes dentro del horizonte observado.
-La conclusión no implica que compactar siempre sea ineficiente ni identifica
-un umbral universal.
-
-## Documentación
-
-- [Instalación](./docs/INSTALACION.md)
-- [Guía desde cero](./infera/GUIA_DESDE_CERO.md)
-- [Configuración](./docs/CONFIGURACION.md)
-- [Auditar el conjunto de referencia](./docs/REPRODUCCION.md)
-- [Archivos de salida](./docs/SALIDAS.md)
-- [Limitaciones](./docs/LIMITACIONES.md)
-- [Mapa para el anexo](./docs/ANEXO_REPOSITORIO.md)
+Los valores caracterizan RTX 4090, Llama 3.1 8B Instruct, vLLM 0.5.3, FP16,
+AWQ, caché de prefijos desactivada y la secuencia fija de 29 tareas. El
+disparador de 4.500 tokens y `K=4` fueron decisiones operativas
+preespecificadas, no valores óptimos.
 
 El repositorio todavía no declara una licencia de reutilización ni una forma
-de citación definitiva. Esos archivos deben añadirse después de confirmar las
-condiciones institucionales y los metadatos finales.
+de citación definitiva. Esos archivos solo deben añadirse cuando se confirmen
+las condiciones institucionales y los metadatos finales.

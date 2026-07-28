@@ -98,9 +98,10 @@ def parse_checksum(path: Path) -> str:
 def verify_archive_contents(
     archive_path: Path,
     campaign_dir: Path,
-) -> dict[str, int | bool]:
+) -> dict[str, int | bool | str | None]:
     archived_files: set[Path] = set()
     entries = 0
+    archive_root: str | None = None
     with tarfile.open(archive_path, mode="r:gz") as archive:
         for member in archive:
             entries += 1
@@ -109,11 +110,22 @@ def verify_archive_contents(
                 relative.is_absolute()
                 or ".." in relative.parts
                 or not relative.parts
-                or relative.parts[0] != campaign_dir.name
             ):
                 raise ValueError(f"ruta insegura/inesperada en archivo: {member.name}")
+            member_root = relative.parts[0]
+            if archive_root is None:
+                archive_root = member_root
+            elif member_root != archive_root:
+                raise ValueError(
+                    "el archivo contiene más de un directorio raíz: "
+                    f"{archive_root}, {member_root}"
+                )
             if member.isdir():
                 continue
+            if len(relative.parts) < 2:
+                raise ValueError(
+                    f"archivo fuera del directorio raíz: {member.name}"
+                )
             if not member.isfile():
                 raise ValueError(
                     f"tipo de entrada no permitido en archivo: {member.name}"
@@ -149,6 +161,7 @@ def verify_archive_contents(
         "entries": entries,
         "regular_files": len(archived_files),
         "paths_safe": True,
+        "archive_root": archive_root,
         "matches_campaign_directory": True,
     }
 

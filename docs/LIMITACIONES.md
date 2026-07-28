@@ -9,16 +9,20 @@
   representaciones y una secuencia fija. Los valores no son universales.
 - El caché de prefijos estuvo desactivado. Activarlo cambia el trabajo repetido
   entre peticiones y requiere una nueva medición.
-- Tres réplicas describen repetibilidad local; no equivalen a múltiples GPU ni
-  a una muestra amplia de hardware.
-- La regla de 4.500 tokens fue operativa. El repositorio no estima un umbral
-  óptimo.
-- Los JSONL principales no guardaron respuestas ni resúmenes. El puntaje
-  programático histórico se describe, pero no puede reconstruirse manualmente
-  desde esos doce archivos.
+- Tres repeticiones instrumentales describen estabilidad local de una
+  trayectoria fija; no equivalen a múltiples GPU, tareas independientes ni
+  réplicas independientes de calidad.
+- La regla de 4.500 tokens y `K=4` fueron decisiones operativas. El repositorio
+  no estima valores óptimos.
+- `K=4` cuenta pares completos usuario/asistente conservados; no representa
+  tokens ni mensajes individuales.
+- Los 18 JSONL guardan respuestas, resúmenes y razones de cierre. Esto permite
+  auditoría focal, pero no reemplaza una evaluación humana ciega y
+  preespecificada.
 - Menos tokens de entrada no implican necesariamente menos energía de sesión:
   también intervienen las salidas, llamadas de resumen, duración y potencia.
-- No se realizó una evaluación humana ciega de las respuestas principales.
+- El cumplimiento programático comprueba reglas declaradas y puede producir
+  falsos positivos o negativos semánticos; no equivale a calidad integral.
 - No se debe extrapolar el punto de equilibrio más allá de las 29 tareas
   observadas.
 

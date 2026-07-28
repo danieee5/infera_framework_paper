@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "campaign": "experimentos/experimento_principal/evidencia",
+  "generator": {
+    "path": "infera/figuras_tres_brazos.py",
+    "sha256": "582c0692755c1e0b226d8bab0e9a2b15d98e870cb496b185deb2556f9623d0ca",
+    "python": "3.12.4",
+    "matplotlib": "3.9.2"
+  },
+  "source_analysis_manifest_sha256": "05f23564bc56c28fa9c23c4bd74176037bd4b8988abc60ae34b6f16e2615b5a6",
+  "source_raw_sha256": {
+    "run_AWQ_completo_rep1.jsonl": "b5d81c49f72d997dd3ab8df8d13712e7a938f002f55321c3ea57027b3d551efc",
+    "run_AWQ_completo_rep2.jsonl": "6b6b2d05f512850e90ca07b939da7541e15ff2f8d68ccc227fef013bad4245b0",
+    "run_AWQ_completo_rep3.jsonl": "d0cb21b4308be254c0c9b1f4587ace1d537dc5fcfb826037aef8f1232bc35956",
+    "run_AWQ_descarte_rep1.jsonl": "54dbfd8a01d2966f86e97da7dd3dcef38b458b8aaa826337d21e223d64464fd6",
+    "run_AWQ_descarte_rep2.jsonl": "2bc044832188bda41468ee647c8a38c9f03a92d743b1c6ed48654d1b56e51f9d",
+    "run_AWQ_descarte_rep3.jsonl": "5b595184b05d243070ff462aba1d9bd5160518e007143902e6d1313e359c6b7f",
+    "run_AWQ_resumen_rep1.jsonl": "9202b8edd9523dfdaa3cda37ba887aa83bbb88909feaa12fa577b19e0740f471",
+    "run_AWQ_resumen_rep2.jsonl": "a7ace6d8c140af7d14d832dd7bf6572df07d7b1e446ddfdf7e586c64811de796",
+    "run_AWQ_resumen_rep3.jsonl": "de0182bacfc03912de1c5a0d4f143bb946971cb8841a8491667f18e27e4d727f",
+    "run_FP16_completo_rep1.jsonl": "cd060ed5dd2fd7c364b233f92b4f7509595a1aeea9d6f9cd6b657702eb002e29",
+    "run_FP16_completo_rep2.jsonl": "c3435e5820ccdd37fec80641075188ed868e9149a49c3272ad79625dabde99e7",
+    "run_FP16_completo_rep3.jsonl": "a63e739a8ee93f0d0623e9edf5cf06b7c0c6ba9686eadbfe8e14dd10168825a3",
+    "run_FP16_descarte_rep1.jsonl": "942f93eadb0b54e56dc5a28791c202fbe8b9ce7aa63dfa72b31c6858796d7ab8",
+    "run_FP16_descarte_rep2.jsonl": "87c713f70b6854ea79b552be7df326ac42e7248229706a10fd89bc3041c42b13",
+    "run_FP16_descarte_rep3.jsonl": "035988de476ddbfc143c9898378fb6f7b5e3018f185229fe3d374b459aba1bbe",
+    "run_FP16_resumen_rep1.jsonl": "e3c6ac1186fd065d7e00d1aa35da04dfdbcad8372a3b9a5b306af1118537e7d7",
+    "run_FP16_resumen_rep2.jsonl": "e9d6efb3d6542fc357502d4d9260cf42ede7c7e11699ff61638cd93ae85277ef",
+    "run_FP16_resumen_rep3.jsonl": "1506896b6d896fe142987ec87f9843ac6d4bd56ff9b2df387e0cd458168a8ec6"
+  },
+  "figures": [
+    {
+      "name": "figura_1_energia_por_politica.pdf",
+      "sha256": "7bc567ab38c5d64f22aa88c878dcf84793a41feff1c6472e3abd4a4c3defa80a",
+      "bytes": 18243
+    },
+    {
+      "name": "figura_1_energia_por_politica.png",
+      "sha256": "5d0bc84c2d565f8b12bd9b7d531c173ebc2553c4b5c0937262ba21e75bfd07aa",
+      "bytes": 96964
+    },
+    {
+      "name": "figura_2_energia_acumulada.pdf",
+      "sha256": "840c809cab1af752bd9c20d1027ced235fdfd7f922ccd5f4d62cc2eb4c37e1bc",
+      "bytes": 19060
+    },
+    {
+      "name": "figura_2_energia_acumulada.png",
+      "sha256": "fc57dd38b6e8eb1211fe5899415b228e9fe9400b3b58cece42506d31e99f7926",
+      "bytes": 179347
+    },
+    {
+      "name": "figura_3_ocupacion_contexto.pdf",
+      "sha256": "6074d3cdca8080f39cf8254ea42b70ca521e1b0dccbf7f9d54d182341927b38a",
+      "bytes": 17731
+    },
+    {
+      "name": "figura_3_ocupacion_contexto.png",
+      "sha256": "7ae150a80921d77b9b83a20accdfcc84e93cc2b380e9a75fcbe98ee1330ecbc8",
+      "bytes": 246630
+    },
+    {
+      "name": "figura_4_score_programatico.pdf",
+      "sha256": "b7c2ca1ba7f37dd8b1fa570cd58360537a27ae945b691da682e4971b6cad3c06",
+      "bytes": 17353
+    },
+    {
+      "name": "figura_4_score_programatico.png",
+      "sha256": "0386b20ae53c1010ed3552223e0f9175bda7272001f1a72d653402607a4be9c3",
+      "bytes": 117228
+    }
+  ],
+  "notes": [
+    "Las bandas muestran rango de tres repeticiones instrumentales.",
+    "Score programático no equivale a evaluación humana integral.",
+    "No se estiman valores p ni inferencia poblacional."
+  ]
+}

@@ -1,7 +1,8 @@
-# Reproducción del análisis V3 sin GPU.
+# Auditoría, reanálisis y figuras del experimento principal sin GPU.
 # Python 3.10 o superior.
 #
-# Las tablas CSV usan únicamente la biblioteca estándar. Pillow se utiliza
-# para las tres figuras PNG del paper.
+# Auditor y analizador usan la biblioteca estándar. Matplotlib genera los
+# derivados PNG/PDF publicados.
 
-Pillow==12.3.0
+numpy==1.26.4
+matplotlib==3.9.2

@@ -1,70 +1,70 @@
-# Configurar una sesión o política
+# Configurar una corrida
 
-INFERA permite cambiar el caso de uso y los parámetros de una compactación
-periódica. No convierte automáticamente cualquier mecanismo de memoria en un
-experimento válido.
+## Repetir el diseño publicado
 
-## Base de conocimiento
-
-El runner espera estos archivos dentro de `infera/kb/`:
-
-- `vigia_kb.md`;
-- `permisos_medicos.csv`;
-- `inventario_uniformes.csv`.
-
-Puedes reemplazar su contenido manteniendo los nombres, o adaptar
-`infera_kb.py`. Utiliza datos ficticios, anonimizados o autorizados.
-
-El tamaño debe evaluarse en tokens. En cada petición deben caber sistema,
-historial activo, pregunta y salida reservada.
-
-## Tareas
-
-Cada tarea necesita un `id` único, `type`, `prompt`, `depends_on` y `verify`.
-
-Las reglas implementadas son:
-
-- `contains_all`: exige todos los términos.
-- `contains_any`: acepta variantes declaradas.
-- `forbidden`: penaliza términos no permitidos.
-- `required_fields`: comprueba secciones de una salida estructurada.
-- `rota`: valida cobertura y restricciones de turnos.
-
-El campo `judge` de configuraciones antiguas no activa una evaluación LLM. La
-medición actual usa `score_task`.
-
-## Decodificación
-
-- Temperatura 0 reduce muestreo aleatorio.
-- Una semilla fija mejora repetibilidad local, pero no garantiza igualdad
-  entre motores o hardware.
-- `max_tokens` reserva la salida máxima de las tareas y resúmenes.
-
-## Presupuesto de contexto
-
-`MAX_MODEL_LEN=8192` significa que una petición completa debe caber en ese
-presupuesto. No limita la cantidad total de consultas durante la vida del
-servidor.
-
-`THRESH` se compara con los tokens del prompt informados por vLLM. Debe
-elegirse antes de medir. Un valor menor puede generar más resúmenes; uno mayor
-conserva más historial por petición. La conveniencia energética debe medirse.
-
-## Validación
-
-Desde `infera/`:
+Desde `infera/`, crea el único archivo local de entorno:
 
 ```bash
-python config/validate_configuration.py \
-  --tasks config/mi_sesion.json \
-  --kb-dir kb \
-  --max-model-len 8192 \
-  --threshold 4500 \
-  --tokenizer /ruta/al/tokenizador
+cp config/reference/experiment.env.example config/experiment.env
 ```
 
-Después ejecuta un humo y comprueba estado, NVML, energía positiva,
-truncamiento, cantidad de compactaciones y reglas programáticas.
+Conserva los parámetros declarados y sustituye únicamente las rutas locales de
+`FP16_MODEL` y `AWQ_MODEL` si quieres repetir la configuración:
 
-Consulta también
-[`../infera/config/README.md`](../infera/config/README.md).
+- 29 tareas de `config/reference/session_tasks.json`;
+- base sintética de `kb/`;
+- representaciones AWQ y FP16;
+- políticas completo, resumen y descarte;
+- tres repeticiones instrumentales;
+- contexto máximo de 8.192 tokens;
+- disparador de resumen en 4.500 tokens;
+- `K=4` pares completos para descarte;
+- temperatura 0, semilla fija y caché de prefijos apagada.
+
+El preflight del launcher valida estos valores antes de levantar vLLM.
+
+## Variables de política
+
+`completo` mantiene todo el historial. `resumen` lee el historial activo,
+genera un relevo y continúa con base fija, relevo y pares nuevos. `descarte`
+mantiene la base fija y los cuatro pares completos más recientes.
+
+El disparador y `K` deben definirse antes de medir. INFERA no los optimiza. Un
+valor distinto cambia las intervenciones y constituye otra caracterización.
+
+## Presupuesto
+
+`MAX_MODEL_LEN=8192` limita cada petición, no la suma de toda la sesión. Antes
+de enviar, el runner cuenta la plantilla de chat real y exige:
+
+```text
+prompt_tokens + max_tokens ≤ MAX_MODEL_LEN
+```
+
+La longitud de las respuestas también altera el historial posterior. Por eso
+no basta con estimar el presupuesto a partir de palabras o número de turnos.
+
+## Cumplimiento programático
+
+Cada tarea tiene un identificador, tipo, prompt, dependencias y reglas
+`verify`. Las reglas buscan campos o restricciones predeclaradas. El campo
+histórico `judge` no instala un juez LLM; el runner utiliza `score_task`.
+
+El resultado permite comprobar consistencia operacional, pero no equivale a
+calidad semántica integral ni evaluación humana.
+
+## Adaptar el caso
+
+Las plantillas `config/experiment.env.example` y
+`config/session_tasks.example.json` sirven para una corrida nueva. Si cambias
+tareas o base:
+
+1. utiliza información ficticia, anonimizada o autorizada;
+2. adapta las reglas programáticas a las respuestas esperadas;
+3. valida estructura, dependencias y presupuesto con el tokenizador real;
+4. declara de antemano cantidad de tareas, políticas y repeticiones;
+5. conserva la misma secuencia para todas las condiciones;
+6. publica esa corrida bajo un identificador nuevo.
+
+Una semilla fija y temperatura 0 mejoran repetibilidad local, pero no
+garantizan igualdad entre motores, versiones o hardware.
